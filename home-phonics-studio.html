@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PedaForge Home - Phonics Studio &amp; Decodable Reader Library: a clay-neumorphic Tonight's Reading experience pairing teacher-assigned phonics games, levelled decodable readers and karaoke-style read-along narration powered by Azure Neural TTS.">
+  <title>Phonics Studio &amp; Decodable Reader Library - PedaForge Home | Agape's Sandbox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── PedaForge Home accent namespace (teal) ─────────────────
+       hub-home is not yet defined in style.css; map --accent-proposal
+       to the Home teal so .hub-pill/.hub-subnav/.module-card/.hub-budget-hero
+       inherit the correct accent without touching the shared stylesheet. */
+    body.hub-home {
+      --accent-proposal: #0E8FA8;
+      --accent-proposal-soft: rgba(14,143,168,0.10);
+      --accent-proposal-line: rgba(14,143,168,0.24);
+      --home-teal: #0E8FA8;
+      --home-teal-dark: #0A6E82;
+      --home-teal-light: #2BAEC7;
+      --home-teal-soft: rgba(14,143,168,0.10);
+      --home-teal-tint: #eaf6f8;
+    }
+
+    /* ── Clay-neumorphic shell ──────────────────────────────── */
+    .ps-section { padding-top: 8px; }
+    .ps-section-label {
+      display: inline-block;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.6px;
+      text-transform: uppercase; color: var(--home-teal);
+      margin-bottom: 10px;
+    }
+    .ps-section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem; color: var(--secondary); line-height: 1.25;
+      margin-bottom: 6px;
+    }
+    .ps-section-sub {
+      font-size: 0.95rem; color: var(--text-light); line-height: 1.65;
+      max-width: 640px;
+    }
+
+    /* Tonight's Reading hero */
+    .ps-tonight {
+      position: relative;
+      border-radius: 28px;
+      padding: 34px 36px;
+      background: linear-gradient(150deg, #eaf6f8 0%, #f4fbfc 55%, #ffffff 100%);
+      box-shadow:
+        12px 12px 30px rgba(14,143,168,0.14),
+        -10px -10px 26px rgba(255,255,255,0.9),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+      overflow: hidden;
+    }
+    .ps-tonight::after {
+      content: "";
+      position: absolute; right: -60px; top: -60px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(43,174,199,0.22), rgba(43,174,199,0) 70%);
+      pointer-events: none;
+    }
+    .ps-tonight-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap; margin-bottom: 18px;
+    }
+    .ps-tonight-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.74rem; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--home-teal-dark);
+    }
+    .ps-tonight-moon {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: #fff; color: var(--home-teal);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 4px 4px 10px rgba(14,143,168,0.18), -3px -3px 8px rgba(255,255,255,0.9);
+    }
+    .ps-tonight h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; color: var(--secondary); line-height: 1.15;
+      margin: 4px 0 4px;
+    }
+    .ps-tonight h2 .ps-sounds {
+      color: var(--home-teal);
+    }
+    .ps-tonight-lead {
+      font-size: 0.96rem; color: var(--text-light); line-height: 1.6;
+      max-width: 560px; margin-bottom: 20px;
+    }
+    .ps-phoneme-row {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .ps-phoneme {
+      display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+      min-width: 74px; padding: 14px 20px;
+      border-radius: 18px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 700; color: var(--home-teal-dark);
+      background: #ffffff;
+      box-shadow:
+        7px 7px 16px rgba(14,143,168,0.16),
+        -6px -6px 14px rgba(255,255,255,0.95);
+    }
+    .ps-phoneme small {
+      display: block; font-family: var(--font);
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--text-muted); margin-top: 2px;
+    }
+    .ps-assigned {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 14px; border-radius: 100px;
+      font-size: 0.78rem; font-weight: 600;
+      background: var(--home-teal); color: #fff;
+      box-shadow: 5px 5px 12px rgba(14,143,168,0.22);
+    }
+    .ps-assigned svg { flex-shrink: 0; }
+    .ps-assigned.ps-assigned-soft {
+      background: #fff; color: var(--home-teal-dark);
+      box-shadow: 4px 4px 10px rgba(14,143,168,0.14), -3px -3px 8px rgba(255,255,255,0.9);
+    }
+
+    /* Reader library row */
+    .ps-reader-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 22px;
+    }
+    .ps-reader-card {
+      background: var(--bg-card);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 8px 8px 22px rgba(14,143,168,0.10), -6px -6px 18px rgba(255,255,255,0.9);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+      display: flex; flex-direction: column;
+    }
+    .ps-reader-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 12px 14px 30px rgba(14,143,168,0.18), -6px -6px 18px rgba(255,255,255,0.9);
+    }
+    .ps-cover {
+      position: relative;
+      border-radius: 16px;
+      height: 150px;
+      display: flex; align-items: flex-end;
+      padding: 14px;
+      overflow: hidden;
+      color: #fff;
+    }
+    .ps-cover-1 { background: linear-gradient(160deg, #0E8FA8, #2BAEC7); }
+    .ps-cover-2 { background: linear-gradient(160deg, #0A6E82, #1f9bb4); }
+    .ps-cover-3 { background: linear-gradient(160deg, #2BAEC7, #6cc9da); }
+    .ps-cover-4 { background: linear-gradient(160deg, #137f96, #43b6cd); }
+    .ps-cover-art {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ps-cover-art svg { opacity: 0.85; }
+    .ps-cover-focus {
+      position: absolute; top: 12px; left: 12px; z-index: 2;
+      display: inline-flex; align-items: center;
+      padding: 3px 9px; border-radius: 100px;
+      font-family: 'Playfair Display', serif; font-weight: 700;
+      font-size: 0.82rem;
+      background: rgba(255,255,255,0.92); color: var(--home-teal-dark);
+    }
+    .ps-reader-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.08rem; color: var(--secondary);
+      margin: 14px 2px 8px;
+    }
+    .ps-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      align-self: flex-start;
+      padding: 4px 11px; border-radius: 100px;
+      font-size: 0.72rem; font-weight: 600;
+      background: var(--home-teal-soft); color: var(--home-teal-dark);
+      margin: 0 2px 14px;
+    }
+    .ps-play {
+      margin: auto 2px 2px;
+      width: 100%;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px 14px; border-radius: 14px;
+      font-family: var(--font); font-size: 0.88rem; font-weight: 600;
+      color: #fff; background: var(--home-teal); border: none; cursor: pointer;
+      box-shadow: 5px 5px 12px rgba(14,143,168,0.20);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .ps-play:hover { background: var(--home-teal-dark); transform: translateY(-1px); }
+    .ps-play svg { flex-shrink: 0; }
+
+    /* Phonics game cards */
+    .ps-game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+    }
+    .ps-game-card {
+      background: var(--bg-card);
+      border-radius: 22px;
+      padding: 26px 24px;
+      box-shadow: 8px 8px 22px rgba(14,143,168,0.10), -6px -6px 18px rgba(255,255,255,0.9);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+      display: flex; flex-direction: column;
+    }
+    .ps-game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 12px 14px 30px rgba(14,143,168,0.18), -6px -6px 18px rgba(255,255,255,0.9);
+    }
+    .ps-game-icon {
+      width: 54px; height: 54px; border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--home-teal); background: var(--home-teal-tint);
+      box-shadow: inset 3px 3px 7px rgba(14,143,168,0.12), inset -3px -3px 7px rgba(255,255,255,0.9);
+      margin-bottom: 16px;
+    }
+    .ps-game-card h3 {
+      font-size: 1.12rem; color: var(--secondary); margin-bottom: 6px;
+    }
+    .ps-game-card p {
+      font-size: 0.88rem; color: var(--text-light); line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .ps-game-card .ps-assigned { margin-top: auto; align-self: flex-start; }
+
+    /* Read-Along karaoke strip */
+    .ps-readalong {
+      border-radius: 26px;
+      padding: 30px 34px;
+      background: linear-gradient(150deg, #f4fbfc 0%, #eaf6f8 100%);
+      box-shadow:
+        10px 10px 26px rgba(14,143,168,0.12),
+        -8px -8px 22px rgba(255,255,255,0.9);
+    }
+    .ps-readalong-head {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+    .ps-readalong-mic {
+      width: 46px; height: 46px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; background: var(--home-teal);
+      box-shadow: 6px 6px 14px rgba(14,143,168,0.22);
+      flex-shrink: 0;
+    }
+    .ps-readalong-head h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; color: var(--secondary); margin: 0;
+    }
+    .ps-readalong-head p {
+      font-size: 0.84rem; color: var(--text-light); margin: 2px 0 0;
+    }
+    .ps-sentence {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem; line-height: 1.5; color: var(--secondary);
+      letter-spacing: 0.2px;
+      padding: 8px 0 18px;
+    }
+    .ps-sentence .ps-word {
+      display: inline-block; padding: 0 2px; transition: color 0.2s ease;
+    }
+    .ps-sentence .ps-word.ps-active {
+      color: var(--accent-proposal);
+      position: relative;
+    }
+    .ps-sentence .ps-word.ps-active::after {
+      content: "";
+      position: absolute; left: 2px; right: 2px; bottom: -4px;
+      height: 4px; border-radius: 4px;
+      background: var(--accent-proposal);
+      opacity: 0.45;
+    }
+    .ps-sentence .ps-word.ps-read {
+      color: var(--home-teal-dark);
+    }
+    .ps-progress {
+      height: 8px; border-radius: 8px;
+      background: rgba(14,143,168,0.12);
+      overflow: hidden; margin-bottom: 10px;
+    }
+    .ps-progress-fill {
+      height: 100%; width: 48%; border-radius: 8px;
+      background: linear-gradient(90deg, var(--home-teal), var(--home-teal-light));
+    }
+    .ps-readalong-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .ps-caption {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 0.78rem; color: var(--text-muted); line-height: 1.5;
+      max-width: 520px;
+    }
+    .ps-caption svg { flex-shrink: 0; color: var(--home-teal); }
+    .ps-transport {
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .ps-transport button {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--home-teal-dark); background: #fff;
+      box-shadow: 4px 4px 10px rgba(14,143,168,0.16), -3px -3px 8px rgba(255,255,255,0.9);
+    }
+    .ps-transport button.ps-transport-play {
+      width: 50px; height: 50px;
+      color: #fff; background: var(--home-teal);
+      box-shadow: 6px 6px 14px rgba(14,143,168,0.24);
+    }
+
+    /* Closing IP note */
+    .ps-ipnote {
+      border-radius: 22px;
+      padding: 28px 32px;
+      background: var(--bg-card);
+      box-shadow: 8px 8px 22px rgba(14,143,168,0.08), -6px -6px 18px rgba(255,255,255,0.9);
+      display: flex; gap: 20px; align-items: flex-start;
+    }
+    .ps-ipnote-icon {
+      width: 48px; height: 48px; border-radius: 16px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--home-teal); background: var(--home-teal-tint);
+    }
+    .ps-ipnote h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; color: var(--secondary); margin-bottom: 8px;
+    }
+    .ps-ipnote p {
+      font-size: 0.92rem; color: var(--text-light); line-height: 1.7;
+    }
+    .ps-ipnote .feature-tags { margin-top: 14px; }
+
+    /* ── Interactive additions (driven by js/home-phonics.js) ── */
+    .ps-phoneme {
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+    }
+    .ps-phoneme:hover {
+      transform: translateY(-3px);
+      box-shadow: 9px 10px 20px rgba(14,143,168,0.22), -6px -6px 14px rgba(255,255,255,0.95);
+    }
+    .ps-bounce { animation: psBounce 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes psBounce {
+      0% { transform: scale(0.9); }
+      55% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    /* Blending strip card */
+    .ps-blend-card {
+      background: var(--bg-card);
+      border-radius: 22px;
+      padding: 26px 24px;
+      box-shadow: 8px 8px 22px rgba(14,143,168,0.10), -6px -6px 18px rgba(255,255,255,0.9);
+      display: flex; flex-direction: column;
+    }
+    .ps-blend-tiles {
+      display: flex; align-items: center; justify-content: center;
+      gap: 18px; padding: 18px 0 10px;
+    }
+    .ps-blend-tile {
+      width: 78px; height: 78px;
+      border: none; border-radius: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem; font-weight: 700; color: var(--home-teal-dark);
+      background: var(--home-teal-tint);
+      box-shadow: inset 4px 4px 9px rgba(14,143,168,0.14), inset -4px -4px 9px rgba(255,255,255,0.9);
+      transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1), background 0.3s ease, color 0.3s ease;
+    }
+    .ps-blend-tile.lit { background: var(--home-teal); color: #fff; }
+    /* tiles slide together on blend */
+    .ps-blend-tiles.blended .ps-blend-tile:nth-child(1) { transform: translateX(18px); }
+    .ps-blend-tiles.blended .ps-blend-tile:nth-child(3) { transform: translateX(-18px); }
+    .ps-blend-word {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 800; color: var(--home-teal);
+      min-height: 2.1rem;
+      opacity: 0; transform: translateY(8px) scale(0.9);
+      transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .ps-blend-word.show { opacity: 1; transform: translateY(0) scale(1); }
+    .ps-blend-btn {
+      margin-top: 12px; align-self: center;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 26px; border: none; border-radius: 100px;
+      font-family: var(--font); font-size: 0.92rem; font-weight: 700;
+      color: #fff; background: var(--home-teal); cursor: pointer;
+      box-shadow: 6px 6px 14px rgba(14,143,168,0.22);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease;
+    }
+    .ps-blend-btn:hover:not(:disabled) { transform: translateY(-2px); background: var(--home-teal-dark); }
+    .ps-blend-btn:disabled { opacity: 0.6; cursor: default; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ps-bounce { animation: none; }
+      .ps-blend-tile, .ps-blend-word { transition: none; }
+      .ps-blend-tiles.blended .ps-blend-tile { transform: none; }
+    }
+
+    @media (max-width: 640px) {
+      .ps-tonight, .ps-readalong { padding: 26px 22px; }
+      .ps-sentence { font-size: 1.5rem; }
+      .ps-tonight h2 { font-size: 1.6rem; }
+      .ps-ipnote { flex-direction: column; gap: 14px; }
+    }
+  </style>
+</head>
+<body class="hub-home">
+<div class="bg-blobs" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+  <div class="bg-blob bg-blob-4"></div>
+  <div class="bg-blob bg-blob-5"></div>
+  <div class="bg-blob bg-blob-6"></div>
+</div>
+
+  <!-- ─── Navigation (umbrella) ─────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"><div class="logo">AG</div> Agape's Sandbox</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
+          <a href="classroom.html">Proposal Overview</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Sample Interpretation</a></div></li>
+        <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
+          <a href="leadership.html">Proposal Overview</a><a href="coach.html">AI Coach</a><a href="lna.html">Learning Needs Analysis</a><a href="observation.html">AI Lesson Observation</a><a href="dashboard.html">Leadership Dashboard</a></div></li>
+        <li><span class="nav-dropdown-trigger">SproutSpace</span><div class="nav-dropdown">
+          <a href="sproutspace.html">Proposal Overview</a><a href="sproutspace-layout.html">Layout Planner</a><a href="sproutspace-inventory.html">Resource Inventory</a><a href="sproutspace-control.html">Leadership Control</a></div></li>
+        <li><span class="nav-dropdown-trigger">Home</span><div class="nav-dropdown">
+          <a href="home.html">Proposal Overview</a><a href="home-phonics-studio.html" class="active">Phonics Studio</a><a href="home-benchmark.html">Termly Benchmark</a><a href="home-reading-coach.html">Reading Coach</a><a href="home-draw-reflect.html">Draw &amp; Reflect</a><a href="home-dictionary.html">Talking Dictionary</a></div></li>
+        <li><a href="index.html#compliance">Compliance</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ─── Page Header ───────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>&#8250;</span>
+        <a href="home.html">Home</a>
+        <span>&#8250;</span>
+        <span class="current">Phonics Studio</span>
+      </div>
+      <h1>Phonics Studio</h1>
+      <p>A guided, teacher-assigned phonics practice space for the home - pairing levelled decodable readers, playful sound games and karaoke-style read-along narration so families can run a confident &ldquo;Tonight&rsquo;s Reading&rdquo; routine without specialist knowledge.</p>
+      <div style="margin-top:18px;">
+        <span class="hub-pill">PedaForge Home &middot; Module 1 of 5</span>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="home.html" class="btn btn-secondary">&larr; Back to PedaForge Home</a>
+      </div>
+      <!-- ─── Hub local sub-nav ─────────────────────────────── -->
+      <div class="hub-subnav">
+        <a href="home-phonics-studio.html" class="active">Phonics Studio</a>
+        <a href="home-benchmark.html">Termly Benchmark</a>
+        <a href="home-reading-coach.html">Reading Coach</a>
+        <a href="home-draw-reflect.html">Draw &amp; Reflect</a>
+        <a href="home-dictionary.html">Talking Dictionary</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Tonight's Reading hero ─────────────────────────────── -->
+  <section style="padding-bottom:0;">
+    <div class="container">
+      <div class="ps-tonight">
+        <div class="ps-tonight-head">
+          <span class="ps-tonight-eyebrow">
+            <span class="ps-tonight-moon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+            Tonight&rsquo;s Reading &middot; Tuesday
+          </span>
+          <span class="ps-assigned">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Assigned by Teacher Sarah
+          </span>
+        </div>
+
+        <h2>This week&rsquo;s sounds: <span class="ps-sounds">/sh/</span> &amp; <span class="ps-sounds">/ch/</span></h2>
+        <p class="ps-tonight-lead">Two readers and three quick games are set for Maya this week, all built around the digraphs <strong>/sh/</strong> and <strong>/ch/</strong>. Tap a sound to hear it, then start tonight&rsquo;s reader together - the app keeps the difficulty exactly where her teacher placed it.</p>
+
+        <div class="ps-phoneme-row">
+          <span class="ps-phoneme">/sh/<small>as in ship</small></span>
+          <span class="ps-phoneme">/ch/<small>as in chip</small></span>
+          <span class="ps-assigned ps-assigned-soft">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Set to Maya&rsquo;s Level 3
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Decodable Reader Library ───────────────────────────── -->
+  <section>
+    <div class="container ps-section">
+      <span class="ps-section-label">Decodable Reader Library</span>
+      <h2 class="ps-section-title">Readers chosen for this week&rsquo;s sounds</h2>
+      <p class="ps-section-sub mb-3">Every title is decodable - the words use only the letter-sound patterns Maya has already met, plus this week&rsquo;s focus sounds. Tap <strong>Play</strong> to open a reader with optional narration.</p>
+
+      <div class="ps-reader-grid">
+
+        <!-- Reader 1 -->
+        <div class="ps-reader-card">
+          <div class="ps-cover ps-cover-1">
+            <span class="ps-cover-focus">/sh/</span>
+            <div class="ps-cover-art" aria-hidden="true">
+              <svg width="92" height="92" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a6 6 0 0 0 3-1 6 6 0 0 1 6 0 6 6 0 0 0 6 0 6 6 0 0 1 3-1"/><path d="M4 18l-1-7 9 2 9-2-1 7"/><path d="M12 13V4l5 3-5 2"/></svg>
+            </div>
+          </div>
+          <h3 class="ps-reader-title">Ship in the Fog</h3>
+          <span class="ps-chip">Level 3 &middot; Decodable</span>
+          <button class="ps-play" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span class="ps-play-label">Play reader</span>
+          </button>
+        </div>
+
+        <!-- Reader 2 -->
+        <div class="ps-reader-card">
+          <div class="ps-cover ps-cover-2">
+            <span class="ps-cover-focus">/ch/</span>
+            <div class="ps-cover-art" aria-hidden="true">
+              <svg width="92" height="92" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </div>
+          </div>
+          <h3 class="ps-reader-title">Chip and the Chimp</h3>
+          <span class="ps-chip">Level 3 &middot; Decodable</span>
+          <button class="ps-play" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span class="ps-play-label">Play reader</span>
+          </button>
+        </div>
+
+        <!-- Reader 3 -->
+        <div class="ps-reader-card">
+          <div class="ps-cover ps-cover-3">
+            <span class="ps-cover-focus">/sh/</span>
+            <div class="ps-cover-art" aria-hidden="true">
+              <svg width="92" height="92" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/><path d="M9 9s.5-2 3-2 3 2 3 2"/><path d="M9 16h6"/></svg>
+            </div>
+          </div>
+          <h3 class="ps-reader-title">The Shell Shop</h3>
+          <span class="ps-chip">Level 2 &middot; Decodable</span>
+          <button class="ps-play" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span class="ps-play-label">Play reader</span>
+          </button>
+        </div>
+
+        <!-- Reader 4 -->
+        <div class="ps-reader-card">
+          <div class="ps-cover ps-cover-4">
+            <span class="ps-cover-focus">/ch/</span>
+            <div class="ps-cover-art" aria-hidden="true">
+              <svg width="92" height="92" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 7v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-5z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+          </div>
+          <h3 class="ps-reader-title">Champ on the Bench</h3>
+          <span class="ps-chip">Level 3 &middot; Decodable</span>
+          <button class="ps-play" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span class="ps-play-label">Play reader</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Phonics Games ──────────────────────────────────────── -->
+  <section>
+    <div class="container ps-section">
+      <span class="ps-section-label">Phonics Games</span>
+      <h2 class="ps-section-title">Three quick games before bed</h2>
+      <p class="ps-section-sub mb-3">Each game is teacher-set to the same focus sounds and takes three to five minutes - short enough to finish, playful enough to repeat.</p>
+
+      <div class="ps-game-grid">
+
+        <!-- Game 1 -->
+        <div class="ps-game-card">
+          <div class="ps-game-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <h3>Blend It</h3>
+          <p>Maya drags letter tiles together and the app blends them aloud - <strong>sh</strong> + <strong>ip</strong> &rarr; <em>ship</em> - rewarding clean, sounded-out reads rather than guessing.</p>
+          <span class="ps-assigned">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Assigned by Teacher
+          </span>
+        </div>
+
+        <!-- Game 2 -->
+        <div class="ps-game-card">
+          <div class="ps-game-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </div>
+          <h3>Rime Time</h3>
+          <p>Match the onset to the right rime to build a word family - <em>ship, chip, chop, shop</em> - so Maya hears how a single swapped sound changes the whole word.</p>
+          <span class="ps-assigned">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Assigned by Teacher
+          </span>
+        </div>
+
+        <!-- Game 3 -->
+        <div class="ps-game-card">
+          <div class="ps-game-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+          </div>
+          <h3>Sight-Word Bingo</h3>
+          <p>A spoken word lights up its square on Maya&rsquo;s card. High-frequency words like <em>the, said, you</em> stay in rotation until she recognises them on sight, with no sounding out.</p>
+          <span class="ps-assigned">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Assigned by Teacher
+          </span>
+        </div>
+
+        <!-- Live blending strip: try Blend It right here -->
+        <div class="ps-blend-card">
+          <h3 style="font-size:1.12rem;color:var(--secondary);margin-bottom:4px;">Try it &middot; Blend the sounds</h3>
+          <p style="font-size:0.88rem;color:var(--text-light);line-height:1.6;margin-bottom:4px;">Tap a tile to hear its sound, then press <strong>Blend it!</strong> to hear the sounds speed up into the whole word.</p>
+          <div class="ps-blend-tiles" id="psBlendTiles">
+            <button type="button" class="ps-blend-tile" aria-label="Hear the sound sh">sh</button>
+            <button type="button" class="ps-blend-tile" aria-label="Hear the sound i">i</button>
+            <button type="button" class="ps-blend-tile" aria-label="Hear the sound p">p</button>
+          </div>
+          <div class="ps-blend-word" id="psBlendWord" aria-live="polite">ship!</div>
+          <button type="button" class="ps-blend-btn" id="psBlendBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Blend it!
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Read-Along karaoke strip ───────────────────────────── -->
+  <section>
+    <div class="container ps-section">
+      <span class="ps-section-label">Read-Along Narration</span>
+      <h2 class="ps-section-title">Karaoke-style synchronised reading</h2>
+      <p class="ps-section-sub mb-3">As the narrator reads, each word lights up in teal at the exact moment it is spoken - so Maya&rsquo;s eyes and ears stay together, word by word.</p>
+
+      <div class="ps-readalong">
+        <div class="ps-readalong-head">
+          <span class="ps-readalong-mic">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </span>
+          <div>
+            <h3>Ship in the Fog &middot; Page 4</h3>
+            <p>Narration on &middot; Maya is following along</p>
+          </div>
+        </div>
+
+        <p class="ps-sentence">
+          <span class="ps-word ps-read">The</span>
+          <span class="ps-word ps-read">big</span>
+          <span class="ps-word ps-read">ship</span>
+          <span class="ps-word ps-read">sails</span>
+          <span class="ps-word ps-active">through</span>
+          <span class="ps-word">the</span>
+          <span class="ps-word">thick</span>
+          <span class="ps-word">grey</span>
+          <span class="ps-word">fog.</span>
+        </p>
+
+        <div class="ps-progress" aria-hidden="true"><div class="ps-progress-fill"></div></div>
+
+        <div class="ps-readalong-foot">
+          <span class="ps-caption">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Narration spoken with real browser TTS &middot; in production, Azure Neural TTS with word-level timing
+            <span id="psReadalongSim"></span>
+          </span>
+          <div class="ps-transport" aria-label="Read-along controls">
+            <button type="button" aria-label="Previous page">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="19 20 9 12 19 4 19 20"/><rect x="3" y="4" width="3" height="16" rx="1"/></svg>
+            </button>
+            <button type="button" class="ps-transport-play" aria-label="Play narration">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </button>
+            <button type="button" aria-label="Next page">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 4 15 12 5 20 5 4"/><rect x="18" y="4" width="3" height="16" rx="1"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Closing IP note ────────────────────────────────────── -->
+  <section style="padding-top:8px;">
+    <div class="container">
+      <div class="ps-ipnote">
+        <div class="ps-ipnote-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div>
+          <h3>Built on our own phonics IP, paired with licensed readers</h3>
+          <p>Phonics Studio runs on <strong>Busy Bees&rsquo;</strong> in-house synthetic-phonics scope and sequence - the same sound progression our educators teach in centre - so home practice never contradicts the classroom. The decodable titles shown here are drawn from a <strong>licensed reader library</strong> mapped to that sequence, and the read-along voice is produced inside our Singapore Azure Neural TTS tenant. Teachers stay in control: they set the focus sounds, the level and the assignments, and nothing reaches a child that a teacher has not chosen.</p>
+          <div class="feature-tags">
+            <span class="tag tag-framework" style="background:var(--accent-proposal-soft);color:var(--accent-proposal);">In-House Phonics IP</span>
+            <span class="tag tag-data">Licensed Reader Library</span>
+            <span class="tag tag-ai">Azure Neural TTS</span>
+            <span class="tag tag-amount">Teacher-Assigned</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ────────────────────────────────────────────── -->
+  <footer class="footer"><div class="container"><div class="footer-grid">
+    <div><h4>Agape's Sandbox</h4><p>Four AI-enabled proposals from one Singapore early childhood operator, aligned with ECDA's IDP 2.0 vision for future-ready preschools.</p></div>
+    <div><h4>Classroom</h4><ul><li><a href="classroom.html">Proposal Overview</a></li><li><a href="planner.html">Lesson Planner</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="work-sample.html">Work Sample Interpretation</a></li></ul></div>
+    <div><h4>Leadership</h4><ul><li><a href="leadership.html">Proposal Overview</a></li><li><a href="coach.html">AI Coach</a></li><li><a href="lna.html">Learning Needs Analysis</a></li><li><a href="observation.html">AI Lesson Observation</a></li><li><a href="dashboard.html">Leadership Dashboard</a></li></ul></div>
+    <div><h4>SproutSpace</h4><ul><li><a href="sproutspace.html">Proposal Overview</a></li><li><a href="sproutspace-layout.html">Layout Planner</a></li><li><a href="sproutspace-inventory.html">Resource Inventory</a></li><li><a href="sproutspace-control.html">Leadership Control</a></li></ul></div>
+    <div><h4>Home</h4><ul><li><a href="home.html">Proposal Overview</a></li><li><a href="home-phonics-studio.html">Phonics Studio</a></li><li><a href="home-benchmark.html">Termly Benchmark</a></li><li><a href="home-reading-coach.html">Reading Coach</a></li><li><a href="home-draw-reflect.html">Draw &amp; Reflect</a></li><li><a href="home-dictionary.html">Talking Dictionary</a></li></ul></div>
+  </div><div class="footer-bottom"><span>&copy; 2026 Busy Bees &middot; Prepared by Anita Teo</span><div class="footer-badges"><span class="footer-badge">PDPA Compliant</span><span class="footer-badge">SG Data Residency</span></div></div></div></footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/home-speech.js"></script>
+  <script src="js/home-phonics.js"></script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PedaForge Director's Dashboard: Real-time pedagogical insights, staff QTT profiles, and SFw-aligned professional development recommendations for Singapore ECE centre leaders.">
+  <title>PedaForge: Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="hub-leadership">
+<div class="bg-blobs" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+  <div class="bg-blob bg-blob-4"></div>
+  <div class="bg-blob bg-blob-5"></div>
+  <div class="bg-blob bg-blob-6"></div>
+</div>
+
+  <!-- ────────────────────────────────────────────────────────
+       Navigation
+       ──────────────────────────────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <div class="logo">AG</div>
+        Agape's Sandbox
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li>
+          <span class="nav-dropdown-trigger">Classroom</span>
+          <div class="nav-dropdown">
+            <a href="classroom.html">Proposal Overview</a>
+            <a href="planner.html">Lesson Planner</a>
+            <a href="portfolio.html">Portfolio</a>
+            <a href="work-sample.html">Work Sample Interpretation</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">Leadership</span>
+          <div class="nav-dropdown">
+            <a href="leadership.html">Proposal Overview</a>
+            <a href="coach.html">AI Coach</a>
+            <a href="lna.html">Learning Needs Analysis</a>
+            <a href="observation.html">AI Lesson Observation</a>
+            <a href="dashboard.html" class="active">Leadership Dashboard</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">SproutSpace</span>
+          <div class="nav-dropdown">
+            <a href="sproutspace.html">Proposal Overview</a>
+            <a href="sproutspace-layout.html">Layout Planner</a>
+            <a href="sproutspace-inventory.html">Resource Inventory</a>
+            <a href="sproutspace-control.html">Leadership Control</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">Home</span>
+          <div class="nav-dropdown">
+            <a href="home.html">Proposal Overview</a>
+            <a href="home-phonics-studio.html">Phonics Studio</a>
+            <a href="home-benchmark.html">Termly Benchmark</a>
+            <a href="home-reading-coach.html">Reading Coach</a>
+            <a href="home-draw-reflect.html">Draw &amp; Reflect</a>
+            <a href="home-dictionary.html">Talking Dictionary</a>
+          </div>
+        </li>
+        <li><a href="index.html#compliance">Compliance</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ────────────────────────────────────────────────────────
+       Page Header
+       ──────────────────────────────────────────────────────── -->
+  <section class="page-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>&rsaquo;</span>
+        <a href="leadership.html">Leadership</a>
+        <span>&rsaquo;</span>
+        <span class="current">Dashboard</span>
+      </div>
+      <h1>Leadership Dashboard</h1>
+      <p>Real-time pedagogical insights, staff learning goals, and SFw-aligned professional development recommendations.</p>
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────
+       Main Content
+       ──────────────────────────────────────────────────────── -->
+  <div class="container" style="padding-top: 40px; padding-bottom: 80px;">
+
+    <!-- Stats Row -->
+    <div class="dashboard-stats">
+      <div class="dash-stat">
+        <div class="stat-label">TOTAL EDUCATORS</div>
+        <div class="stat-value">12</div>
+        <div class="stat-change positive">+2 from last term</div>
+      </div>
+      <div class="dash-stat">
+        <div class="stat-label">AVG QTT SCORE</div>
+        <div class="stat-value">3.4/5</div>
+        <div class="stat-change positive">+0.3 improvement</div>
+      </div>
+      <div class="dash-stat">
+        <div class="stat-label">COACHING SESSIONS</div>
+        <div class="stat-value">48</div>
+        <div class="stat-change">This month</div>
+      </div>
+      <div class="dash-stat">
+        <div class="stat-label">DOC TIME SAVED</div>
+        <div class="stat-value">62%</div>
+        <div class="stat-change positive">vs. baseline</div>
+      </div>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-grid">
+
+      <!-- ═══════════ Left Column ═══════════ -->
+      <div>
+
+        <!-- Panel 1: QTT Domain Averages -->
+        <div class="dash-panel mb-3">
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20V10M18 20V4M6 20v-4"/></svg> QTT Domain Progression</h3>
+          <div class="qtt-chart">
+            <div class="qtt-col">
+              <span class="qtt-val" style="color:var(--success)">75%</span>
+              <div class="qtt-track"><div class="qtt-fill" style="background:var(--success); height:75%"></div></div>
+              <span class="qtt-lbl">Learning Env.</span>
+            </div>
+            <div class="qtt-col">
+              <span class="qtt-val" style="color:var(--info)">85%</span>
+              <div class="qtt-track"><div class="qtt-fill" style="background:var(--info); height:85%"></div></div>
+              <span class="qtt-lbl">Teacher-Child</span>
+            </div>
+            <div class="qtt-col">
+              <span class="qtt-val" style="color:var(--warning)">60%</span>
+              <div class="qtt-track"><div class="qtt-fill" style="background:var(--warning); height:60%"></div></div>
+              <span class="qtt-lbl">Curriculum</span>
+            </div>
+            <div class="qtt-col">
+              <span class="qtt-val" style="color:var(--danger)">40%</span>
+              <div class="qtt-track"><div class="qtt-fill" style="background:var(--danger); height:40%"></div></div>
+              <span class="qtt-lbl">Assessment</span>
+            </div>
+            <div class="qtt-col">
+              <span class="qtt-val" style="color:var(--danger)">35%</span>
+              <div class="qtt-track"><div class="qtt-fill" style="background:var(--danger); height:35%"></div></div>
+              <span class="qtt-lbl">Sustained Thinking</span>
+            </div>
+            <div class="qtt-col">
+              <span class="qtt-val" style="color:var(--success)">70%</span>
+              <div class="qtt-track"><div class="qtt-fill" style="background:var(--success); height:70%"></div></div>
+              <span class="qtt-lbl">Family &amp; Community</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Staff Learning Goals & IDP Overview -->
+        <div class="dash-panel mb-3">
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Staff Learning Goals &amp; IDP Overview</h3>
+          <div style="overflow-x: auto;">
+            <table class="budget-table">
+              <thead>
+                <tr>
+                  <th>Educator</th>
+                  <th>Designation</th>
+                  <th>Learning Goal 1 (CWF01)</th>
+                  <th>Learning Goal 2</th>
+                  <th>IDP Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Sarah L.</strong></td>
+                  <td>Preschool Educator</td>
+                  <td>Sustained shared thinking</td>
+                  <td>Formative assessment (CWF05)</td>
+                  <td><span class="status-badge on-track">Completed</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Wei Ting</strong></td>
+                  <td>Preschool Educator</td>
+                  <td>Intentional teaching strategies</td>
+                  <td>Observation documentation (CWF05)</td>
+                  <td><span class="status-badge needs-support">In Progress</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Siti R.</strong></td>
+                  <td>Senior Preschool Educator</td>
+                  <td>Inquiry-based curriculum design</td>
+                  <td>Mentoring junior educators (CWF03)</td>
+                  <td><span class="status-badge exceeding">Completed</span></td>
+                </tr>
+                <tr>
+                  <td><strong>James K.</strong></td>
+                  <td>Early Years Educator</td>
+                  <td>Play-based learning facilitation</td>
+                  <td>Family engagement (CWF02)</td>
+                  <td><span class="status-badge new-educator">Not Started</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Panel 3: AI-Generated Centre PD Plan -->
+        <div class="dash-panel mb-3">
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> Centre PD Plan <span class="tag tag-ai tag-sm">AI-Generated from LNA &amp; IDP</span></h3>
+
+          <div class="alert-item critical">
+            <div>
+              <div class="alert-title">Sustained Shared Thinking (CWF01)</div>
+              <div class="alert-desc">3 educators identified this as a growth area in their LNA. Recommend: Centre-wide PLC focus for Term 2. Pair Sarah L. with mentor Siti R. for peer learning.</div>
+            </div>
+          </div>
+
+          <div class="alert-item warning">
+            <div>
+              <div class="alert-title">Observation &amp; Assessment Practices (CWF05)</div>
+              <div class="alert-desc">2 educators&rsquo; IDPs include formative assessment goals. Recommend: Workshop on observation-based assessment techniques aligned to SFw proficiency levels.</div>
+            </div>
+          </div>
+
+          <div class="alert-item info">
+            <div>
+              <div class="alert-title">Curriculum Differentiation (CWF05)</div>
+              <div class="alert-desc">Opportunity to strengthen profile-driven planning across all classes. Schedule cross-class observation visits to support peer learning.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══════════ Right Column ═══════════ -->
+      <div>
+
+        <!-- Panel 4: Alerts & Actions -->
+        <div class="dash-panel mb-3">
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Action Items</h3>
+
+          <div class="alert-item critical">
+            <div>
+              <div class="alert-title">QTT Focus: Sustained Thinking</div>
+              <div class="alert-desc">Centre-wide trajectory shows this as the earliest growth area. Consider prioritising professional learning to help educators set developmental goals in this domain.</div>
+            </div>
+          </div>
+
+          <div class="alert-item warning">
+            <div>
+              <div class="alert-title">Wei Ting: Coaching Overdue</div>
+              <div class="alert-desc">Last coaching session: 3 weeks ago. Schedule follow-up.</div>
+            </div>
+          </div>
+
+          <div class="alert-item info">
+            <div>
+              <div class="alert-title">Term 2 IDP Due</div>
+              <div class="alert-desc">Individual Development Plans for all educators due by 30 June 2026.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 5: SFw Professional Development -->
+        <div class="dash-panel mb-3">
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Targeted Training (SFw for ECCE)</h3>
+
+          <div class="pd-list">
+            <div class="pd-card">
+              <div class="pd-title">Engage Children in Meaningful Conversations</div>
+              <div class="pd-code">TSC: ECE-PIN-3001-1.1</div>
+              <div class="pd-for">Recommended for: <strong>Sarah L.</strong>, <strong>Wei Ting</strong></div>
+              <button class="btn btn-primary btn-sm">Assign PD</button>
+            </div>
+            <div class="pd-card">
+              <div class="pd-title">Apply Formative Assessment in ECE</div>
+              <div class="pd-code">TSC: ECE-ASS-4001-1.1</div>
+              <div class="pd-for">Recommended for: <strong>Wei Ting</strong></div>
+              <button class="btn btn-primary btn-sm">Assign PD</button>
+            </div>
+            <div class="pd-card">
+              <div class="pd-title">Facilitate Collaborative Learning</div>
+              <div class="pd-code">TSC: ECE-COL-3002-1.1</div>
+              <div class="pd-for">Recommended for: <strong>James K.</strong></div>
+              <button class="btn btn-primary btn-sm">Assign PD</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 6: Quick Stats -->
+        <div class="dash-panel">
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> This Term</h3>
+          <div class="stat-list">
+            <div class="stat-row">
+              <span class="stat-row-label">Lesson Plans Generated</span>
+              <span class="stat-row-value">156</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-row-label">Portfolio Entries</span>
+              <span class="stat-row-value">892</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-row-label">Parent Reports Sent</span>
+              <span class="stat-row-value">48</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-row-label">AI Coaching Hours</span>
+              <span class="stat-row-value">24</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────
+       Footer
+       ──────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Agape's Sandbox</h4>
+          <p>Four AI-enabled proposals from one Singapore early childhood operator, aligned with ECDA's IDP 2.0 vision for future-ready preschools.</p>
+        </div>
+        <div>
+          <h4>Classroom</h4>
+          <ul>
+            <li><a href="classroom.html">Proposal Overview</a></li>
+            <li><a href="planner.html">Lesson Planner</a></li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="work-sample.html">Work Sample Interpretation</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Leadership</h4>
+          <ul>
+            <li><a href="leadership.html">Proposal Overview</a></li>
+            <li><a href="coach.html">AI Coach</a></li>
+            <li><a href="lna.html">Learning Needs Analysis</a></li>
+            <li><a href="observation.html">AI Lesson Observation</a></li>
+            <li><a href="dashboard.html">Leadership Dashboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>SproutSpace</h4>
+          <ul>
+            <li><a href="sproutspace.html">Proposal Overview</a></li>
+            <li><a href="sproutspace-layout.html">Layout Planner</a></li>
+            <li><a href="sproutspace-inventory.html">Resource Inventory</a></li>
+            <li><a href="sproutspace-control.html">Leadership Control</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Home</h4>
+          <ul>
+            <li><a href="home.html">Proposal Overview</a></li>
+            <li><a href="home-phonics-studio.html">Phonics Studio</a></li>
+            <li><a href="home-benchmark.html">Termly Benchmark</a></li>
+            <li><a href="home-reading-coach.html">Reading Coach</a></li>
+            <li><a href="home-draw-reflect.html">Draw &amp; Reflect</a></li>
+            <li><a href="home-dictionary.html">Talking Dictionary</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Busy Bees &middot; Prepared by Anita Teo</span>
+        <div class="footer-badges">
+          <span class="footer-badge">PDPA Compliant</span>
+          <span class="footer-badge">SG Data Residency</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

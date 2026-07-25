@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PedaForge Work Sample Interpretation: upload children's artwork, select learning domains, and receive AI-powered analysis aligned to NEL outcomes.">
+  <title>PedaForge: Work Sample Interpretation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .ws-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding-top: 24px;
+      padding-bottom: 60px;
+    }
+
+    .ws-upload-col {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .ws-result-col {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ─── Upload Area ─────────────────────────────────── */
+    .ws-upload-area {
+      background: var(--bg-card);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 48px 32px;
+      text-align: center;
+      transition: all var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .ws-upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(232,6,60,0.02);
+    }
+
+    .ws-upload-area.has-file {
+      border-style: solid;
+      border-color: var(--success);
+      background: rgba(16,185,129,0.03);
+      padding: 24px;
+    }
+
+    .ws-upload-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(232,6,60,0.08);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .ws-upload-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .ws-upload-hint {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* ─── Preview ─────────────────────────────────────── */
+    .ws-preview {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .ws-preview-img {
+      width: 200px;
+      height: 200px;
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .ws-preview-img svg {
+      color: var(--text-muted);
+    }
+
+    .ws-preview-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ws-preview-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .ws-preview-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .ws-preview-check {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: var(--success);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    /* ─── Domain Selection ────────────────────────────── */
+    .ws-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .ws-panel h3 {
+      font-size: 1rem;
+      color: var(--secondary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .domain-select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--bg);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+
+    .domain-select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .selected-domains {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .domain-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(232,6,60,0.06);
+      border: 1px solid rgba(232,6,60,0.15);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--primary);
+    }
+
+    .domain-chip-remove {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(232,6,60,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      cursor: pointer;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .ws-context-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--bg);
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color var(--transition);
+    }
+
+    .ws-context-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .ws-context-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* ─── Analyse Button ──────────────────────────────── */
+    .ws-analyse-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    .ws-analyse-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* ─── Result Cards ────────────────────────────────── */
+    .ws-result-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .ws-result-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ws-domain-result + .ws-domain-result {
+      margin-top: 16px;
+    }
+
+    .ws-outcome-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ws-outcome-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .ws-outcome-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      margin-top: 2px;
+    }
+
+    .ws-outcome-icon.met {
+      background: rgba(16,185,129,0.15);
+      color: var(--success);
+    }
+
+    .ws-outcome-icon.emerging {
+      background: rgba(255,158,24,0.15);
+      color: var(--warning);
+    }
+
+    .ws-outcome-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .ws-outcome-badge.met {
+      background: rgba(16,185,129,0.1);
+      color: var(--success);
+    }
+
+    .ws-outcome-badge.emerging {
+      background: rgba(255,158,24,0.1);
+      color: var(--warning);
+    }
+
+    /* ─── Summary Bar ─────────────────────────────────── */
+    .ws-summary-bar {
+      display: flex;
+      gap: 16px;
+    }
+
+    .ws-summary-stat {
+      flex: 1;
+      text-align: center;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+
+    .ws-summary-stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .ws-summary-stat-value.met { color: var(--success); }
+    .ws-summary-stat-value.emerging { color: var(--warning); }
+
+    .ws-summary-stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ─── Responsive ──────────────────────────────────── */
+    @media (max-width: 900px) {
+      .ws-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="hub-classroom">
+<div class="bg-blobs" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+  <div class="bg-blob bg-blob-4"></div>
+  <div class="bg-blob bg-blob-5"></div>
+  <div class="bg-blob bg-blob-6"></div>
+</div>
+
+  <!-- ────────────────────────────────────────────────────────
+       Navigation
+       ──────────────────────────────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <div class="logo">AG</div>
+        Agape's Sandbox
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li>
+          <span class="nav-dropdown-trigger">Classroom</span>
+          <div class="nav-dropdown">
+            <a href="classroom.html">Proposal Overview</a>
+            <a href="planner.html">Lesson Planner</a>
+            <a href="classroom.html">Classroom</a>
+            <a href="work-sample.html" class="active">Work Sample Interpretation</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">Leadership</span>
+          <div class="nav-dropdown">
+            <a href="leadership.html">Proposal Overview</a>
+            <a href="coach.html">AI Coach</a>
+            <a href="lna.html">Learning Needs Analysis</a>
+            <a href="observation.html">AI Lesson Observation</a>
+            <a href="dashboard.html">Leadership Dashboard</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">SproutSpace</span>
+          <div class="nav-dropdown">
+            <a href="sproutspace.html">Proposal Overview</a>
+            <a href="sproutspace-layout.html">Layout Planner</a>
+            <a href="sproutspace-inventory.html">Resource Inventory</a>
+            <a href="sproutspace-control.html">Leadership Control</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">Home</span>
+          <div class="nav-dropdown">
+            <a href="home.html">Proposal Overview</a>
+            <a href="home-phonics-studio.html">Phonics Studio</a>
+            <a href="home-benchmark.html">Termly Benchmark</a>
+            <a href="home-reading-coach.html">Reading Coach</a>
+            <a href="home-draw-reflect.html">Draw &amp; Reflect</a>
+            <a href="home-dictionary.html">Talking Dictionary</a>
+          </div>
+        </li>
+        <li><a href="index.html#compliance">Compliance</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ────────────────────────────────────────────────────────
+       Page Header
+       ──────────────────────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>&#8250;</span>
+        <a href="portfolio.html">Portfolio</a>
+        <span>&#8250;</span>
+        <span class="current">Work Sample Interpretation</span>
+      </div>
+      <h1>Work Sample Interpretation</h1>
+      <p>Upload a child&rsquo;s artwork, select targeted learning domains, and let AI analyse whether the sample meets the expected learning outcomes.</p>
+    </div>
+  </header>
+
+  <!-- ────────────────────────────────────────────────────────
+       Main Content
+       ──────────────────────────────────────────────────────── -->
+  <main class="container main-content-spacing">
+
+    <!-- Child context bar -->
+    <div class="portfolio-header" style="margin-bottom: 8px;">
+      <div class="child-avatar"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div style="flex: 1;">
+        <h2 class="profile-name-lg">Leo Tan</h2>
+        <p class="profile-subtitle">K1 (4 years 3 months) &middot; Sunshine Class</p>
+      </div>
+      <a href="portfolio.html" class="btn btn-secondary btn-sm">&larr; Back to Portfolio</a>
+    </div>
+
+    <div class="ws-layout">
+
+      <!-- ─── Left Column: Upload & Settings ─────────── -->
+      <div class="ws-upload-col">
+
+        <!-- Upload Panel -->
+        <div class="ws-panel">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload Artwork
+          </h3>
+
+          <div class="ws-upload-area has-file">
+            <div class="ws-preview">
+              <div class="ws-preview-img">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+              <div class="ws-preview-info">
+                <span class="ws-preview-name">Leo_FireStation_Drawing.jpg</span>
+                <span class="ws-preview-meta">2.4 MB &middot; 2048 &times; 1536 px</span>
+                <span class="ws-preview-meta">Uploaded: 12 May 2026</span>
+                <span class="ws-preview-check">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Ready for analysis
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain Selection -->
+        <div class="ws-panel">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Target Learning Domains
+          </h3>
+          <p class="profile-meta" style="margin-bottom: 12px;">Select one or more NEL learning domains for the AI to evaluate against.</p>
+
+          <select class="domain-select">
+            <option value="" disabled>Add a learning domain&hellip;</option>
+            <option value="aesthetics">Aesthetics &amp; Creative Expression</option>
+            <option value="discovery">Discovery of the World</option>
+            <option value="language">Language &amp; Literacy</option>
+            <option value="motor">Motor Skills Development</option>
+            <option value="numeracy">Numeracy</option>
+            <option value="social">Social &amp; Emotional Development</option>
+          </select>
+
+          <div class="selected-domains">
+            <div class="domain-chip">
+              Aesthetics &amp; Creative Expression
+              <span class="domain-chip-remove">&times;</span>
+            </div>
+            <div class="domain-chip">
+              Motor Skills Development
+              <span class="domain-chip-remove">&times;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Context -->
+        <div class="ws-panel">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Context (Optional)
+          </h3>
+          <textarea class="ws-context-input" placeholder="Add context about the activity, e.g. &quot;During Community Helpers unit, Leo drew a fire station after a visit from the SCDF.&quot;">During the &ldquo;Community Helpers&rdquo; unit, Leo drew a fire station after a visit from the SCDF. He spent 20 minutes on the drawing and narrated while drawing: &ldquo;This is where the firemen sleep, and the truck goes out from here.&rdquo;</textarea>
+        </div>
+
+        <!-- Analyse Button -->
+        <button class="ws-analyse-btn" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A7 7 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5"/></svg>
+          Analyse Work Sample
+        </button>
+      </div>
+
+      <!-- ─── Right Column: AI Results ───────────────── -->
+      <div class="ws-result-col">
+
+        <!-- Summary -->
+        <div class="ws-panel">
+          <div class="ws-result-header">
+            <div class="ws-result-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A7 7 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5"/></svg>
+            </div>
+            <div>
+              <h3 style="font-size: 1rem; color: var(--secondary); margin: 0;">
+                <span class="inline-tag-title"><span class="tag tag-ai tag-sm">AI-Powered</span> Interpretation Results</span>
+              </h3>
+              <p class="profile-meta" style="margin-top: 2px;">Analysis of Leo_FireStation_Drawing.jpg</p>
+            </div>
+          </div>
+
+          <div class="ws-summary-bar">
+            <div class="ws-summary-stat">
+              <div class="ws-summary-stat-value met">4</div>
+              <div class="ws-summary-stat-label">Outcomes Met</div>
+            </div>
+            <div class="ws-summary-stat">
+              <div class="ws-summary-stat-value emerging">2</div>
+              <div class="ws-summary-stat-label">Emerging</div>
+            </div>
+            <div class="ws-summary-stat">
+              <div class="ws-summary-stat-value" style="color: var(--secondary);">2</div>
+              <div class="ws-summary-stat-label">Domains Assessed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overall Interpretation -->
+        <div class="ws-panel">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Overall Interpretation
+          </h3>
+          <p class="narrative-text" style="line-height: 1.7;">Leo&rsquo;s fire station drawing demonstrates strong creative representation and fine motor control that exceeds typical K1 developmental expectations. The drawing includes a multi-storey structure with identifiable architectural features (door, windows, garage), a fire truck with proportional details (ladder, wheels, red colouring), and evidence of spatial planning. His verbal narration during the activity (&ldquo;This is where the firemen sleep&rdquo;) indicates purposeful representation linked to real-world understanding from the SCDF visit.</p>
+        </div>
+
+        <!-- Domain 1: Aesthetics & Creative -->
+        <div class="ws-panel">
+          <h3>Aesthetics &amp; Creative Expression</h3>
+
+          <div class="ws-outcome-list">
+            <div class="ws-outcome-item">
+              <span class="ws-outcome-icon met">&#10003;</span>
+              <div>
+                <strong>Purposeful use of colour and shape</strong>
+                <span class="ws-outcome-badge met" style="margin-left: 8px;">Met</span>
+                <p class="profile-meta" style="margin-top: 4px;">Leo uses red deliberately for the fire truck and differentiates building colours. Shape usage shows intentional architectural representation rather than random marks.</p>
+              </div>
+            </div>
+
+            <div class="ws-outcome-item">
+              <span class="ws-outcome-icon met">&#10003;</span>
+              <div>
+                <strong>Representational drawing with recognisable forms</strong>
+                <span class="ws-outcome-badge met" style="margin-left: 8px;">Met</span>
+                <p class="profile-meta" style="margin-top: 4px;">The fire station, truck, and human figures are all recognisable without explanation. This exceeds the K1 expectation of emerging representational skills.</p>
+              </div>
+            </div>
+
+            <div class="ws-outcome-item">
+              <span class="ws-outcome-icon met">&#10003;</span>
+              <div>
+                <strong>Planning and composition</strong>
+                <span class="ws-outcome-badge met" style="margin-left: 8px;">Met</span>
+                <p class="profile-meta" style="margin-top: 4px;">The drawing shows deliberate spatial arrangement: the building occupies the centre, the truck is positioned in the garage bay, and the ground line anchors the composition.</p>
+              </div>
+            </div>
+
+            <div class="ws-outcome-item">
+              <span class="ws-outcome-icon emerging">&#9679;</span>
+              <div>
+                <strong>Experimentation with different media</strong>
+                <span class="ws-outcome-badge emerging" style="margin-left: 8px;">Emerging</span>
+                <p class="profile-meta" style="margin-top: 4px;">Drawing uses pencil and coloured pencils only. Consider introducing mixed media (collage, paint, crayon resist) to extend Leo&rsquo;s creative expression range.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain 2: Motor Skills -->
+        <div class="ws-panel">
+          <h3>Motor Skills Development</h3>
+
+          <div class="ws-outcome-list">
+            <div class="ws-outcome-item">
+              <span class="ws-outcome-icon met">&#10003;</span>
+              <div>
+                <strong>Fine motor control in mark-making</strong>
+                <span class="ws-outcome-badge met" style="margin-left: 8px;">Met</span>
+                <p class="profile-meta" style="margin-top: 4px;">Straight lines for the building walls, small details like window panes and ladder rungs demonstrate controlled pencil grip and precision. Above K1 expectations.</p>
+              </div>
+            </div>
+
+            <div class="ws-outcome-item">
+              <span class="ws-outcome-icon emerging">&#9679;</span>
+              <div>
+                <strong>Letter and number formation</strong>
+                <span class="ws-outcome-badge emerging" style="margin-left: 8px;">Emerging</span>
+                <p class="profile-meta" style="margin-top: 4px;">Leo attempted to label the garage door with &ldquo;SCDF&rdquo; but letter formation is inconsistent (S reversed, D partially formed). Continue supporting through meaningful writing contexts.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="ws-panel" style="background: linear-gradient(135deg, var(--secondary) 0%, #3d2663 100%); color: white; border: none;">
+          <h3 style="color: white;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            Recommended Next Steps
+          </h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">1</span>
+              <span style="font-size: 0.88rem; color: rgba(255,255,255,0.85); line-height: 1.5;">Introduce 3D construction projects (clay, recyclable materials) to extend Leo&rsquo;s spatial understanding from 2D drawing into three dimensions.</span>
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">2</span>
+              <span style="font-size: 0.88rem; color: rgba(255,255,255,0.85); line-height: 1.5;">Provide mixed media opportunities (collage, paint, crayon resist) alongside his preferred pencil drawing to expand his creative toolkit.</span>
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">3</span>
+              <span style="font-size: 0.88rem; color: rgba(255,255,255,0.85); line-height: 1.5;">Support letter formation through meaningful contexts (labelling his drawings, creating signs for his constructions) rather than isolated writing practice.</span>
+            </li>
+          </ul>
+          <p style="font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-top: 16px; display: flex; align-items: center; gap: 6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            This analysis can be saved to Leo&rsquo;s portfolio and shared with parents.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ────────────────────────────────────────────────────────
+       Footer
+       ──────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Agape's Sandbox</h4>
+          <p>Four AI-enabled proposals from one Singapore early childhood operator, aligned with ECDA's IDP 2.0 vision for future-ready preschools.</p>
+        </div>
+        <div>
+          <h4>Classroom</h4>
+          <ul>
+            <li><a href="classroom.html">Proposal Overview</a></li>
+            <li><a href="planner.html">Lesson Planner</a></li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="work-sample.html">Work Sample Interpretation</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Leadership</h4>
+          <ul>
+            <li><a href="leadership.html">Proposal Overview</a></li>
+            <li><a href="coach.html">AI Coach</a></li>
+            <li><a href="lna.html">Learning Needs Analysis</a></li>
+            <li><a href="observation.html">AI Lesson Observation</a></li>
+            <li><a href="dashboard.html">Leadership Dashboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>SproutSpace</h4>
+          <ul>
+            <li><a href="sproutspace.html">Proposal Overview</a></li>
+            <li><a href="sproutspace-layout.html">Layout Planner</a></li>
+            <li><a href="sproutspace-inventory.html">Resource Inventory</a></li>
+            <li><a href="sproutspace-control.html">Leadership Control</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Home</h4>
+          <ul>
+            <li><a href="home.html">Proposal Overview</a></li>
+            <li><a href="home-phonics-studio.html">Phonics Studio</a></li>
+            <li><a href="home-benchmark.html">Termly Benchmark</a></li>
+            <li><a href="home-reading-coach.html">Reading Coach</a></li>
+            <li><a href="home-draw-reflect.html">Draw &amp; Reflect</a></li>
+            <li><a href="home-dictionary.html">Talking Dictionary</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Busy Bees &middot; Prepared by Anita Teo</span>
+        <div class="footer-badges">
+          <span class="footer-badge">PDPA Compliant</span>
+          <span class="footer-badge">SG Data Residency</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

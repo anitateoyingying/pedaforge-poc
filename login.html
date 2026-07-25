@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Sign in - Agape's Sandbox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .login-card {
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 12px 40px rgba(45,42,94,0.10);
+      padding: 48px 44px; max-width: 440px; width: 100%; text-align: center;
+    }
+    .login-logo {
+      width: 56px; height: 56px; border-radius: 16px; margin: 0 auto 18px;
+      background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.3rem; box-shadow: 6px 6px 16px rgba(232,6,60,0.25), -4px -4px 12px rgba(255,255,255,0.3);
+    }
+    .login-card h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--secondary); margin-bottom: 8px; }
+    .login-card > p { font-size: 0.9rem; color: var(--text-light); line-height: 1.6; margin-bottom: 28px; }
+    .google-btn {
+      display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;
+      padding: 13px 20px; border-radius: 100px; border: 1px solid var(--border); cursor: pointer;
+      background: #fff; font-family: var(--font); font-size: 0.95rem; font-weight: 600; color: var(--text);
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
+    }
+    .google-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(45,42,94,0.08), 0 10px 26px rgba(45,42,94,0.10); }
+    .google-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
+    .login-note { margin-top: 26px; font-size: 0.76rem; color: var(--text-muted); line-height: 1.6; }
+    .login-err { display: none; margin-top: 16px; font-size: 0.8rem; color: var(--danger); }
+    .login-badges { display: flex; justify-content: center; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .login-badges span {
+      font-size: 0.68rem; font-weight: 700; padding: 4px 12px; border-radius: 100px;
+      background: var(--bg); border: 1px solid var(--border); color: var(--text-muted);
+    }
+    .login-demo { margin-top: 18px; text-align: left; }
+    .login-demo summary { font-size: 0.78rem; color: var(--text-muted); cursor: pointer; text-align: center; }
+    .login-demo-body { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+    .login-demo-body .form-control {
+      padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-family: var(--font); font-size: 0.85rem; width: 100%;
+    }
+  </style>
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+</div>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">AG</div>
+    <h1>Agape's Sandbox</h1>
+    <p>Four AI-enabled ECDA Innovation Sandbox proposals with working proof-of-concept demos. Sign in to explore the platform with your own saved data.</p>
+
+    <button class="google-btn" id="googleBtn">
+      <svg width="19" height="19" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41.4 34.9 44 29.9 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
+      Continue with Google
+    </button>
+
+    <p class="login-err" id="loginErr"></p>
+
+    <details class="login-demo">
+      <summary>Panel reviewer? Use a demo account</summary>
+      <div class="login-demo-body">
+        <input type="email" id="demoEmail" class="form-control" placeholder="Email" autocomplete="username">
+        <input type="password" id="demoPass" class="form-control" placeholder="Password" autocomplete="current-password">
+        <button class="btn btn-secondary btn-sm" id="demoBtn" style="width:100%;justify-content:center;">Sign in with email</button>
+        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:8px;line-height:1.5;">Demo credentials are provided in the proposal pack — one educator and one director account, each showing role-based views.</p>
+      </div>
+    </details>
+
+    <div class="login-badges">
+      <span>PDPA Compliant</span><span>SG Data Residency</span><span>Row-Level Security</span>
+    </div>
+    <p class="login-note">Proof of concept &middot; data is stored in a Supabase (PostgreSQL) instance in Singapore (ap-southeast-1). Prepared by Anita Teo &middot; Busy Bees.</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/pf-auth.js"></script>
+<script>
+(function () {
+  'use strict';
+  var btn = document.getElementById('googleBtn');
+  var err = document.getElementById('loginErr');
+
+  window.pfAuthReady.then(function (ctx) {
+    if (ctx.user) {
+      var ret = 'index.html';
+      try { ret = sessionStorage.getItem('pedaforge:return') || ret; sessionStorage.removeItem('pedaforge:return'); } catch (e) {}
+      window.location.replace(ret);
+    }
+  });
+
+  btn.addEventListener('click', function () {
+    btn.disabled = true;
+    var base = window.location.origin + window.location.pathname.replace(/[^\/]*$/, '');
+    window.pfDb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: base + 'login.html' }
+    }).then(function (r) {
+      if (r.error) {
+        err.textContent = 'Sign-in failed: ' + r.error.message;
+        err.style.display = 'block';
+        btn.disabled = false;
+      }
+    });
+  });
+
+  document.getElementById('demoBtn').addEventListener('click', function () {
+    var email = document.getElementById('demoEmail').value.trim();
+    var pass = document.getElementById('demoPass').value;
+    if (!email || !pass) { err.textContent = 'Enter the demo email and password.'; err.style.display = 'block'; return; }
+    window.pfDb.auth.signInWithPassword({ email: email, password: pass }).then(function (r) {
+      if (r.error) {
+        err.textContent = 'Sign-in failed: ' + r.error.message;
+        err.style.display = 'block';
+        return;
+      }
+      var ret = 'index.html';
+      try { ret = sessionStorage.getItem('pedaforge:return') || ret; sessionStorage.removeItem('pedaforge:return'); } catch (e) {}
+      window.location.replace(ret);
+    });
+  });
+})();
+</script>
+</body>
+</html>

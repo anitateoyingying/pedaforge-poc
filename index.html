@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A Singapore early childhood operator's four ECDA Innovation Sandbox proposals: PedaForge Classroom, PedaForge Leadership, SproutSpace, and PedaForge Home - AI-enabled pedagogy, coaching, learning environments, and the home-school literacy bridge.">
+  <title>Four AI Sandboxes, One ECE Mission - Agape's Sandbox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+  <div class="bg-blob bg-blob-4"></div>
+  <div class="bg-blob bg-blob-5"></div>
+  <div class="bg-blob bg-blob-6"></div>
+</div>
+
+  <!-- ─── Navigation (umbrella) ─────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <div class="logo">AG</div>
+        Agape's Sandbox
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li>
+          <span class="nav-dropdown-trigger">Classroom</span>
+          <div class="nav-dropdown">
+            <a href="classroom.html">Proposal Overview</a>
+            <a href="planner.html">Lesson Planner</a>
+            <a href="portfolio.html">Portfolio</a>
+            <a href="work-sample.html">Work Sample Interpretation</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">Leadership</span>
+          <div class="nav-dropdown">
+            <a href="leadership.html">Proposal Overview</a>
+            <a href="coach.html">AI Coach</a>
+            <a href="lna.html">Learning Needs Analysis</a>
+            <a href="observation.html">AI Lesson Observation</a>
+            <a href="dashboard.html">Leadership Dashboard</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">SproutSpace</span>
+          <div class="nav-dropdown">
+            <a href="sproutspace.html">Proposal Overview</a>
+            <a href="sproutspace-layout.html">Layout Planner</a>
+            <a href="sproutspace-inventory.html">Resource Inventory</a>
+            <a href="sproutspace-control.html">Leadership Control</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">Home</span>
+          <div class="nav-dropdown">
+            <a href="home.html">Proposal Overview</a>
+            <a href="home-phonics-studio.html">Phonics Studio</a>
+            <a href="home-benchmark.html">Termly Benchmark</a>
+            <a href="home-reading-coach.html">Reading Coach</a>
+            <a href="home-draw-reflect.html">Draw &amp; Reflect</a>
+            <a href="home-dictionary.html">Talking Dictionary</a>
+          </div>
+        </li>
+        <li><a href="#compliance">Compliance</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ─── Hero ──────────────────────────────────────────────── -->
+  <section class="hero" id="home">
+    <div class="hero-shapes" aria-hidden="true">
+      <div class="hero-shape hero-shape-1"></div>
+      <div class="hero-shape hero-shape-2"></div>
+      <div class="hero-shape hero-shape-3"></div>
+      <div class="hero-shape hero-shape-4"></div>
+      <div class="hero-shape hero-shape-5"></div>
+      <div class="hero-shape-ring hero-ring-1"></div>
+      <div class="hero-shape-ring hero-ring-2"></div>
+      <div class="hero-cross hero-cross-1"></div>
+      <div class="hero-cross hero-cross-2"></div>
+      <div class="hero-dot hero-dot-1"></div>
+      <div class="hero-dot hero-dot-2"></div>
+      <div class="hero-dot hero-dot-3"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          Early Childhood Innovation Sandbox &middot; Four Proposals
+        </div>
+        <h1>Four AI Sandboxes, <span>One ECE Mission</span></h1>
+        <p>One Singapore early childhood operator. One shared mission to lift quality across the whole early childhood journey. Four focused, independently fundable innovation sandbox proposals - serving the child, the educator, the environment, and the family - each giving educators their time back and raising the standard of teaching, leadership, learning spaces, and home literacy.</p>
+        <div class="hero-actions">
+          <a href="#proposals" class="btn btn-primary btn-lg">Explore the Four Proposals</a>
+          <a href="#compliance" class="btn btn-secondary btn-lg">Shared Compliance</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-mockup">
+          <div class="mockup-header">
+            <span class="mockup-dot red"></span>
+            <span class="mockup-dot yellow"></span>
+            <span class="mockup-dot green"></span>
+          </div>
+          <div class="mockup-body">
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div style="padding:14px 16px;border-radius:12px;background:#faf6f0;border-bottom:1px solid #e8e4dd;border-left:4px solid #e8063c;">
+                <div style="font-weight:700;color:#2D2A5E;font-size:0.92rem;">PedaForge Classroom</div>
+                <div style="font-size:0.8rem;color:#6b7280;margin-top:2px;">Profile-driven planning &amp; authentic portfolios &middot; <strong>S$110,000</strong></div>
+              </div>
+              <div style="padding:14px 16px;border-radius:12px;background:#faf6f0;border-bottom:1px solid #e8e4dd;border-left:4px solid #773E8B;">
+                <div style="font-weight:700;color:#2D2A5E;font-size:0.92rem;">PedaForge Leadership</div>
+                <div style="font-size:0.8rem;color:#6b7280;margin-top:2px;">QTT coaching &amp; AI lesson observation &middot; <strong>S$120,000</strong></div>
+              </div>
+              <div style="padding:14px 16px;border-radius:12px;background:#faf6f0;border-bottom:1px solid #e8e4dd;border-left:4px solid #1c9c6b;">
+                <div style="font-weight:700;color:#2D2A5E;font-size:0.92rem;">SproutSpace</div>
+                <div style="font-size:0.8rem;color:#6b7280;margin-top:2px;">Layout design &amp; resource management &middot; <strong>S$150,000</strong></div>
+              </div>
+              <div style="padding:14px 16px;border-radius:12px;background:#faf6f0;border-bottom:1px solid #e8e4dd;border-left:4px solid #0E8FA8;">
+                <div style="font-weight:700;color:#2D2A5E;font-size:0.92rem;">PedaForge Home</div>
+                <div style="font-size:0.8rem;color:#6b7280;margin-top:2px;">Home-school literacy bridge &middot; <strong>S$140,000</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Shared Problem ────────────────────────────────────── -->
+  <section class="problem-section" id="problem">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">The Shared Challenge</span>
+        <h2>One Sector-Wide Crisis, Four Fronts</h2>
+        <p>Across our pilot centres, educators lose hours to documentation, leaders lack the data to coach, and physical learning environments are planned on paper &mdash; and the home learning environment is invisible to the centre. Each proposal attacks one front of the same problem.</p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="problem-icon burnout"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="stat-highlight">~40%</div>
+          <h3>Documentation Overload</h3>
+          <p>A 2025 NIE working paper found Singaporean ECE educators spend up to 40% of working hours on manual portfolio documentation, forcing a "pedagogical compromise" away from individualised, child-led interaction.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon compromise"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="stat-highlight">Siloed</div>
+          <h3>Leadership Without Data</h3>
+          <p>Centre Directors lack the bandwidth to audit lessons or provide daily micro-coaching, and annual appraisals stay subjective without continuous observation data, leaving teachers unsupported (TODAY, Feb 2026).</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon siloed"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="stat-highlight">Manual</div>
+          <h3>Environments &amp; Resources</h3>
+          <p>Classroom layouts are drafted on paper and inventories live on isolated spreadsheets, so spaces are cluttered, resources duplicated or lost, and HQ has no visibility for safe, evidence-based budgeting.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon" style="background:rgba(14,143,168,0.1);color:#0E8FA8;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div>
+          <div class="stat-highlight">Invisible</div>
+          <h3>The Home Literacy Gap</h3>
+          <p>Parents want to support early reading but lack structured phonics and shared-reading guidance at home, and centres have zero visibility into home practice &mdash; so learning stalls the moment the child leaves the gate.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Four-Proposal Selector ───────────────────────────── -->
+  <section id="proposals">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">The Four Proposals</span>
+        <h2>Choose a Sandbox to Explore</h2>
+        <p>Each proposal is a self-contained ECDA Innovation Sandbox submission with its own budget, KPIs, and 12-month plan. Together they form a connected ecosystem spanning the child, the educator, the environment, and the family; individually, each can be funded on its own merits.</p>
+      </div>
+
+      <div class="proposal-selector">
+
+        <!-- Classroom -->
+        <div class="proposal-card pc-classroom">
+          <div class="pc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+          <h3>PedaForge Classroom</h3>
+          <p class="pc-tagline">Pedagogy &amp; Differentiated Learning Sandbox - profile-driven planning and authentic portfolios that give educators their time back.</p>
+          <div class="pc-budget">S$110,000</div>
+          <div class="pc-budget-note">12-month sandbox &middot; 55 tablets</div>
+          <ul class="pc-kpis">
+            <li>Documentation time from ~8h to under 3h per educator per week</li>
+            <li>100% of lessons differentiated for 2+ learner profiles</li>
+            <li>Work samples tagged to EYDF/NEL within 60 seconds</li>
+          </ul>
+          <div class="pc-cta"><a href="classroom.html" class="btn btn-primary">View Proposal</a></div>
+        </div>
+
+        <!-- Leadership -->
+        <div class="proposal-card pc-leadership">
+          <div class="pc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h3>PedaForge Leadership</h3>
+          <p class="pc-tagline">AI Coaching &amp; Curriculum Leadership Sandbox - QTT-aligned coaching and full-cycle lesson observation that strengthen the Key Person and Director roles.</p>
+          <div class="pc-budget">S$120,000</div>
+          <div class="pc-budget-note">12-month sandbox &middot; Director laptops</div>
+          <ul class="pc-kpis">
+            <li>85% of educators agree the AI-IDP reflects their growth vs SFw</li>
+            <li>100% of educators complete 2+ coaching cycles weekly</li>
+            <li>100% of centre-wide gaps mapped to PLC or mentoring</li>
+          </ul>
+          <div class="pc-cta"><a href="leadership.html" class="btn btn-primary">View Proposal</a></div>
+        </div>
+
+        <!-- SproutSpace -->
+        <div class="proposal-card pc-sproutspace">
+          <div class="pc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 2v20"/></svg></div>
+          <h3>SproutSpace</h3>
+          <p class="pc-tagline">Intelligent Digital Portal for Classroom Layout Design &amp; Resource Management - design safe spaces, track resources by QR, and standardise across branches.</p>
+          <div class="pc-budget">S$150,000</div>
+          <div class="pc-budget-note">12-month sandbox</div>
+          <ul class="pc-kpis">
+            <li>50% faster layout planning; 75% less inventory search time</li>
+            <li>35% reduction in duplicate purchasing across centres</li>
+            <li>100% first-time classroom-layout safety approval</li>
+          </ul>
+          <div class="pc-cta"><a href="sproutspace.html" class="btn btn-primary">View Proposal</a></div>
+        </div>
+
+        <!-- Home -->
+        <div class="proposal-card pc-home">
+          <div class="pc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div>
+          <h3>PedaForge Home</h3>
+          <p class="pc-tagline">The Home-School Literacy Bridge - phonics, shared reading, an AI reading coach and SEL writing that raise readers with families at home.</p>
+          <div class="pc-budget">S$140,000</div>
+          <div class="pc-budget-note">12-month sandbox &middot; for families &amp; staff</div>
+          <ul class="pc-kpis">
+            <li>Weekly shared-reading families from ~25% to 70%</li>
+            <li>75% of children advance 1+ reading-benchmark band</li>
+            <li>Love-of-reading score up +0.6, 80%+ at "enjoy"</li>
+          </ul>
+          <div class="pc-cta"><a href="home.html" class="btn btn-primary">View Proposal</a></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── How the Four Connect ─────────────────────────────── -->
+  <section id="connect" style="background:var(--bg-card);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">One Connected Ecosystem</span>
+        <h2>Complementary, but Separately Funded</h2>
+        <p>The four proposals reinforce one another, yet each stands alone. ECDA can fund any one, any combination, or all four; none depends on the others to deliver its outcomes.</p>
+      </div>
+      <div class="connect-strip">
+        <div class="connect-node">
+          <div class="connect-dot" style="background:#e8063c;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg></div>
+          <h4>Classroom</h4>
+          <p>Serves the <strong>child</strong> - differentiated planning and a Living Profile for every Unique Child.</p>
+        </div>
+        <div class="connect-arrow">&rarr;</div>
+        <div class="connect-node">
+          <div class="connect-dot" style="background:#773E8B;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <h4>Leadership</h4>
+          <p>Serves the <strong>educator &amp; Director</strong> - QTT coaching, observation, and SFw-aligned growth.</p>
+        </div>
+        <div class="connect-arrow">&rarr;</div>
+        <div class="connect-node">
+          <div class="connect-dot" style="background:#1c9c6b;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+          <h4>SproutSpace</h4>
+          <p>Serves the <strong>environment</strong> - safe, well-resourced spaces as an active partner in learning.</p>
+        </div>
+        <div class="connect-arrow">&rarr;</div>
+        <div class="connect-node">
+          <div class="connect-dot" style="background:#0E8FA8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+          <h4>Home</h4>
+          <p>Serves the <strong>family</strong> - the home-school literacy bridge that makes the parent a co-educator alongside the teacher.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Shared Compliance & Architecture ──────────────────── -->
+  <section id="compliance">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Shared Posture</span>
+        <h2>Enterprise-Grade, Singapore-Resident, PDPA-Compliant</h2>
+        <p>All four proposals are delivered by the same operator on a common technology foundation and data-protection posture: a React front end and FastAPI back end, hosted on Azure in the Singapore region. Classroom and Leadership are AI-token-intensive (Azure OpenAI closed tenant); SproutSpace is the broadest custom build, standing on permissive open-source libraries for its layout canvas, QR tracking and dashboards; and PedaForge Home adds Azure AI Speech and Neural TTS for its reading coach and talking dictionary - all woven through the same enclave.</p>
+
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-number"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <h3>Data Residency &amp; PDPA</h3>
+          <p>All child, educator, and centre data is hosted in Singapore-based data centres and handled in strict accordance with the Personal Data Protection Act (PDPA).</p>
+          <div class="feature-tags">
+            <span class="tag tag-data">SG Region</span>
+            <span class="tag tag-framework">PDPA</span>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-number"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>Zero Public AI Training &amp; RBAC</h3>
+          <p>PedaForge uses Azure OpenAI within a closed tenant - no child or staff data trains public models. Role-based access control ensures each user sees only their authorised cohorts.</p>
+          <div class="feature-tags">
+            <span class="tag tag-ai">Closed Tenant</span>
+            <span class="tag tag-data">RBAC</span>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-number"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
+          <h3>Aligned to National Frameworks</h3>
+          <p>Every module maps to Singapore's ECE frameworks - EYDF (0&ndash;3), NEL/iTeach (4&ndash;6), the ECDA Quality Teaching Tool (QTT), and the Skills Framework for ECCE.</p>
+          <div class="feature-tags">
+            <span class="tag tag-framework">EYDF</span>
+            <span class="tag tag-framework">NEL</span>
+            <span class="tag tag-framework">QTT</span>
+            <span class="tag tag-framework">SFw</span>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-number"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <h3>Independently Fundable</h3>
+          <p>Each proposal has its own itemised budget and KPIs with no shared-cost double-counting. ECDA can approve any combination without budget overlap or hidden dependency.</p>
+          <div class="feature-tags">
+            <span class="tag tag-amount">S$110k</span>
+            <span class="tag tag-amount">S$120k</span>
+            <span class="tag tag-amount">S$150k</span>
+            <span class="tag tag-amount">S$140k</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Shared Team / Operator ────────────────────────────── -->
+  <section id="team" style="background:var(--bg-card);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">The Operator &amp; Team</span>
+        <h2>One Credible Delivery Team Across All Four</h2>
+        <p>A lean, cross-disciplinary team combining deep technical skill with authentic early childhood domain knowledge, delivering across a network of pilot centres.</p>
+      </div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
+          <h4>Programme Lead</h4>
+          <div class="role">Anita Teo &middot; Programme Specialist</div>
+          <p>Owns timeline, budget, and ECDA / pilot-centre relationships across all four sandboxes. Leads evaluation and impact reporting.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+          <h4>Technical Lead</h4>
+          <div class="role">Full-stack &amp; AI integration</div>
+          <p>Builds all four on a shared React + FastAPI stack with the Azure AI Enclave (Classroom, Leadership), QR asset tracking (SproutSpace), and Azure AI Speech (Home); owns security and deployment.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+          <h4>Pedagogical Specialist</h4>
+          <div class="role">EYDF / NEL / QTT / SFw alignment</div>
+          <p>Validates that every AI output meets ECDA pedagogical standards and leads educator and leadership change-management workshops.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Agape's Sandbox</h4>
+          <p>Four AI-enabled proposals from one Singapore early childhood operator, aligned with ECDA's IDP 2.0 vision for future-ready preschools.</p>
+        </div>
+        <div>
+          <h4>Classroom</h4>
+          <ul>
+            <li><a href="classroom.html">Proposal Overview</a></li>
+            <li><a href="planner.html">Lesson Planner</a></li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="work-sample.html">Work Sample Interpretation</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Leadership</h4>
+          <ul>
+            <li><a href="leadership.html">Proposal Overview</a></li>
+            <li><a href="coach.html">AI Coach</a></li>
+            <li><a href="lna.html">Learning Needs Analysis</a></li>
+            <li><a href="observation.html">AI Lesson Observation</a></li>
+            <li><a href="dashboard.html">Leadership Dashboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>SproutSpace</h4>
+          <ul>
+            <li><a href="sproutspace.html">Proposal Overview</a></li>
+            <li><a href="sproutspace-layout.html">Layout Planner</a></li>
+            <li><a href="sproutspace-inventory.html">Resource Inventory</a></li>
+            <li><a href="sproutspace-control.html">Leadership Control</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Home</h4>
+          <ul>
+            <li><a href="home.html">Proposal Overview</a></li>
+            <li><a href="home-phonics-studio.html">Phonics Studio</a></li>
+            <li><a href="home-benchmark.html">Termly Benchmark</a></li>
+            <li><a href="home-reading-coach.html">Reading Coach</a></li>
+            <li><a href="home-draw-reflect.html">Draw &amp; Reflect</a></li>
+            <li><a href="home-dictionary.html">Talking Dictionary</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Busy Bees &middot; Prepared by Anita Teo</span>
+        <div class="footer-badges">
+          <span class="footer-badge">PDPA Compliant</span>
+          <span class="footer-badge">SG Data Residency</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

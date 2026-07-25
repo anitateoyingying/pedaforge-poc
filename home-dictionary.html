@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PedaForge Home Talking Dictionary: a child-safe word lab where children hear words spoken aloud with Azure Neural TTS, see syllable splits and kid-friendly definitions, practise spelling, and watch their word-recognition grow.">
+  <title>Talking Dictionary &amp; Word Recognition | Agape's Sandbox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ─── Home hub accent namespace (teal) ─────────────────────
+       Scoped to this page; mirrors the per-hub pattern in style.css. */
+    body.hub-home {
+      --accent-proposal: #0E8FA8;
+      --accent-proposal-soft: rgba(14,143,168,0.10);
+      --accent-proposal-line: rgba(14,143,168,0.24);
+    }
+
+    /* ─── Clay neumorphic word lab ─────────────────────────────
+       Soft pillows built from the existing --bg + shadow tokens. */
+    .wordlab {
+      background: linear-gradient(160deg, #f3eee6 0%, #faf6f0 60%, #f0f6f7 100%);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 10px 30px rgba(45,42,94,0.07);
+    }
+
+    .clay-card {
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow:
+        8px 8px 18px rgba(45,42,94,0.08),
+        -8px -8px 18px rgba(255,255,255,0.9);
+    }
+    .clay-card + .clay-card { margin-top: 22px; }
+
+    /* ─── Search row ───────────────────────────────────────── */
+    .word-search {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .word-search-field {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 22px;
+      border-radius: 100px;
+      background: var(--bg);
+      box-shadow:
+        inset 5px 5px 12px rgba(45,42,94,0.09),
+        inset -5px -5px 12px rgba(255,255,255,0.95);
+    }
+    .word-search-field svg { color: var(--text-muted); flex-shrink: 0; }
+    .word-search-text {
+      font-family: var(--font);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--secondary);
+      letter-spacing: 0.5px;
+    }
+    .word-search-caret {
+      width: 2px;
+      height: 1.4rem;
+      background: var(--accent-proposal);
+      border-radius: 2px;
+      display: inline-block;
+      animation: blinkCaret 1.1s step-end infinite;
+    }
+    @keyframes blinkCaret { 50% { opacity: 0; } }
+
+    /* ─── Speaker button (soft inset pillow) ───────────────── */
+    .speaker-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: none;
+      flex-shrink: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      background: linear-gradient(150deg, var(--accent-proposal) 0%, #0b7287 100%);
+      box-shadow:
+        6px 6px 14px rgba(14,143,168,0.32),
+        -5px -5px 12px rgba(255,255,255,0.85),
+        inset 2px 2px 4px rgba(255,255,255,0.28),
+        inset -2px -2px 5px rgba(0,0,0,0.12);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .speaker-btn:hover { transform: translateY(-2px); }
+    .speaker-btn:active {
+      box-shadow:
+        inset 4px 4px 9px rgba(0,0,0,0.18),
+        inset -3px -3px 7px rgba(255,255,255,0.2);
+    }
+    .speaker-caption {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: var(--text-light);
+    }
+    .speaker-caption .sound-wave {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 14px;
+    }
+    .speaker-caption .sound-wave span {
+      width: 3px;
+      border-radius: 2px;
+      background: var(--accent-proposal);
+      transform: scaleY(0.5);
+      transform-origin: bottom;
+    }
+    /* wave bars animate ONLY while speechSynthesis is speaking */
+    .speaker-caption .sound-wave.speaking span { animation: soundWave 1s ease-in-out infinite; }
+    .speaker-caption .sound-wave span:nth-child(1) { height: 6px;  animation-delay: 0s;    }
+    .speaker-caption .sound-wave span:nth-child(2) { height: 13px; animation-delay: 0.15s; }
+    .speaker-caption .sound-wave span:nth-child(3) { height: 9px;  animation-delay: 0.3s;  }
+    .speaker-caption .sound-wave span:nth-child(4) { height: 14px; animation-delay: 0.45s; }
+    @keyframes soundWave { 0%,100% { transform: scaleY(0.5); } 50% { transform: scaleY(1); } }
+    @media (prefers-reduced-motion: reduce) {
+      .speaker-caption .sound-wave.speaking span { animation: none; transform: scaleY(1); }
+      .word-search-caret { animation: none; }
+    }
+
+    /* ─── Result word display ──────────────────────────────── */
+    .result-word {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--secondary);
+      line-height: 1;
+      letter-spacing: 1px;
+    }
+    .syllable-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent-proposal);
+      background: var(--accent-proposal-soft);
+      box-shadow:
+        inset 2px 2px 5px rgba(14,143,168,0.10),
+        inset -2px -2px 5px rgba(255,255,255,0.9);
+    }
+    .syllable-chip .syll-part {
+      padding: 2px 9px;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--secondary);
+    }
+    .syllable-chip .syll-btn {
+      border: none;
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 700;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    }
+    .syllable-chip .syll-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(14,143,168,0.18);
+    }
+    .zh-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 14px 0 0 10px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 100px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--accent-proposal);
+      background: var(--accent-proposal-soft);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .zh-chip:hover { transform: translateY(-2px); }
+    .zh-chip[hidden] { display: none; }
+    .kid-def {
+      font-size: 1.05rem;
+      color: var(--text);
+      line-height: 1.6;
+      margin-top: 18px;
+    }
+    .kid-def strong { color: var(--accent-proposal); }
+    .example-sentence {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 14px 18px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-proposal-soft);
+      font-size: 0.98rem;
+      color: var(--secondary);
+      font-style: italic;
+      line-height: 1.55;
+    }
+    .example-sentence svg { color: var(--accent-proposal); flex-shrink: 0; margin-top: 2px; }
+
+    /* ─── Sentence starter pills ───────────────────────────── */
+    .starter-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 22px 0 10px;
+    }
+    .starter-pills { display: flex; flex-wrap: wrap; gap: 10px; }
+    .starter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 18px;
+      border: none;
+      border-radius: 100px;
+      font-family: var(--font);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--secondary);
+      background: var(--bg);
+      cursor: pointer;
+      box-shadow:
+        5px 5px 11px rgba(45,42,94,0.08),
+        -5px -5px 11px rgba(255,255,255,0.92);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .starter-pill:hover { transform: translateY(-2px); }
+    .starter-pill .pill-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--accent-proposal); flex-shrink: 0;
+    }
+
+    /* ─── Spell it! letter tiles ───────────────────────────── */
+    .spell-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .spell-title {
+      display: flex; align-items: center; gap: 9px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--secondary);
+    }
+    .spell-title .spark {
+      width: 30px; height: 30px; border-radius: 9px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--accent-proposal); background: var(--accent-proposal-soft);
+    }
+    .spell-hint { font-size: 0.85rem; color: var(--text-light); margin-bottom: 18px; }
+    .letter-tiles { display: flex; gap: 14px; flex-wrap: wrap; }
+    .letter-tile {
+      width: 62px; height: 62px;
+      border: none;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font);
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--secondary);
+      background: var(--bg);
+      cursor: pointer;
+      position: relative;
+      box-shadow:
+        6px 6px 13px rgba(45,42,94,0.10),
+        -6px -6px 13px rgba(255,255,255,0.95);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
+    }
+    .letter-tile:hover:not(:disabled) { transform: translateY(-3px) rotate(-2deg); }
+    .letter-tile.used {
+      opacity: 0.28;
+      cursor: default;
+      box-shadow: inset 3px 3px 8px rgba(45,42,94,0.10), inset -3px -3px 8px rgba(255,255,255,0.9);
+    }
+    .spell-slots {
+      display: flex; gap: 14px; margin-top: 22px; flex-wrap: wrap;
+    }
+    .spell-slot {
+      width: 62px; height: 62px;
+      border: none;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font);
+      font-size: 1.7rem; font-weight: 800;
+      color: var(--secondary);
+      background: var(--bg);
+      cursor: pointer;
+      box-shadow:
+        inset 5px 5px 11px rgba(45,42,94,0.10),
+        inset -5px -5px 11px rgba(255,255,255,0.95);
+    }
+    .spell-slot.filled { color: var(--accent-proposal); }
+    .spell-slot.pop { animation: slotPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes slotPop {
+      0% { transform: scale(0.8); }
+      60% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) { .spell-slot.pop { animation: none; } }
+    .spell-actions {
+      display: flex; align-items: center; gap: 14px;
+      margin-top: 22px; flex-wrap: wrap;
+    }
+    .check-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 13px 26px;
+      border: none; border-radius: 100px;
+      font-family: var(--font);
+      font-size: 0.95rem; font-weight: 700;
+      color: #fff; cursor: pointer;
+      background: linear-gradient(150deg, var(--accent-proposal) 0%, #0b7287 100%);
+      box-shadow:
+        5px 5px 12px rgba(14,143,168,0.28),
+        -4px -4px 10px rgba(255,255,255,0.85);
+      transition: transform var(--transition);
+    }
+    .check-btn:hover { transform: translateY(-2px); }
+    .spell-feedback {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 0.9rem; font-weight: 600; color: var(--success);
+    }
+    .spell-feedback.is-error { color: var(--accent-proposal); }
+
+    /* ─── My Words Jar (right rail) ────────────────────────── */
+    .jar-rail { display: flex; flex-direction: column; gap: 22px; }
+    .jar-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
+    }
+    .jar-card h3 {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 1.05rem; color: var(--secondary); margin-bottom: 4px;
+    }
+    .jar-card h3 svg { color: var(--accent-proposal); }
+    .jar-sub { font-size: 0.85rem; color: var(--text-light); margin-bottom: 18px; }
+
+    /* progress ring */
+    .ring-wrap { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+    .ring { position: relative; width: 84px; height: 84px; flex-shrink: 0; }
+    .ring svg { transform: rotate(-90deg); }
+    .ring-label {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .ring-pct { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 800; color: var(--secondary); }
+    .ring-cap { font-size: 0.62rem; color: var(--text-muted); margin-top: 2px; }
+    .ring-text strong { font-size: 1.05rem; color: var(--secondary); }
+    .ring-text p { font-size: 0.84rem; color: var(--text-light); line-height: 1.5; margin-top: 3px; }
+
+    .word-chip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .word-chip {
+      display: flex; flex-direction: column; gap: 7px;
+      padding: 12px 13px;
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      box-shadow:
+        4px 4px 9px rgba(45,42,94,0.06),
+        -4px -4px 9px rgba(255,255,255,0.92);
+    }
+    .jar-chip {
+      border: none;
+      cursor: pointer;
+      align-items: flex-start;
+      text-align: left;
+      font-family: var(--font);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    }
+    .jar-chip:hover { transform: translateY(-2px); }
+    .jar-chip.jar-active {
+      box-shadow:
+        inset 3px 3px 8px rgba(14,143,168,0.14),
+        inset -3px -3px 8px rgba(255,255,255,0.9),
+        0 0 0 2px var(--accent-proposal-line);
+    }
+    #dictRingCircle { transition: stroke-dashoffset 0.9s cubic-bezier(0.34,1.56,0.64,1); }
+    @media (prefers-reduced-motion: reduce) { #dictRingCircle { transition: none; } }
+    .word-chip .wc-word { font-weight: 700; font-size: 0.98rem; color: var(--secondary); }
+    .wc-status {
+      align-self: flex-start;
+      padding: 3px 9px;
+      border-radius: 100px;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .wc-status.known    { background: rgba(16,185,129,0.12); color: var(--success); }
+    .wc-status.learning { background: rgba(255,158,24,0.14); color: var(--accent-warm); }
+    .wc-status.new      { background: var(--accent-proposal-soft); color: var(--accent-proposal); }
+
+    .jar-legend {
+      display: flex; flex-wrap: wrap; gap: 14px;
+      margin-top: 18px; padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .jar-legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--text-light); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-dot.known    { background: var(--success); }
+    .legend-dot.learning { background: var(--accent-warm); }
+    .legend-dot.new      { background: var(--accent-proposal); }
+
+    @media (max-width: 600px) {
+      .result-word { font-size: 3rem; }
+      .word-chip-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="hub-home">
+<div class="bg-blobs" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+  <div class="bg-blob bg-blob-4"></div>
+  <div class="bg-blob bg-blob-5"></div>
+  <div class="bg-blob bg-blob-6"></div>
+</div>
+
+  <!-- ─── Navigation (umbrella) ─────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"><div class="logo">AG</div> Agape's Sandbox</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
+          <a href="classroom.html">Proposal Overview</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Sample Interpretation</a></div></li>
+        <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
+          <a href="leadership.html">Proposal Overview</a><a href="coach.html">AI Coach</a><a href="lna.html">Learning Needs Analysis</a><a href="observation.html">AI Lesson Observation</a><a href="dashboard.html">Leadership Dashboard</a></div></li>
+        <li><span class="nav-dropdown-trigger">SproutSpace</span><div class="nav-dropdown">
+          <a href="sproutspace.html">Proposal Overview</a><a href="sproutspace-layout.html">Layout Planner</a><a href="sproutspace-inventory.html">Resource Inventory</a><a href="sproutspace-control.html">Leadership Control</a></div></li>
+        <li><span class="nav-dropdown-trigger">Home</span><div class="nav-dropdown">
+          <a href="home.html">Proposal Overview</a><a href="home-phonics-studio.html">Phonics Studio</a><a href="home-benchmark.html">Termly Benchmark</a><a href="home-reading-coach.html">Reading Coach</a><a href="home-draw-reflect.html">Draw &amp; Reflect</a><a href="home-dictionary.html" class="active">Talking Dictionary</a></div></li>
+        <li><a href="index.html#compliance">Compliance</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ─── Page Header ───────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>&#8250;</span>
+        <a href="home.html">Home</a>
+        <span>&#8250;</span>
+        <span class="current">Talking Dictionary</span>
+      </div>
+      <span class="hub-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        PedaForge Home
+      </span>
+      <h1>Talking Dictionary</h1>
+      <p>A child-safe word lab where a young reader types or taps a word, hears it spoken aloud with natural Azure Neural text-to-speech, then sees the syllables, a kid-friendly meaning and an example sentence. Sentence starters invite the child to use the word, a Spell it! game turns recognition into production, and a My Words Jar makes growth visible - all on their own, at their own pace.</p>
+      <div class="mt-2">
+        <a href="home.html" class="btn btn-secondary btn-sm">&larr; Back to PedaForge Home</a>
+      </div>
+      <!-- ─── Hub local sub-nav ─────────────────────────────── -->
+      <div class="hub-subnav">
+        <a href="home-phonics-studio.html">Phonics Studio</a>
+        <a href="home-benchmark.html">Termly Benchmark</a>
+        <a href="home-reading-coach.html">Reading Coach</a>
+        <a href="home-draw-reflect.html">Draw &amp; Reflect</a>
+        <a href="home-dictionary.html" class="active">Talking Dictionary</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── Main Content ──────────────────────────────────────── -->
+  <main class="container main-content-spacing">
+
+    <div class="demo-two-col">
+
+      <!-- ─── Left: The Word Lab ──────────────────────────── -->
+      <div>
+        <div class="wordlab">
+
+          <!-- Search card -->
+          <div class="clay-card">
+            <div class="word-search">
+              <div class="word-search-field">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span class="word-search-text" id="dictSearchText">ship</span><span class="word-search-caret" aria-hidden="true"></span>
+              </div>
+              <button class="speaker-btn" id="dictSpeakerBtn" aria-label="Say the word aloud">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+              </button>
+            </div>
+            <div class="speaker-caption">
+              <span class="sound-wave" id="dictWave" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+              <span id="dictCaption">Tap the speaker to hear &ldquo;ship&rdquo; spoken aloud &middot; real browser TTS</span>
+            </div>
+          </div>
+
+          <!-- Result card (re-rendered by js/home-dictionary.js) -->
+          <div class="clay-card">
+            <div class="result-word" id="dictWord">ship</div>
+            <div class="syllable-chip" id="dictSyllables"></div>
+            <button class="zh-chip" id="dictZhChip" hidden aria-label="Hear the word in Mandarin">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <span id="dictZhText"></span>
+              <small style="font-weight:600;opacity:0.75;">&middot; Mandarin</small>
+            </button>
+            <p class="kid-def" id="dictDef"></p>
+            <div class="example-sentence">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l9-9 9 9"/><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"/><path d="M9 21V13h6v8"/></svg>
+              <span id="dictExample"></span>
+            </div>
+
+            <div class="starter-label">Now you try &middot; finish a sentence</div>
+            <div class="starter-pills" id="dictStarters"></div>
+          </div>
+
+          <!-- Spell it! card (click-to-place tiles) -->
+          <div class="clay-card">
+            <div class="spell-head">
+              <span class="spell-title">
+                <span class="spark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2H22l-6 4.4 2.3 7.2-6.3-4.5L5.7 20.8 8 13.6 2 9.2h7.6z"/></svg></span>
+                Spell it!
+              </span>
+              <span class="tag tag-amount tag-sm">Self-led practice</span>
+            </div>
+            <p class="spell-hint">Tap each letter to drop it into the next box and spell <strong id="dictSpellWord">ship</strong>, then press Check. Tap a filled box to send its letter back. Try as many times as you like - mistakes are part of learning.</p>
+
+            <div class="letter-tiles" id="dictTiles"></div>
+
+            <div class="spell-slots" id="dictSlots"></div>
+
+            <div class="spell-actions">
+              <button class="check-btn" id="dictCheckBtn">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Check
+              </button>
+              <span class="spell-feedback" id="dictFeedback"></span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Pedagogy note under the lab -->
+        <div class="narrative-box mt-4">
+          <span class="narrative-label">How this helps a young reader grow</span>
+          <p class="narrative-text">Every word a child looks up becomes a small loop of independent learning: hear it, see how it breaks into sounds, understand what it means, use it in a sentence of their own, then spell it back. Because the Talking Dictionary speaks with natural Azure Neural voices and never marks a child wrong, it builds the confidence to keep trying. Words a child practises move from <em>New</em> to <em>Learning</em> to <em>Known</em> in their Words Jar, so progress is visible and motivating - to the child, the parent and the teacher.</p>
+        </div>
+      </div>
+
+      <!-- ─── Right rail: My Words Jar ────────────────────── -->
+      <div class="jar-rail">
+
+        <div class="jar-card">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8"/><path d="M9 2v2.79a4 4 0 0 1-.52 1.97l-.18.32A4 4 0 0 0 7.78 9H16.2a4 4 0 0 0-.52-1.92l-.18-.32A4 4 0 0 1 15 4.79V2"/><path d="M7.78 9A6 6 0 0 0 6 13v5a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-5a6 6 0 0 0-1.78-4"/></svg>
+            My Words Jar
+          </h3>
+          <p class="jar-sub">Every word Mia explores drops into her jar. Hear a word and spell it to move it from <em>New</em> to <em>Learning</em> to <em>Known</em>. Tap any word to open it.</p>
+
+          <!-- Progress ring -->
+          <div class="ring-wrap">
+            <div class="ring" role="img" aria-label="Word recognition growth ring">
+              <svg width="84" height="84" viewBox="0 0 84 84">
+                <circle cx="42" cy="42" r="36" fill="none" stroke="var(--border)" stroke-width="9"/>
+                <circle id="dictRingCircle" cx="42" cy="42" r="36" fill="none" stroke="var(--accent-proposal)" stroke-width="9" stroke-linecap="round" stroke-dasharray="226.2" stroke-dashoffset="226.2"/>
+              </svg>
+              <div class="ring-label">
+                <span class="ring-pct" id="dictRingPct">0%</span>
+                <span class="ring-cap">known</span>
+              </div>
+            </div>
+            <div class="ring-text">
+              <strong>Word recognition</strong>
+              <p id="dictRingText">Hear a word and spell it to grow the jar.</p>
+            </div>
+          </div>
+
+          <!-- Word chips (rendered by js/home-dictionary.js) -->
+          <div class="word-chip-grid" id="dictJarGrid"></div>
+
+          <div class="jar-legend">
+            <span><span class="legend-dot known"></span>Known</span>
+            <span><span class="legend-dot learning"></span>Learning</span>
+            <span><span class="legend-dot new"></span>New</span>
+          </div>
+        </div>
+
+        <!-- Safe & encouraging panel -->
+        <div class="jar-card">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            Child-safe by design
+          </h3>
+          <ul class="icon-list">
+            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Only age-appropriate words and definitions from a curated early-reading dictionary - no open web search.</li>
+            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Encouraging feedback only - the child is never told they are wrong, just nudged to try again.</li>
+            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Natural Azure Neural voices read every word, so the child can learn pronunciation independently.</li>
+            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Singapore-hosted, PDPA-compliant - the Words Jar belongs to the child and family.</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ─── Footer ────────────────────────────────────────────── -->
+  <footer class="footer"><div class="container"><div class="footer-grid">
+    <div><h4>Agape's Sandbox</h4><p>Four AI-enabled proposals from one Singapore early childhood operator, aligned with ECDA's IDP 2.0 vision for future-ready preschools.</p></div>
+    <div><h4>Classroom</h4><ul><li><a href="classroom.html">Proposal Overview</a></li><li><a href="planner.html">Lesson Planner</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="work-sample.html">Work Sample Interpretation</a></li></ul></div>
+    <div><h4>Leadership</h4><ul><li><a href="leadership.html">Proposal Overview</a></li><li><a href="coach.html">AI Coach</a></li><li><a href="lna.html">Learning Needs Analysis</a></li><li><a href="observation.html">AI Lesson Observation</a></li><li><a href="dashboard.html">Leadership Dashboard</a></li></ul></div>
+    <div><h4>SproutSpace</h4><ul><li><a href="sproutspace.html">Proposal Overview</a></li><li><a href="sproutspace-layout.html">Layout Planner</a></li><li><a href="sproutspace-inventory.html">Resource Inventory</a></li><li><a href="sproutspace-control.html">Leadership Control</a></li></ul></div>
+    <div><h4>Home</h4><ul><li><a href="home.html">Proposal Overview</a></li><li><a href="home-phonics-studio.html">Phonics Studio</a></li><li><a href="home-benchmark.html">Termly Benchmark</a></li><li><a href="home-reading-coach.html">Reading Coach</a></li><li><a href="home-draw-reflect.html">Draw &amp; Reflect</a></li><li><a href="home-dictionary.html">Talking Dictionary</a></li></ul></div>
+  </div><div class="footer-bottom"><span>&copy; 2026 Busy Bees &middot; Prepared by Anita Teo</span><div class="footer-badges"><span class="footer-badge">PDPA Compliant</span><span class="footer-badge">SG Data Residency</span></div></div></div></footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/home-speech.js"></script>
+  <script src="js/home-dictionary-data.js"></script>
+  <script src="js/home-dictionary.js"></script>
+</body>
+</html>

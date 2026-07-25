@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PedaForge Home - Termly Benchmarking &amp; Home-School Reading Bridge: a shared parent and teacher workspace tracking five early-reading strands with advisory, teacher-confirmed AI growth summaries and collaborative reading strategies.">
+  <title>PedaForge Home: Termly Benchmarking &amp; Home-School Reading Bridge | Agape's Sandbox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ─── PedaForge Home accent namespace (teal) ─────────── */
+    body.hub-home {
+      --accent-proposal: #0E8FA8;
+      --accent-proposal-soft: rgba(14,143,168,0.10);
+      --accent-proposal-line: rgba(14,143,168,0.24);
+    }
+
+    /* ─── Benchmark strand rows ──────────────────────────── */
+    .bm-strand {
+      display: grid;
+      grid-template-columns: 150px 1fr 110px;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .bm-strand:last-child { border-bottom: none; }
+    .bm-strand-name {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+    .bm-strand-name small {
+      display: block;
+      font-weight: 400;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .bm-bar {
+      position: relative;
+      height: 10px;
+      border-radius: 100px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .bm-bar-fill {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      border-radius: 100px;
+      background: #0E8FA8;
+    }
+    .bm-bar-fill.is-developing { background: #d68a14; }
+    .bm-status {
+      justify-self: end;
+    }
+    .tag-emerging { background: rgba(232,6,60,0.10); color: #c2185b; }
+    .tag-developing { background: rgba(214,138,20,0.12); color: #b06a00; }
+    .tag-secure { background: rgba(14,143,168,0.12); color: #0a6e82; }
+
+    /* ─── Evidence timeline (centre vs home) ─────────────── */
+    .ev-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 700px) { .ev-grid { grid-template-columns: 1fr; } }
+    .ev-col-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .ev-col-head.centre { color: #0a6e82; }
+    .ev-col-head.home { color: #7a4ad0; }
+    .ev-col-head .ev-dot {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ev-col-head.centre .ev-dot { background: rgba(14,143,168,0.12); color: #0a6e82; }
+    .ev-col-head.home .ev-dot { background: rgba(139,92,246,0.12); color: #7a4ad0; }
+    .ev-bubbles {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .ev-bubble {
+      position: relative;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      line-height: 1.55;
+      color: var(--text);
+    }
+    .ev-bubble.centre {
+      background: rgba(14,143,168,0.06);
+      border: 1px solid rgba(14,143,168,0.16);
+      border-bottom-left-radius: 4px;
+    }
+    .ev-bubble.home {
+      background: rgba(139,92,246,0.06);
+      border: 1px solid rgba(139,92,246,0.16);
+      border-bottom-right-radius: 4px;
+    }
+    .ev-bubble .ev-meta {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* ─── AI summary toolbar ─────────────────────────────── */
+    .ai-summary-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 100px;
+      font-family: var(--font);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-light);
+      transition: all var(--transition);
+    }
+    .pill-btn:hover { border-color: #0E8FA8; color: #0a6e82; }
+    .pill-btn.primary {
+      background: #0E8FA8;
+      border-color: #0E8FA8;
+      color: #fff;
+    }
+    .pill-btn.primary:hover { background: #0a6e82; color: #fff; }
+
+    .advisory-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.8rem;
+      line-height: 1.55;
+      color: var(--text-muted);
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,158,24,0.06);
+      border: 1px solid rgba(255,158,24,0.18);
+    }
+    .advisory-note svg { color: var(--warning); flex-shrink: 0; margin-top: 1px; }
+
+    /* ─── Sidebar strategy cards ─────────────────────────── */
+    .strategy-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      border: 1px solid var(--border);
+    }
+    .strategy-card + .strategy-card { margin-top: 12px; }
+    .strategy-card h4 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: var(--secondary);
+      margin-bottom: 6px;
+    }
+    .strategy-card h4 .sc-num {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: rgba(14,143,168,0.10);
+      color: #0a6e82;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .strategy-card p {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      line-height: 1.55;
+    }
+
+    /* ─── Family reading log ─────────────────────────────── */
+    .reading-log {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+    }
+    .reading-log li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .reading-log li:last-child { border-bottom: none; }
+    .rl-date {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #0a6e82;
+      width: 46px;
+      flex-shrink: 0;
+      text-align: center;
+      line-height: 1.2;
+    }
+    .rl-book {
+      flex: 1;
+      font-size: 0.84rem;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .rl-book small { display: block; color: var(--text-muted); font-size: 0.74rem; }
+    .rl-mins {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-light);
+      background: var(--bg);
+      padding: 3px 9px;
+      border-radius: 100px;
+      flex-shrink: 0;
+    }
+    .rl-total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 2px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .rl-total strong { color: #0a6e82; font-size: 1.05rem; }
+
+    .shared-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(14,143,168,0.06);
+      border: 1px solid rgba(14,143,168,0.18);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .shared-banner svg { color: #0E8FA8; flex-shrink: 0; }
+    .shared-banner p { font-size: 0.84rem; color: var(--text-light); line-height: 1.5; margin: 0; }
+    .shared-banner strong { color: var(--secondary); }
+
+    /* ─── 3-question check-in quiz ───────────────────────── */
+    .bmq-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
+    }
+    .bmq-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .bmq-ring { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
+    .bmq-ring svg { transform: rotate(-90deg); display: block; }
+    .bmq-ring-fill { transition: stroke-dashoffset 0.8s cubic-bezier(0.34,1.56,0.64,1); }
+    .bmq-ring-label {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 800; color: var(--secondary);
+    }
+    .bmq-title h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--secondary);
+      margin: 0 0 3px;
+    }
+    .bmq-title p { font-size: 0.84rem; color: var(--text-light); margin: 0; }
+    .bmq-step {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.4px;
+      text-transform: uppercase; color: #0a6e82;
+      margin-bottom: 6px;
+    }
+    .bmq-prompt {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem; color: var(--secondary);
+      margin: 0 0 4px;
+    }
+    .bmq-hint { font-size: 0.84rem; color: var(--text-muted); margin: 0 0 16px; }
+    .bmq-options { display: flex; flex-wrap: wrap; gap: 12px; }
+    .bmq-option {
+      border: none;
+      cursor: pointer;
+      padding: 14px 24px;
+      border-radius: 100px;
+      font-family: var(--font);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--secondary);
+      background: var(--bg);
+      box-shadow: inset 0 0 0 1px var(--border);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+    .bmq-option:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: inset 0 0 0 2px rgba(14,143,168,0.4), 0 8px 18px rgba(14,143,168,0.14);
+    }
+    .bmq-option:disabled { cursor: default; }
+    .bmq-option.is-right {
+      background: rgba(16,185,129,0.14);
+      color: #0f7a56;
+      box-shadow: inset 0 0 0 2px rgba(16,185,129,0.5), 0 0 0 5px rgba(16,185,129,0.10);
+    }
+    .bmq-option.is-gentle {
+      background: rgba(255,158,24,0.10);
+      color: #a86400;
+      box-shadow: inset 0 0 0 2px rgba(255,158,24,0.35);
+    }
+    .bmq-feedback {
+      min-height: 1.4rem;
+      margin-top: 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #0a6e82;
+    }
+    .bmq-summary[hidden] { display: none; }
+    .bmq-summary h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem; color: var(--secondary);
+      margin: 0 0 8px;
+    }
+    .bmq-summary p { font-size: 0.9rem; color: var(--text-light); line-height: 1.6; margin: 0 0 16px; }
+    .bmq-strand {
+      display: grid;
+      grid-template-columns: 150px 1fr 60px;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+    }
+    .bmq-strand-val { font-size: 0.82rem; font-weight: 700; color: #0a6e82; justify-self: end; }
+    @media (prefers-reduced-motion: reduce) {
+      .bmq-ring-fill { transition: none; }
+      .bmq-option:hover:not(:disabled) { transform: none; }
+    }
+    @media (max-width: 600px) {
+      .bmq-strand { grid-template-columns: 1fr; gap: 8px; }
+      .bmq-strand-val { justify-self: start; }
+    }
+  </style>
+</head>
+<body class="hub-home">
+<div class="bg-blobs" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+  <div class="bg-blob bg-blob-4"></div>
+  <div class="bg-blob bg-blob-5"></div>
+  <div class="bg-blob bg-blob-6"></div>
+</div>
+
+  <!-- ─── Navigation (umbrella) ─────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"><div class="logo">AG</div> Agape's Sandbox</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
+          <a href="classroom.html">Proposal Overview</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Sample Interpretation</a></div></li>
+        <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
+          <a href="leadership.html">Proposal Overview</a><a href="coach.html">AI Coach</a><a href="lna.html">Learning Needs Analysis</a><a href="observation.html">AI Lesson Observation</a><a href="dashboard.html">Leadership Dashboard</a></div></li>
+        <li><span class="nav-dropdown-trigger">SproutSpace</span><div class="nav-dropdown">
+          <a href="sproutspace.html">Proposal Overview</a><a href="sproutspace-layout.html">Layout Planner</a><a href="sproutspace-inventory.html">Resource Inventory</a><a href="sproutspace-control.html">Leadership Control</a></div></li>
+        <li><span class="nav-dropdown-trigger">Home</span><div class="nav-dropdown">
+          <a href="home.html">Proposal Overview</a><a href="home-phonics-studio.html">Phonics Studio</a><a href="home-benchmark.html" class="active">Termly Benchmark</a><a href="home-reading-coach.html">Reading Coach</a><a href="home-draw-reflect.html">Draw &amp; Reflect</a><a href="home-dictionary.html">Talking Dictionary</a></div></li>
+        <li><a href="index.html#compliance">Compliance</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ─── Page Header ───────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>&#8250;</span>
+        <a href="home.html">Home</a>
+        <span>&#8250;</span>
+        <span class="current">Termly Benchmark</span>
+      </div>
+      <h1>Termly Benchmarking</h1>
+      <p>A shared parent and teacher workspace that bridges centre and home reading - tracking five early-literacy strands with an advisory, teacher-confirmed AI growth summary. This is a formative, supportive snapshot, not a high-stakes test.</p>
+      <div style="margin-top:18px;">
+        <span class="hub-pill">PedaForge Home &middot; Module 2</span>
+      </div>
+      <!-- ─── Hub local sub-nav ─────────────────────────────── -->
+      <div class="hub-subnav">
+        <a href="home.html">Overview</a>
+        <a href="home-phonics-studio.html">Phonics Studio</a>
+        <a href="home-benchmark.html" class="active">Termly Benchmark</a>
+        <a href="home-reading-coach.html">Reading Coach</a>
+        <a href="home-draw-reflect.html">Draw &amp; Reflect</a>
+        <a href="home-dictionary.html">Talking Dictionary</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── Main Content ──────────────────────────────────────── -->
+  <main class="container main-content-spacing">
+
+    <!-- Back to hub -->
+    <div style="margin-bottom:16px;">
+      <a href="home.html" class="btn btn-secondary btn-sm">&larr; Back to PedaForge Home Overview</a>
+    </div>
+
+    <!-- Shared workspace banner -->
+    <div class="shared-banner">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <p><strong>A shared workspace.</strong> Teachers and parents both contribute evidence and read the same benchmark together. Reading grows fastest when home and centre pull in the same direction.</p>
+    </div>
+
+    <div class="demo-two-col">
+
+      <!-- ═══ MAIN COLUMN ═══════════════════════════════════ -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
+
+        <!-- Try a 3-question check-in (interactive) -->
+        <div class="bmq-card">
+          <div class="bmq-head">
+            <div class="bmq-ring" aria-hidden="true">
+              <svg width="76" height="76" viewBox="0 0 76 76">
+                <circle cx="38" cy="38" r="34" fill="none" stroke="var(--border)" stroke-width="7"/>
+                <circle id="bmqRingFill" class="bmq-ring-fill" cx="38" cy="38" r="34" fill="none" stroke="#0E8FA8" stroke-width="7" stroke-linecap="round" stroke-dasharray="213.63" stroke-dashoffset="213.63"/>
+              </svg>
+              <span class="bmq-ring-label" id="bmqRingLabel">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E8FA8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+            </div>
+            <div class="bmq-title" style="flex:1;">
+              <h3>Try a 3-question check-in</h3>
+              <p>This is what a child&rsquo;s termly check-in feels like - warm, quick and game-like. Tap an answer to see the ring fill. <span id="bmqSimHost" style="display:inline-flex;vertical-align:middle;margin-left:6px;"></span></p>
+            </div>
+          </div>
+
+          <div id="bmqBody">
+            <div class="bmq-step" id="bmqStep">Question 1 of 3</div>
+            <p class="bmq-prompt" id="bmqPrompt"></p>
+            <p class="bmq-hint" id="bmqHint"></p>
+            <div class="bmq-options" id="bmqOptions"></div>
+            <div class="bmq-feedback" id="bmqFeedback" aria-live="polite"></div>
+          </div>
+
+          <div class="bmq-summary" id="bmqSummary" hidden>
+            <h4 id="bmqSummaryHead"></h4>
+            <p id="bmqSummaryBody"></p>
+            <div class="bmq-strand">
+              <div class="bm-strand-name">Phonics<small>Letter-sound knowledge</small></div>
+              <div class="bm-bar"><div class="bm-bar-fill" id="bmqStrandFill" style="width:45%;"></div></div>
+              <span class="bmq-strand-val" id="bmqStrandVal"></span>
+            </div>
+            <div style="margin-top:16px;">
+              <button type="button" class="pill-btn" id="bmqRestartBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Try it again
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benchmark card -->
+        <div class="panel-card">
+          <div class="portfolio-header" style="margin-bottom:18px;">
+            <div class="child-avatar"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+            <div style="flex:1;">
+              <h2 class="profile-name-lg" style="margin-bottom:2px;">Term 2 Benchmark &middot; Aisyah</h2>
+              <p class="profile-subtitle">K2 (5 years 8 months) &middot; Rainbow Class &middot; Reviewed 14 May 2026</p>
+            </div>
+            <span class="tag tag-secure">On Track</span>
+          </div>
+
+          <p class="profile-meta" style="margin-bottom:14px;">Five early-reading strands, rated <strong>Emerging</strong>, <strong>Developing</strong> or <strong>Secure</strong> against age-typical expectations. Bars show progress since Term 1.</p>
+
+          <!-- Strand 1 -->
+          <div class="bm-strand">
+            <div class="bm-strand-name">Print Awareness<small>Book handling &amp; print direction</small></div>
+            <div class="bm-bar"><div class="bm-bar-fill" style="width:92%;"></div></div>
+            <span class="tag tag-secure bm-status">Secure</span>
+          </div>
+
+          <!-- Strand 2 -->
+          <div class="bm-strand">
+            <div class="bm-strand-name">Phonics<small>Letter-sound knowledge</small></div>
+            <div class="bm-bar"><div class="bm-bar-fill" style="width:84%;"></div></div>
+            <span class="tag tag-secure bm-status">Secure</span>
+          </div>
+
+          <!-- Strand 3 -->
+          <div class="bm-strand">
+            <div class="bm-strand-name">Decoding<small>Blending sounds into words</small></div>
+            <div class="bm-bar"><div class="bm-bar-fill is-developing" style="width:62%;"></div></div>
+            <span class="tag tag-developing bm-status">Developing</span>
+          </div>
+
+          <!-- Strand 4 -->
+          <div class="bm-strand">
+            <div class="bm-strand-name">Sight Words<small>High-frequency word recall</small></div>
+            <div class="bm-bar"><div class="bm-bar-fill is-developing" style="width:58%;"></div></div>
+            <span class="tag tag-developing bm-status">Developing</span>
+          </div>
+
+          <!-- Strand 5 -->
+          <div class="bm-strand">
+            <div class="bm-strand-name">Comprehension<small>Retelling &amp; predicting</small></div>
+            <div class="bm-bar"><div class="bm-bar-fill is-developing" style="width:45%;"></div></div>
+            <span class="tag tag-emerging bm-status">Emerging</span>
+          </div>
+        </div>
+
+        <!-- Evidence timeline: centre vs home -->
+        <div class="panel-card">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--secondary);margin-bottom:6px;">Evidence Behind the Benchmark</h3>
+          <p class="profile-meta" style="margin-bottom:18px;">Every rating is anchored in real observations - teacher notes from the centre and reading-log notes parents add at home. Both sides see the full picture.</p>
+
+          <div class="ev-grid">
+
+            <!-- Centre evidence -->
+            <div>
+              <div class="ev-col-head centre">
+                <span class="ev-dot"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+                Centre Evidence
+              </div>
+              <div class="ev-bubbles">
+                <div class="ev-bubble centre">
+                  Aisyah confidently pointed to the title, author and where to start reading during shared-book time. Tracks print left to right unprompted.
+                  <span class="ev-meta">Ms Lim &middot; 6 May &middot; Print Awareness</span>
+                </div>
+                <div class="ev-bubble centre">
+                  Sounded out all single letters and most digraphs (sh, ch, th) in our phonics game. Quick and accurate.
+                  <span class="ev-meta">Ms Lim &middot; 8 May &middot; Phonics</span>
+                </div>
+                <div class="ev-bubble centre">
+                  Blending three-sound words (c-a-t) is emerging - needs a beat to hold the sounds. Retelling a story still leans on the pictures.
+                  <span class="ev-meta">Ms Lim &middot; 13 May &middot; Decoding / Comprehension</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Home evidence -->
+            <div>
+              <div class="ev-col-head home">
+                <span class="ev-dot"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                Home Evidence
+              </div>
+              <div class="ev-bubbles">
+                <div class="ev-bubble home">
+                  Aisyah &ldquo;read&rdquo; her bedtime book to her little brother, turning pages in order and pointing under the words. So proud!
+                  <span class="ev-meta">Parent log &middot; 5 May &middot; Print Awareness</span>
+                </div>
+                <div class="ev-bubble home">
+                  She recognised &ldquo;the&rdquo; and &ldquo;and&rdquo; on a cereal box but got stuck on &ldquo;said&rdquo; and &ldquo;they&rdquo;.
+                  <span class="ev-meta">Parent log &middot; 10 May &middot; Sight Words</span>
+                </div>
+                <div class="ev-bubble home">
+                  When I ask &ldquo;what do you think happens next?&rdquo; she usually shrugs, but loves answering &ldquo;who&rdquo; and &ldquo;where&rdquo; questions.
+                  <span class="ev-meta">Parent log &middot; 12 May &middot; Comprehension</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- AI Growth Summary -->
+        <div class="panel-card" style="border-color:rgba(14,143,168,0.20);">
+          <div class="ws-result-header" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0E8FA8,#3bb6cc);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A7 7 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5"/></svg>
+            </div>
+            <div style="flex:1;">
+              <h3 style="font-size:1.05rem;color:var(--secondary);margin:0;">
+                <span class="inline-tag-title">AI Growth Summary <span class="tag tag-ai tag-sm">Draft - teacher to confirm</span></span>
+              </h3>
+              <p class="profile-meta" style="margin-top:2px;">Generated from the evidence above &middot; not yet shared</p>
+            </div>
+          </div>
+
+          <div class="narrative-box">
+            <div class="narrative-label">Suggested summary for parents (plain language)</div>
+            <div class="narrative-text">Aisyah is reading right on track for K2 and clearly loves books. She handles a book like a confident reader - finding the title, tracking the words and reading happily at home and in class. Her letter sounds are strong and secure. The next step is <strong>blending</strong> those sounds smoothly into whole words and building up her bank of sight words like &ldquo;said&rdquo; and &ldquo;they&rdquo;. In stories she answers &ldquo;who&rdquo; and &ldquo;where&rdquo; well; gently inviting her to <em>predict</em> what happens next will stretch her comprehension. A few minutes of shared reading each day, with a pause to guess what comes next, will make a real difference this term.</div>
+          </div>
+
+          <div class="ai-summary-tools">
+            <button type="button" class="pill-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Regenerate
+            </button>
+            <button type="button" class="pill-btn primary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              Share with parent
+            </button>
+          </div>
+
+          <div class="advisory-note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>This summary is <strong>advisory only</strong>. The AI drafts language from the teacher&rsquo;s and parents&rsquo; own evidence; the educator reviews, edits and confirms it before anything is shared. Benchmarking here is <strong>formative</strong> - a supportive snapshot to guide reading together, never a high-stakes test or a ranking of children.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ SIDEBAR (340px) ═══════════════════════════════ -->
+      <aside style="display:flex;flex-direction:column;gap:24px;">
+
+        <!-- Collaborative reading strategies -->
+        <div class="panel-card">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--secondary);margin-bottom:6px;">Collaborative Reading Strategies</h3>
+          <p class="profile-meta" style="margin-bottom:16px;">Simple, evidence-based moves parents can try tonight - chosen to lift Aisyah&rsquo;s next strands.</p>
+
+          <div class="strategy-card">
+            <h4><span class="sc-num">1</span> Echo Reading</h4>
+            <p>Read a short line aloud first, then have Aisyah echo it straight back - matching your pace and expression. Builds fluent decoding without the pressure of going it alone.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4><span class="sc-num">2</span> Pause &amp; Predict</h4>
+            <p>Stop at an exciting moment and ask &ldquo;What do you think happens next?&rdquo; Accept any reasonable guess. This directly grows the comprehension strand she is still emerging in.</p>
+          </div>
+
+          <div class="strategy-card">
+            <h4><span class="sc-num">3</span> Point &amp; Read</h4>
+            <p>Run a finger under each word as you read together. Slows reading to one word at a time and reinforces sight words like &ldquo;said&rdquo; and &ldquo;they&rdquo; in context.</p>
+          </div>
+        </div>
+
+        <!-- Family reading log -->
+        <div class="panel-card">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--secondary);margin-bottom:6px;">Family Reading Log</h3>
+          <p class="profile-meta" style="margin-bottom:14px;">Every shared book counts. Logging at home builds a life-long reading habit - and feeds the benchmark above.</p>
+
+          <ul class="reading-log">
+            <li>
+              <span class="rl-date">14<br>May</span>
+              <span class="rl-book">The Very Hungry Caterpillar<small>with Mum &middot; predicted the ending</small></span>
+              <span class="rl-mins">15 min</span>
+            </li>
+            <li>
+              <span class="rl-date">12<br>May</span>
+              <span class="rl-book">Where&rsquo;s Spot?<small>read to little brother</small></span>
+              <span class="rl-mins">10 min</span>
+            </li>
+            <li>
+              <span class="rl-date">10<br>May</span>
+              <span class="rl-book">Brown Bear, Brown Bear<small>echo reading with Dad</small></span>
+              <span class="rl-mins">12 min</span>
+            </li>
+            <li>
+              <span class="rl-date">8<br>May</span>
+              <span class="rl-book">Bedtime for Bunny<small>pointed under each word</small></span>
+              <span class="rl-mins">14 min</span>
+            </li>
+            <li>
+              <span class="rl-date">5<br>May</span>
+              <span class="rl-book">Llama Llama Red Pyjama<small>read it to little brother</small></span>
+              <span class="rl-mins">11 min</span>
+            </li>
+          </ul>
+
+          <div class="rl-total">
+            <span class="profile-meta">This week, 5 sessions</span>
+            <span><strong>62 min</strong> read together</span>
+          </div>
+
+          <div style="margin-top:14px;">
+            <button type="button" class="pill-btn primary" style="width:100%;justify-content:center;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Log tonight&rsquo;s reading
+            </button>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- ─── Footer ────────────────────────────────────────────── -->
+  <footer class="footer"><div class="container"><div class="footer-grid">
+  <div><h4>Agape's Sandbox</h4><p>Four AI-enabled proposals from one Singapore early childhood operator, aligned with ECDA's IDP 2.0 vision for future-ready preschools.</p></div>
+  <div><h4>Classroom</h4><ul><li><a href="classroom.html">Proposal Overview</a></li><li><a href="planner.html">Lesson Planner</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="work-sample.html">Work Sample Interpretation</a></li></ul></div>
+  <div><h4>Leadership</h4><ul><li><a href="leadership.html">Proposal Overview</a></li><li><a href="coach.html">AI Coach</a></li><li><a href="lna.html">Learning Needs Analysis</a></li><li><a href="observation.html">AI Lesson Observation</a></li><li><a href="dashboard.html">Leadership Dashboard</a></li></ul></div>
+  <div><h4>SproutSpace</h4><ul><li><a href="sproutspace.html">Proposal Overview</a></li><li><a href="sproutspace-layout.html">Layout Planner</a></li><li><a href="sproutspace-inventory.html">Resource Inventory</a></li><li><a href="sproutspace-control.html">Leadership Control</a></li></ul></div>
+  <div><h4>Home</h4><ul><li><a href="home.html">Proposal Overview</a></li><li><a href="home-phonics-studio.html">Phonics Studio</a></li><li><a href="home-benchmark.html">Termly Benchmark</a></li><li><a href="home-reading-coach.html">Reading Coach</a></li><li><a href="home-draw-reflect.html">Draw &amp; Reflect</a></li><li><a href="home-dictionary.html">Talking Dictionary</a></li></ul></div>
+</div><div class="footer-bottom"><span>&copy; 2026 Busy Bees &middot; Prepared by Anita Teo</span><div class="footer-badges"><span class="footer-badge">PDPA Compliant</span><span class="footer-badge">SG Data Residency</span></div></div></div></footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/home-speech.js"></script>
+  <script src="js/home-benchmark-quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PedaForge Portfolio &amp; Dynamic Profiling: capture daily observations, track developmental progress, and generate AI-powered narratives aligned to EYDF and NEL.">
+  <title>PedaForge: Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="hub-classroom">
+<div class="bg-blobs" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+  <div class="bg-blob bg-blob-4"></div>
+  <div class="bg-blob bg-blob-5"></div>
+  <div class="bg-blob bg-blob-6"></div>
+</div>
+
+  <!-- ────────────────────────────────────────────────────────
+       Navigation
+       ──────────────────────────────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <div class="logo">AG</div>
+        Agape's Sandbox
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li>
+          <span class="nav-dropdown-trigger">Classroom</span>
+          <div class="nav-dropdown">
+            <a href="classroom.html">Proposal Overview</a>
+            <a href="planner.html">Lesson Planner</a>
+            <a href="portfolio.html" class="active">Portfolio</a>
+            <a href="work-sample.html">Work Sample Interpretation</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">Leadership</span>
+          <div class="nav-dropdown">
+            <a href="leadership.html">Proposal Overview</a>
+            <a href="coach.html">AI Coach</a>
+            <a href="lna.html">Learning Needs Analysis</a>
+            <a href="observation.html">AI Lesson Observation</a>
+            <a href="dashboard.html">Leadership Dashboard</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">SproutSpace</span>
+          <div class="nav-dropdown">
+            <a href="sproutspace.html">Proposal Overview</a>
+            <a href="sproutspace-layout.html">Layout Planner</a>
+            <a href="sproutspace-inventory.html">Resource Inventory</a>
+            <a href="sproutspace-control.html">Leadership Control</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">Home</span>
+          <div class="nav-dropdown">
+            <a href="home.html">Proposal Overview</a>
+            <a href="home-phonics-studio.html">Phonics Studio</a>
+            <a href="home-benchmark.html">Termly Benchmark</a>
+            <a href="home-reading-coach.html">Reading Coach</a>
+            <a href="home-draw-reflect.html">Draw &amp; Reflect</a>
+            <a href="home-dictionary.html">Talking Dictionary</a>
+          </div>
+        </li>
+        <li><a href="index.html#compliance">Compliance</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ────────────────────────────────────────────────────────
+       Page Header
+       ──────────────────────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>&rsaquo;</span>
+        <a href="classroom.html">Classroom</a>
+        <span>&rsaquo;</span>
+        <span class="current">Portfolio</span>
+      </div>
+      <h1>Authentic Portfolio &amp; Dynamic Profiling</h1>
+      <p>Capture daily observations, track developmental progress, and generate AI-powered narratives aligned to EYDF and NEL.</p>
+    </div>
+  </header>
+
+  <!-- ────────────────────────────────────────────────────────
+       Main Content
+       ──────────────────────────────────────────────────────── -->
+  <main class="container main-content-spacing">
+
+    <!-- Child Profile Header -->
+    <div class="portfolio-header">
+      <div class="child-avatar"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div style="flex: 1;">
+        <h2 class="profile-name-lg">Leo Tan</h2>
+        <p class="profile-subtitle">K1 (4 years 3 months) &middot; Sunshine Class</p>
+        <p class="profile-meta">Key Person: Teacher Sarah</p>
+      </div>
+      <span class="tag tag-ai" style="padding: 6px 14px; font-size: 0.8rem;">Living Profile, Last Updated: 8 May 2026</span>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="observations">Observations</button>
+      <a href="work-sample.html" class="tab" style="text-decoration:none;">Work Samples &rsaquo;</a>
+      <button class="tab" data-tab="assessment">Assessment</button>
+      <button class="tab" data-tab="parent">Parent Suggestions</button>
+    </div>
+
+    <!-- ─── Tab Panel 1: Overview ──────────────────────────── -->
+    <div class="tab-panel" data-tab-panel="overview">
+
+      <!-- Development Domain Progress -->
+      <div class="panel-card mb-3">
+        <h3 class="section-title" style="margin-bottom: 20px;">Development Domain Progress</h3>
+        <div class="domain-grid">
+
+          <div class="domain-cell">
+            <div class="domain-icon" style="background: rgba(16,185,129,0.1); color: var(--success);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="domain-roundel">
+              <svg class="roundel-ring" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--border)" stroke-width="6"/>
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--success)" stroke-width="6" stroke-linecap="round" class="roundel-track" stroke-dasharray="226.19" stroke-dashoffset="33.93"/>
+              </svg>
+              <span class="roundel-value">85%</span>
+            </div>
+            <span class="domain-name">Aesthetics &amp; Creative</span>
+          </div>
+
+          <div class="domain-cell">
+            <div class="domain-icon" style="background: rgba(59,130,246,0.1); color: var(--info);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <div class="domain-roundel">
+              <svg class="roundel-ring" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--border)" stroke-width="6"/>
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--info)" stroke-width="6" stroke-linecap="round" class="roundel-track" stroke-dasharray="226.19" stroke-dashoffset="63.33"/>
+              </svg>
+              <span class="roundel-value">72%</span>
+            </div>
+            <span class="domain-name">Discovery of the World</span>
+          </div>
+
+          <div class="domain-cell">
+            <div class="domain-icon" style="background: rgba(139,92,246,0.1); color: #8b5cf6;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div class="domain-roundel">
+              <svg class="roundel-ring" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--border)" stroke-width="6"/>
+                <circle cx="40" cy="40" r="36" fill="none" stroke="#8b5cf6" stroke-width="6" stroke-linecap="round" class="roundel-track" stroke-dasharray="226.19" stroke-dashoffset="72.38"/>
+              </svg>
+              <span class="roundel-value">68%</span>
+            </div>
+            <span class="domain-name">Language &amp; Literacy</span>
+          </div>
+
+          <div class="domain-cell">
+            <div class="domain-icon" style="background: rgba(16,185,129,0.1); color: var(--success);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="domain-roundel">
+              <svg class="roundel-ring" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--border)" stroke-width="6"/>
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--success)" stroke-width="6" stroke-linecap="round" class="roundel-track" stroke-dasharray="226.19" stroke-dashoffset="22.62"/>
+              </svg>
+              <span class="roundel-value">90%</span>
+            </div>
+            <span class="domain-name">Motor Skills</span>
+          </div>
+
+          <div class="domain-cell">
+            <div class="domain-icon" style="background: rgba(255,158,24,0.1); color: var(--warning);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+            </div>
+            <div class="domain-roundel">
+              <svg class="roundel-ring" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--border)" stroke-width="6"/>
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--warning)" stroke-width="6" stroke-linecap="round" class="roundel-track" stroke-dasharray="226.19" stroke-dashoffset="101.79"/>
+              </svg>
+              <span class="roundel-value">55%</span>
+            </div>
+            <span class="domain-name">Numeracy</span>
+          </div>
+
+          <div class="domain-cell">
+            <div class="domain-icon" style="background: rgba(220,38,38,0.1); color: var(--danger);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="domain-roundel">
+              <svg class="roundel-ring" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--border)" stroke-width="6"/>
+                <circle cx="40" cy="40" r="36" fill="none" stroke="var(--danger)" stroke-width="6" stroke-linecap="round" class="roundel-track" stroke-dasharray="226.19" stroke-dashoffset="124.40"/>
+              </svg>
+              <span class="roundel-value">45%</span>
+            </div>
+            <span class="domain-name">Social &amp; Emotional</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- AI-Generated Profile Summary -->
+      <div class="panel-card mb-3">
+        <h3 class="section-title" style="margin-bottom: 12px;">
+          <span class="inline-tag-title">
+            <span class="tag tag-ai tag-sm">AI-Generated</span>
+            Profile Summary
+          </span>
+        </h3>
+        <p class="narrative-text" style="line-height: 1.7;">Leo demonstrates strong creative abilities and excellent motor development. He excels in hands-on, kinesthetic activities and shows particular interest in building and construction play. Areas for focused support include social-emotional development, specifically peer interaction and emotional regulation during group activities. Leo benefits from having a consistent Key Person and responds well to calm, validating approaches when frustrated.</p>
+        <div class="recommendation-box">
+          <h4>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A7 7 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5"/></svg>
+            Recommendation
+          </h4>
+          <p>Bridge social-emotional growth through cooperative building activities that leverage his construction interests. Pair Leo with a peer model during structured building projects, assigning collaborative roles that require turn-taking and verbal negotiation.</p>
+        </div>
+      </div>
+
+      <!-- Key Strengths & Growth Areas -->
+      <div class="two-col-grid">
+        <div class="panel-card">
+          <h3 class="section-title">Key Strengths</h3>
+          <ul class="icon-list">
+            <li class="icon-list-item">
+              <span class="icon-list-mark positive">+</span>
+              Exceptional fine and gross motor skills
+            </li>
+            <li class="icon-list-item">
+              <span class="icon-list-mark positive">+</span>
+              Strong visual-spatial reasoning
+            </li>
+            <li class="icon-list-item">
+              <span class="icon-list-mark positive">+</span>
+              Deep engagement with building/construction
+            </li>
+            <li class="icon-list-item">
+              <span class="icon-list-mark positive">+</span>
+              Good verbal expression when 1-on-1
+            </li>
+          </ul>
+        </div>
+
+        <div class="panel-card">
+          <h3 class="section-title">Growth Areas</h3>
+          <ul class="icon-list">
+            <li class="icon-list-item">
+              <span class="icon-list-mark growth">&#9650;</span>
+              Emotional regulation in group settings
+            </li>
+            <li class="icon-list-item">
+              <span class="icon-list-mark growth">&#9650;</span>
+              Turn-taking and cooperative play
+            </li>
+            <li class="icon-list-item">
+              <span class="icon-list-mark growth">&#9650;</span>
+              Expressing frustration verbally instead of physically
+            </li>
+            <li class="icon-list-item">
+              <span class="icon-list-mark growth">&#9650;</span>
+              Transitioning between activities
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Tab Panel 2: Observations ──────────────────────── -->
+    <div class="tab-panel hidden" data-tab-panel="observations" style="display: none;">
+
+      <!-- Observation 1 -->
+      <div class="observation-card">
+        <div class="obs-meta">
+          <span>8 May 2026, 10:30 AM</span>
+          <span>&middot;</span>
+          <span>Teacher Sarah</span>
+        </div>
+        <p class="obs-text">During block play, Leo built an elaborate bridge connecting two towers. He spent 25 minutes focused on the task, testing different block configurations. When the bridge collapsed, he initially showed frustration (clenched fists) but then took a deep breath and tried again with larger blocks as support.</p>
+        <div class="obs-tags">
+          <span class="tag tag-framework">Motor Skills</span>
+          <span class="tag tag-data">Problem Solving</span>
+          <span class="tag tag-ai">Emotional Regulation</span>
+        </div>
+        <div class="narrative-box">
+          <p class="narrative-label">AI Narrative</p>
+          <p class="narrative-text">Leo demonstrates sustained engagement and iterative problem-solving. The self-regulation after frustration shows growth from last month's observations.</p>
+        </div>
+      </div>
+
+      <!-- Observation 2 -->
+      <div class="observation-card">
+        <div class="obs-meta">
+          <span>6 May 2026, 2:15 PM</span>
+          <span>&middot;</span>
+          <span>Teacher Sarah</span>
+        </div>
+        <p class="obs-text">Leo refused to participate in group circle time singing activity. He sat at the edge of the circle with his hands over his ears. When offered the option to join a smaller group, he agreed and participated actively.</p>
+        <div class="obs-tags">
+          <span class="tag tag-ai">Social-Emotional</span>
+          <span class="tag tag-data">Sensory</span>
+          <span class="tag tag-framework">Group Dynamics</span>
+        </div>
+        <div class="narrative-box">
+          <p class="narrative-label">AI Narrative</p>
+          <p class="narrative-text">Consistent pattern of sensory sensitivity in large group settings. Small group accommodation effective.</p>
+        </div>
+      </div>
+
+      <!-- Observation 3 -->
+      <div class="observation-card">
+        <div class="obs-meta">
+          <span>3 May 2026, 9:45 AM</span>
+          <span>&middot;</span>
+          <span>Teacher Wei Ting</span>
+        </div>
+        <p class="obs-text">During outdoor play, Leo organised a &ldquo;construction site&rdquo; with 3 other children. He assigned roles: &ldquo;You carry the planks, I&rsquo;ll build, and Mei Mei can be the engineer.&rdquo; He sustained this cooperative play for 15 minutes.</p>
+        <div class="obs-tags">
+          <span class="tag tag-framework">Leadership</span>
+          <span class="tag tag-ai">Social Skills</span>
+          <span class="tag tag-data">Language</span>
+        </div>
+        <div class="narrative-box">
+          <p class="narrative-label">AI Narrative</p>
+          <p class="narrative-text">Significant social milestone. Leo initiated and sustained cooperative play. Leadership emerging through areas of personal interest.</p>
+        </div>
+      </div>
+
+      <!-- Observation 4 -->
+      <div class="observation-card">
+        <div class="obs-meta">
+          <span>1 May 2026, 11:00 AM</span>
+          <span>&middot;</span>
+          <span>Teacher Sarah</span>
+        </div>
+        <p class="obs-text">During story time about &ldquo;The Three Little Pigs&rdquo;, Leo commented: &ldquo;The wolf should have used a crane to knock down the brick house!&rdquo; He then drew a detailed diagram of a crane with labeled parts.</p>
+        <div class="obs-tags">
+          <span class="tag tag-data">Literacy</span>
+          <span class="tag tag-ai">Creative Thinking</span>
+          <span class="tag tag-framework">Visual-Spatial</span>
+        </div>
+        <div class="narrative-box">
+          <p class="narrative-label">AI Narrative</p>
+          <p class="narrative-text">Strong connection between narrative comprehension and technical thinking. Suggests bridging literacy through engineering/construction themes.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Tab Panel 3: Work Samples ────────────────────────── -->
+    <div class="tab-panel hidden" data-tab-panel="work-samples" style="display: none;">
+
+      <div class="panel-card mb-3">
+        <h3 class="section-title">Upload Work Sample</h3>
+
+        <div class="upload-zone">
+          <div class="upload-zone-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <p class="upload-zone-text">Drag and drop a photo of the child&rsquo;s work, or click to browse</p>
+          <p class="upload-zone-hint">Supports JPG, PNG, PDF &middot; Max 10 MB</p>
+        </div>
+
+        <div class="work-sample-preview">
+          <div class="work-sample-thumb">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <div class="work-sample-details">
+            <h5>Leo_FireStation_Drawing.jpg</h5>
+            <p class="profile-meta">Uploaded: 8 May 2026 &middot; 2.4 MB</p>
+
+            <div class="mt-2">
+              <label class="narrative-label">Select Learning Domain(s) for AI Focus</label>
+              <div class="obs-tags">
+                <span class="tag tag-framework">Aesthetics &amp; Creative</span>
+                <span class="tag tag-data">Discovery of the World</span>
+                <span class="tag tag-ai">Motor Skills</span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-sm mt-2" disabled>Analyse Work Sample</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h3 class="section-title" style="margin-bottom: 12px;">
+          <span class="inline-tag-title">
+            <span class="tag tag-ai tag-sm">AI Interpretation</span>
+            Work Sample Analysis
+          </span>
+        </h3>
+        <p class="narrative-text" style="line-height: 1.7; margin-bottom: 16px;">Leo&rsquo;s drawing of a fire station shows strong spatial awareness and creative representation. The structure includes a recognisable building shape with multiple floors, a door, and windows drawn with deliberate symmetry. He has added a fire truck in the garage with identifiable features (ladder, wheels, red colour). The level of detail and proportional accuracy is above typical developmental expectations for K1.</p>
+
+        <div class="two-col-grid">
+          <div class="narrative-box">
+            <p class="narrative-label">Aesthetics &amp; Creative Expression</p>
+            <p class="narrative-text">Demonstrates purposeful use of colour and shape. The drawing shows emerging representational skills with attention to architectural detail. Leo is beginning to plan compositions before drawing.</p>
+          </div>
+          <div class="narrative-box">
+            <p class="narrative-label">Motor Skills</p>
+            <p class="narrative-text">Fine motor control is evident in the straight lines and small details (window panes, ladder rungs). Pencil grip appears functional. Recommend continuing to challenge with more intricate drawing tasks.</p>
+          </div>
+        </div>
+
+        <div class="recommendation-box mt-2">
+          <h4>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A7 7 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5"/></svg>
+            Next Steps
+          </h4>
+          <p>Introduce 3D construction projects (clay, recyclable materials) to extend Leo&rsquo;s spatial understanding from 2D representation into three-dimensional building. Link to the upcoming &ldquo;My Body&rdquo; unit by asking Leo to draw or build body parts with labelled functions.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Tab Panel 4: Assessment ────────────────────────── -->
+    <div class="tab-panel hidden" data-tab-panel="assessment" style="display: none;">
+
+      <div class="panel-card mb-3">
+        <h3 class="section-title" style="margin-bottom: 20px;">Term 1 Assessment Summary</h3>
+        <div class="table-scroll">
+          <table class="budget-table">
+            <thead>
+              <tr>
+                <th>Domain</th>
+                <th class="text-center">Beginning</th>
+                <th class="text-center">Developing</th>
+                <th class="text-center">Achieving</th>
+                <th class="text-center">Excelling</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Aesthetics &amp; Creative Expression</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"><span style="color: var(--success); font-size: 1.2rem;">&#9679;</span></td>
+              </tr>
+              <tr>
+                <td>Discovery of the World</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"><span style="color: var(--info); font-size: 1.2rem;">&#9679;</span></td>
+                <td class="text-center"></td>
+              </tr>
+              <tr>
+                <td>Language &amp; Literacy</td>
+                <td class="text-center"></td>
+                <td class="text-center"><span style="color: #8b5cf6; font-size: 1.2rem;">&#9679;</span></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+              </tr>
+              <tr>
+                <td>Motor Skills Development</td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"><span style="color: var(--success); font-size: 1.2rem;">&#9679;</span></td>
+              </tr>
+              <tr>
+                <td>Numeracy</td>
+                <td class="text-center"></td>
+                <td class="text-center"><span style="color: var(--warning); font-size: 1.2rem;">&#9679;</span></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+              </tr>
+              <tr>
+                <td>Social &amp; Emotional Development</td>
+                <td class="text-center"><span style="color: var(--danger); font-size: 1.2rem;">&#9679;</span></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- AI Assessment Narrative -->
+      <div class="panel-card">
+        <h3 class="section-title" style="margin-bottom: 12px;">
+          <span class="inline-tag-title">
+            <span class="tag tag-ai tag-sm">AI-Generated</span>
+            Assessment Narrative
+          </span>
+        </h3>
+        <p class="narrative-text" style="line-height: 1.7;">Leo&rsquo;s Term 1 profile shows strong bimodal development: exceptional motor/creative abilities alongside emergent social-emotional skills. The Zone of Proximal Development for Leo lies in channeling his construction interests as a bridge to cooperative play and emotional vocabulary building. Recommended focus for Term 2: structured cooperative building projects with assigned roles, emotion naming during play scenarios, and small-group activities that leverage peer modeling.</p>
+      </div>
+    </div>
+
+    <!-- ─── Tab Panel 4: Parent Suggestions ────────────────── -->
+    <div class="tab-panel hidden" data-tab-panel="parent" style="display: none;">
+
+      <div style="margin-bottom: 12px;">
+        <h3 class="section-title" style="margin-bottom: 4px;">
+          <span class="inline-tag-title">
+            <span class="tag tag-ai tag-sm">AI-Generated</span>
+            Home Activities
+          </span>
+        </h3>
+        <p class="profile-meta">Tailored suggestions to extend Leo's learning at home</p>
+      </div>
+
+      <!-- Suggestion 1 -->
+      <div class="suggestion-card mb-2">
+        <h4>Building Together</h4>
+        <p>At home, invite Leo to build with you. Take turns adding pieces. When his structure falls, model saying: &ldquo;That&rsquo;s okay! Let&rsquo;s think about why it fell and try differently.&rdquo; This builds frustration tolerance in a safe setting.</p>
+        <div class="obs-tags">
+          <span class="tag tag-framework">Social-Emotional</span>
+          <span class="tag tag-data">Motor Skills</span>
+        </div>
+      </div>
+
+      <!-- Suggestion 2 -->
+      <div class="suggestion-card mb-2">
+        <h4>Feelings Vocabulary</h4>
+        <p>Read stories about characters who feel frustrated or angry (e.g., &ldquo;When Sophie Gets Angry&rdquo;). After reading, ask: &ldquo;Have you ever felt like Sophie? What did you do?&rdquo; Create a &ldquo;feelings chart&rdquo; together.</p>
+        <div class="obs-tags">
+          <span class="tag tag-data">Language &amp; Literacy</span>
+          <span class="tag tag-framework">Social-Emotional</span>
+        </div>
+      </div>
+
+      <!-- Suggestion 3 -->
+      <div class="suggestion-card mb-2">
+        <h4>Nature Explorer</h4>
+        <p>Take Leo on nature walks with a magnifying glass. Ask open-ended questions: &ldquo;What do you notice about this leaf? Why do you think the ant is carrying that crumb?&rdquo; This builds scientific inquiry and verbal expression.</p>
+        <div class="obs-tags">
+          <span class="tag tag-data">Discovery of the World</span>
+          <span class="tag tag-framework">Language</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ────────────────────────────────────────────────────────
+       Footer
+       ──────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Agape's Sandbox</h4>
+          <p>Four AI-enabled proposals from one Singapore early childhood operator, aligned with ECDA's IDP 2.0 vision for future-ready preschools.</p>
+        </div>
+        <div>
+          <h4>Classroom</h4>
+          <ul>
+            <li><a href="classroom.html">Proposal Overview</a></li>
+            <li><a href="planner.html">Lesson Planner</a></li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="work-sample.html">Work Sample Interpretation</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Leadership</h4>
+          <ul>
+            <li><a href="leadership.html">Proposal Overview</a></li>
+            <li><a href="coach.html">AI Coach</a></li>
+            <li><a href="lna.html">Learning Needs Analysis</a></li>
+            <li><a href="observation.html">AI Lesson Observation</a></li>
+            <li><a href="dashboard.html">Leadership Dashboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>SproutSpace</h4>
+          <ul>
+            <li><a href="sproutspace.html">Proposal Overview</a></li>
+            <li><a href="sproutspace-layout.html">Layout Planner</a></li>
+            <li><a href="sproutspace-inventory.html">Resource Inventory</a></li>
+            <li><a href="sproutspace-control.html">Leadership Control</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Home</h4>
+          <ul>
+            <li><a href="home.html">Proposal Overview</a></li>
+            <li><a href="home-phonics-studio.html">Phonics Studio</a></li>
+            <li><a href="home-benchmark.html">Termly Benchmark</a></li>
+            <li><a href="home-reading-coach.html">Reading Coach</a></li>
+            <li><a href="home-draw-reflect.html">Draw &amp; Reflect</a></li>
+            <li><a href="home-dictionary.html">Talking Dictionary</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Busy Bees &middot; Prepared by Anita Teo</span>
+        <div class="footer-badges">
+          <span class="footer-badge">PDPA Compliant</span>
+          <span class="footer-badge">SG Data Residency</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

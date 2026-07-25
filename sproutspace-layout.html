@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SproutSpace Interactive Layout Planner: design age-appropriate, safe classroom layouts with live safety checks for sightlines, spacing, and evacuation paths.">
+  <title>SproutSpace: Interactive Layout Planner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Interactive layout planner ── */
+    .layout-canvas { touch-action: none; user-select: none; -webkit-user-select: none; overflow: hidden; }
+    .layout-canvas .furn { cursor: grab; transition: box-shadow 0.25s ease, filter 0.25s ease; }
+    .layout-canvas .furn:active { cursor: grabbing; }
+    .furn.lp-tall { background: #6d28d9; }
+    .furn.lp-socket { background: #f59e0b; color: #fff; font-size: 0.58rem; }
+    .lp-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    .layout-canvas .furn { z-index: 1; }
+    .lp-ray { stroke: rgba(28,156,107,0.45); stroke-width: 3; stroke-dasharray: 10 8; }
+    .lp-ray-bad { stroke: rgba(220,38,38,0.65); }
+    .lp-shadow { fill: rgba(220,38,38,0.08); }
+    .lp-exit-zone { fill: rgba(28,156,107,0.05); stroke: rgba(28,156,107,0.3); stroke-width: 2; stroke-dasharray: 8 8; }
+    .lp-exit-zone-bad { fill: rgba(220,38,38,0.10); stroke: rgba(220,38,38,0.5); }
+    .lp-selected { outline: 3px solid var(--accent-proposal); outline-offset: 2px; }
+    .lp-viol-warn { box-shadow: 0 0 0 3px rgba(255,158,24,0.65), var(--shadow); }
+    .lp-viol-danger { box-shadow: 0 0 0 3px rgba(220,38,38,0.75), var(--shadow); }
+    .lp-ghost-bad { filter: grayscale(0.4); opacity: 0.55; }
+    .lp-drag-ghost { opacity: 0.8; pointer-events: none; z-index: 3; }
+    @keyframes lp-pulse-kf { 0%,100% { box-shadow: 0 0 0 3px rgba(220,38,38,0.75); } 50% { box-shadow: 0 0 0 9px rgba(220,38,38,0.25); } }
+    .lp-pulse { animation: lp-pulse-kf 0.5s ease 3; }
+    .lp-handles { position: absolute; top: -14px; right: -14px; display: flex; gap: 4px; z-index: 4; }
+    .lp-handle { width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer;
+      background: var(--bg-card); color: var(--text); font-size: 0.8rem; line-height: 1;
+      box-shadow: 0 1px 2px rgba(45,42,94,0.15), 0 4px 10px rgba(45,42,94,0.15); }
+    .lp-handle:hover { color: var(--accent-proposal); }
+    .lp-handle-del:hover { color: var(--danger); }
+    .lp-tool { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer;
+      background: var(--bg); color: var(--text); font-size: 0.95rem; transition: all var(--transition); }
+    .lp-tool:hover { border-color: var(--accent-proposal); background: var(--accent-proposal-soft); }
+    .lp-hint { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-light);
+      background: var(--accent-proposal-soft); border: 1px solid var(--accent-proposal-line);
+      border-radius: var(--radius-sm); padding: 9px 13px; margin-bottom: 12px; line-height: 1.45; }
+    .lp-hint svg { flex-shrink: 0; color: var(--accent-proposal); }
+    .lp-score { position: relative; width: 128px; margin: 4px auto 2px; }
+    .lp-ring { width: 100%; height: auto; display: block; }
+    .lp-ring-track { fill: none; stroke: var(--border); stroke-width: 10; }
+    .lp-ring-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease; }
+    @media (prefers-reduced-motion: reduce) { .lp-ring-fill { transition: none; } .lp-pulse { animation: none; } }
+    .lp-ring-good { stroke: var(--success); }
+    .lp-ring-warn { stroke: var(--warning); }
+    .lp-ring-bad { stroke: var(--danger); }
+    .lp-score-body { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .lp-score-num { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700; color: var(--secondary); }
+    .lp-score-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+    .lp-score-state { text-align: center; font-size: 0.8rem; font-weight: 600; margin: 6px 0 16px; }
+    .lp-score-state.lp-good { color: var(--success); }
+    .lp-score-state.lp-warnc { color: var(--warning); }
+    .lp-score-state.lp-bad { color: var(--danger); }
+    .lp-flag { cursor: pointer; }
+    .lp-flag:hover { filter: brightness(0.98); }
+    .lp-cite { font-size: 0.7rem; color: var(--text-muted); font-style: italic; }
+    .lp-dim { margin-left: auto; font-size: 0.68rem; color: var(--text-muted); }
+    #lpSubmit:disabled { opacity: 0.55; cursor: not-allowed; }
+  </style>
+</head>
+<body class="hub-sproutspace">
+<div class="bg-blobs" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+  <div class="bg-blob bg-blob-4"></div>
+  <div class="bg-blob bg-blob-5"></div>
+  <div class="bg-blob bg-blob-6"></div>
+</div>
+
+  <!-- ─── Navigation (umbrella) ─────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="index.html" class="navbar-brand"><div class="logo">AG</div> Agape's Sandbox</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
+          <a href="classroom.html">Proposal Overview</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Sample Interpretation</a></div></li>
+        <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
+          <a href="leadership.html">Proposal Overview</a><a href="coach.html">AI Coach</a><a href="lna.html">Learning Needs Analysis</a><a href="observation.html">AI Lesson Observation</a><a href="dashboard.html">Leadership Dashboard</a></div></li>
+        <li><span class="nav-dropdown-trigger">SproutSpace</span><div class="nav-dropdown">
+          <a href="sproutspace.html">Proposal Overview</a><a href="sproutspace-layout.html" class="active">Layout Planner</a><a href="sproutspace-inventory.html">Resource Inventory</a><a href="sproutspace-control.html">Leadership Control</a></div></li>
+        <li><span class="nav-dropdown-trigger">Home</span><div class="nav-dropdown">
+          <a href="home.html">Proposal Overview</a><a href="home-phonics-studio.html">Phonics Studio</a><a href="home-benchmark.html">Termly Benchmark</a><a href="home-reading-coach.html">Reading Coach</a><a href="home-draw-reflect.html">Draw &amp; Reflect</a><a href="home-dictionary.html">Talking Dictionary</a></div></li>
+        <li><a href="index.html#compliance">Compliance</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ─── Page Header ───────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>&#8250;</span>
+        <a href="sproutspace.html">SproutSpace</a>
+        <span>&#8250;</span>
+        <span class="current">Layout Planner</span>
+      </div>
+      <span class="hub-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        SproutSpace
+      </span>
+      <h1>Interactive Layout Planner</h1>
+      <p>Drag furniture and learning zones onto a to-scale floor plan, choose the age group, and let SproutSpace run live safety checks for sightlines, spacing, and clear evacuation paths before any layout goes to a Centre Director for approval.</p>
+      <div class="mt-2">
+        <a href="sproutspace.html" class="btn btn-secondary btn-sm">&larr; Back to SproutSpace</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── Main Content ──────────────────────────────────────── -->
+  <main class="container main-content-spacing">
+
+    <!-- Layout shell: palette | canvas | inspector -->
+    <div class="layout-shell">
+
+      <!-- ─── Left: Furniture & Zones palette ─────────── -->
+      <div class="layout-palette">
+        <h3>Furniture &amp; Zones</h3>
+        <p class="profile-meta" style="margin-bottom:14px;">Drag an item onto the canvas to place it.</p>
+
+        <div class="palette-item" data-type="lowshelf">
+          <span class="palette-swatch" style="background:#8b5cf6;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+          </span>
+          Low Shelf <span class="lp-dim">0.9&nbsp;m</span>
+        </div>
+
+        <div class="palette-item" data-type="tallshelf">
+          <span class="palette-swatch" style="background:#6d28d9;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="8" x2="19" y2="8"/><line x1="5" y1="14" x2="19" y2="14"/></svg>
+          </span>
+          Tall Shelf <span class="lp-dim">1.5&nbsp;m</span>
+        </div>
+
+        <div class="palette-item" data-type="table">
+          <span class="palette-swatch" style="background:var(--info);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="9" rx="1"/><line x1="6" y1="15" x2="6" y2="20"/><line x1="18" y1="15" x2="18" y2="20"/></svg>
+          </span>
+          Activity Table
+        </div>
+
+        <div class="palette-item" data-type="rug">
+          <span class="palette-swatch" style="background:var(--sprout);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
+          Soft Rug / Circle
+        </div>
+
+        <div class="palette-item" data-type="reading">
+          <span class="palette-swatch" style="background:var(--accent-warm);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </span>
+          Reading Corner
+        </div>
+
+        <div class="palette-item" data-type="sink">
+          <span class="palette-swatch" style="background:#64748b;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z"/></svg>
+          </span>
+          Water / Sink
+        </div>
+
+        <div class="palette-item" data-type="socket">
+          <span class="palette-swatch" style="background:#f59e0b;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </span>
+          Power Socket
+        </div>
+
+        <div class="palette-item" data-type="door">
+          <span class="palette-swatch" style="background:#94a3b8;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561z"/></svg>
+          </span>
+          Door / Exit
+        </div>
+
+        <p class="profile-meta" style="margin-top:14px;line-height:1.5;">Items snap to the 0.5&nbsp;m grid. Select an item to rotate (<strong>R</strong>) or delete (<strong>Del</strong>). Tall furniture is auto-flagged where it blocks a sightline.</p>
+      </div>
+
+      <!-- ─── Centre: Canvas ──────────────────────────── -->
+      <div class="layout-canvas-wrap">
+        <div class="layout-toolbar">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <label for="ageGroup" class="profile-meta" style="font-weight:600;">Age group</label>
+            <select class="age-select" id="ageGroup">
+              <option value="ic">Infant Care</option>
+              <option value="pg">Playgroup</option>
+              <option value="n1">Nursery N1</option>
+              <option value="n2">Nursery N2</option>
+              <option value="k1" selected>Kindergarten K1</option>
+              <option value="k2">Kindergarten K2</option>
+            </select>
+            <select class="age-select" id="lpPreset" aria-label="Room presets">
+              <option value="">Presets…</option>
+              <option value="ic">Infant Care room</option>
+              <option value="n2">Nursery N2 room</option>
+              <option value="k1">K1 reference room</option>
+              <option value="k2">K2 room</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="lp-tool" id="lpUndo" title="Undo (Ctrl+Z)" aria-label="Undo">↺</button>
+            <button class="lp-tool" id="lpRedo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↻</button>
+            <button class="lp-tool" id="lpClear" title="Clear furniture" aria-label="Clear furniture">🗑</button>
+            <span class="profile-meta">1 grid = 0.5&nbsp;m</span>
+          </div>
+        </div>
+
+        <div class="lp-hint" id="lpHint">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Try it: drag the <strong>Tall Shelf</strong> into the middle of the room and watch the safety engine react — then fix it and submit.
+        </div>
+
+        <div class="layout-canvas" id="layoutCanvas">
+          <svg id="lpOverlay" class="lp-overlay" viewBox="0 0 1200 800" preserveAspectRatio="none" aria-hidden="true"></svg>
+        </div>
+
+        <p class="profile-meta" style="margin-top:12px;line-height:1.55;">
+          6&nbsp;m &times; 4&nbsp;m room to scale. Every drop, rotation, and age-group change re-runs all eight ECDA/SCDF safety rules live — sightlines, egress, wet/dry separation, storage heights, and floor density.
+        </p>
+      </div>
+
+      <!-- ─── Right: Live Safety Check inspector ──────── -->
+      <div class="layout-inspector">
+        <div class="lp-score">
+          <svg viewBox="0 0 120 120" class="lp-ring" role="img" aria-label="Layout compliance score">
+            <circle cx="60" cy="60" r="52" class="lp-ring-track"/>
+            <circle cx="60" cy="60" r="52" class="lp-ring-fill" id="lpRingFill" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="lp-score-body">
+            <span class="lp-score-num" id="lpScoreText">100%</span>
+            <span class="lp-score-label">Compliance</span>
+          </div>
+        </div>
+        <p class="lp-score-state" id="lpScoreState" aria-live="polite"></p>
+
+        <h3>Live Safety Check</h3>
+        <div id="lpFlags" aria-live="polite"></div>
+
+        <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border);">
+          <h3 style="margin-bottom:12px;">My Layouts</h3>
+          <select class="age-select" id="lpSaved" style="width:100%;margin-bottom:10px;"></select>
+          <button class="btn btn-secondary btn-sm" id="lpSave" style="width:100%;justify-content:center;">Save Current Layout</button>
+          <p class="profile-meta" style="margin-top:10px;line-height:1.5;">Layouts save to this device (demo). In production they sync to HQ with the Director&rsquo;s approval trail.</p>
+        </div>
+
+        <button class="btn btn-primary mt-3" id="lpSubmit" disabled style="width:100%;justify-content:center;background:var(--sprout);border-color:var(--sprout);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Submit Layout for Approval
+        </button>
+        <p class="profile-meta" style="margin-top:8px;text-align:center;">Enabled at 100% compliance</p>
+      </div>
+
+    </div>
+
+    <!-- ─── How the planner enforces safe, age-appropriate spaces ─── -->
+    <div class="panel-card mt-4">
+      <div class="section-header" style="text-align:left;margin-bottom:24px;">
+        <span class="section-label" style="color:var(--sprout);">Built-In Safeguards</span>
+        <h2 style="font-size:1.5rem;">How the Planner Keeps Every Layout Safe</h2>
+        <p style="margin:0;">SproutSpace turns ECDA and SCDF licensing requirements into live, visual rules. Each placement is checked against the selected age group, so a layout cannot be submitted for approval until it is age-appropriate, visible, and evacuable.</p>
+      </div>
+
+      <div class="two-col-grid">
+
+        <div>
+          <h4 style="font-size:1rem;color:var(--secondary);display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="width:34px;height:34px;border-radius:9px;background:var(--sprout-soft);color:var(--sprout-dark);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </span>
+            Age-appropriate spacing
+          </h4>
+          <p style="font-size:0.9rem;color:var(--text-light);line-height:1.6;">Each age group carries its own ratio and floor-area rules. Selecting <strong>Kindergarten K1</strong> sets the minimum per-child area and caps furniture density, so the room never exceeds the licensed capacity for that band - from Infant Care through K2.</p>
+        </div>
+
+        <div>
+          <h4 style="font-size:1rem;color:var(--secondary);display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="width:34px;height:34px;border-radius:9px;background:var(--sprout-soft);color:var(--sprout-dark);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+            Supervision &amp; visibility
+          </h4>
+          <p style="font-size:0.9rem;color:var(--text-light);line-height:1.6;">The planner traces the educator&rsquo;s line of sight and flags any furniture over 1.2&nbsp;m that would create a blind spot. Tall storage is pushed to the perimeter so children remain visible from the circle area at all times.</p>
+        </div>
+
+        <div>
+          <h4 style="font-size:1rem;color:var(--secondary);display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="width:34px;height:34px;border-radius:9px;background:var(--sprout-soft);color:var(--sprout-dark);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561z"/></svg>
+            </span>
+            Clear evacuation paths
+          </h4>
+          <p style="font-size:0.9rem;color:var(--text-light);line-height:1.6;">SCDF rules require unobstructed routes to every exit. The planner keeps a minimum walkway width clear of furniture and confirms at least two independent paths reach the door before a layout can be submitted.</p>
+        </div>
+
+        <div>
+          <h4 style="font-size:1rem;color:var(--secondary);display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="width:34px;height:34px;border-radius:9px;background:var(--sprout-soft);color:var(--sprout-dark);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </span>
+            Mapped to safety KPIs
+          </h4>
+          <p style="font-size:0.9rem;color:var(--text-light);line-height:1.6;">Every check feeds the sandbox KPI of <strong>100% first-time classroom-layout safety approval</strong>, while reusable, pre-validated templates cut planning time by <strong>50%</strong> - Centre Directors approve digitally rather than re-measuring on paper.</p>
+        </div>
+
+      </div>
+
+      <div class="narrative-box mt-3">
+        <span class="narrative-label">Why it matters</span>
+        <p class="narrative-text">By the time a layout reaches a Centre Director, the hard safety questions are already answered. Educators spend their energy on the pedagogy of the space - provocations, flow between zones, quiet versus active areas - not on chasing compliance, and HQ gains a consistent, evidence-based record of every room across the network.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ─── Footer ────────────────────────────────────────────── -->
+  <footer class="footer"><div class="container"><div class="footer-grid">
+    <div><h4>Agape's Sandbox</h4><p>Four AI-enabled proposals from one Singapore early childhood operator, aligned with ECDA's IDP 2.0 vision for future-ready preschools.</p></div>
+    <div><h4>Classroom</h4><ul><li><a href="classroom.html">Proposal Overview</a></li><li><a href="planner.html">Lesson Planner</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="work-sample.html">Work Sample Interpretation</a></li></ul></div>
+    <div><h4>Leadership</h4><ul><li><a href="leadership.html">Proposal Overview</a></li><li><a href="coach.html">AI Coach</a></li><li><a href="lna.html">Learning Needs Analysis</a></li><li><a href="observation.html">AI Lesson Observation</a></li><li><a href="dashboard.html">Leadership Dashboard</a></li></ul></div>
+    <div><h4>SproutSpace</h4><ul><li><a href="sproutspace.html">Proposal Overview</a></li><li><a href="sproutspace-layout.html">Layout Planner</a></li><li><a href="sproutspace-inventory.html">Resource Inventory</a></li><li><a href="sproutspace-control.html">Leadership Control</a></li></ul></div>
+  <div><h4>Home</h4><ul><li><a href="home.html">Proposal Overview</a></li><li><a href="home-phonics-studio.html">Phonics Studio</a></li><li><a href="home-benchmark.html">Termly Benchmark</a></li><li><a href="home-reading-coach.html">Reading Coach</a></li><li><a href="home-draw-reflect.html">Draw &amp; Reflect</a></li><li><a href="home-dictionary.html">Talking Dictionary</a></li></ul></div>
+  </div><div class="footer-bottom"><span>&copy; 2026 Busy Bees &middot; Prepared by Anita Teo</span><div class="footer-badges"><span class="footer-badge">PDPA Compliant</span><span class="footer-badge">SG Data Residency</span></div></div></div></footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/sproutspace-layout.js"></script>
+</body>
+</html>

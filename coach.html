@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PedaForge AI Coaching Agent: multiple coaching modes aligned to ECDA Quality Teaching Tool for Singapore early childhood educators.">
+  <title>PedaForge: AI Coach</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ─── Coach Page Layout ──────────────────────────────── */
+    .coach-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+      padding-top: 24px;
+      padding-bottom: 60px;
+    }
+
+    /* ─── Mode Strip ─────────────────────────────────────── */
+    .mode-strip {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .mode-strip-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .mode-strip-btn:hover {
+      border-color: var(--primary);
+      background: rgba(232,6,60,0.04);
+    }
+
+    .mode-strip-btn.active {
+      border-color: var(--primary);
+      background: rgba(232,6,60,0.08);
+      color: var(--primary);
+    }
+
+    .mode-strip-btn .mode-strip-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .mode-strip-btn .mode-strip-label {
+      white-space: nowrap;
+    }
+
+    /* ─── Standalone Chat ────────────────────────────────── */
+    .chat-standalone {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-standalone .chat-standalone-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--secondary);
+      color: white;
+    }
+
+    .chat-standalone .chat-standalone-header h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .chat-standalone .chat-header-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-standalone .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+
+    .chat-standalone .status-text {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.7);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-standalone .qtt-badge {
+      padding: 3px 10px;
+      background: rgba(254,205,27,0.2);
+      color: var(--accent);
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .chat-standalone .chat-standalone-body {
+      padding: 20px;
+      min-height: 420px;
+      max-height: 420px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--bg);
+    }
+
+    .chat-standalone .chat-message {
+      display: flex;
+      gap: 12px;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    .chat-standalone .chat-message.user {
+      flex-direction: row-reverse;
+    }
+
+    .chat-standalone .chat-message .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .chat-standalone .chat-message.assistant .avatar {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+
+    .chat-standalone .chat-message.user .avatar {
+      background: var(--accent);
+      color: white;
+    }
+
+    .chat-standalone .chat-message .chat-bubble {
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-width: 80%;
+    }
+
+    .chat-standalone .chat-message.assistant .chat-bubble {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .chat-standalone .chat-message.user .chat-bubble {
+      background: var(--primary);
+      color: white;
+    }
+
+    .chat-standalone .chat-bubble .qtt-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(254,205,27,0.15);
+      color: #c07d00;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .chat-standalone .chat-standalone-input {
+      display: flex;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-standalone .chat-standalone-input input {
+      flex: 1;
+      padding: 10px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: var(--font);
+      outline: none;
+      transition: border-color var(--transition);
+    }
+
+    .chat-standalone .chat-standalone-input input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .chat-standalone .chat-standalone-input input:focus {
+      border-color: var(--primary);
+    }
+
+    .chat-standalone .chat-standalone-input button {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+      font-family: var(--font);
+      font-size: 0.9rem;
+      transition: all var(--transition);
+    }
+
+    .chat-standalone .chat-standalone-input button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(232,6,60,0.3);
+    }
+
+    /* ─── Prompt Starters ────────────────────────────────── */
+    .prompt-starters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .prompt-starter {
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 0.82rem;
+      color: var(--text-light);
+      line-height: 1.5;
+      text-align: left;
+      transition: all var(--transition);
+    }
+
+    .prompt-starter:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(232,6,60,0.04);
+    }
+
+    /* ─── Sidebar Panels ─────────────────────────────────── */
+    .coach-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .sidebar-panel h3 {
+      font-size: 0.95rem;
+      color: var(--secondary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .session-meta {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px 16px;
+      font-size: 0.85rem;
+    }
+
+    .session-meta dt {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .session-meta dd {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ─── Mode Explained Cards ───────────────────────────── */
+    .mode-explained {
+      padding: 12px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-explained:last-child {
+      margin-bottom: 0;
+    }
+
+    .mode-explained-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .mode-explained-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--secondary);
+    }
+
+    .mode-intensity {
+      display: flex;
+      gap: 3px;
+    }
+
+    .mode-intensity-bar {
+      width: 14px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+    }
+
+    .mode-intensity-bar.filled {
+      background: var(--accent);
+    }
+
+    .mode-explained-desc {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+
+    .mode-explained-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(232,6,60,0.08);
+      color: var(--primary);
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    /* ─── QTT Progress ───────────────────────────────────── */
+    .qtt-progress-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .qtt-progress-item .qtt-progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .qtt-progress-item .qtt-progress-name {
+      font-size: 0.82rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .qtt-progress-item .qtt-progress-value {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .qtt-progress-item .bar-track {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .qtt-progress-item .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.8s ease;
+    }
+
+    /* ─── Coach CTA ──────────────────────────────────────── */
+    .coach-cta-panel {
+      background: linear-gradient(135deg, var(--secondary) 0%, #3d2663 100%);
+      color: white;
+      border: none;
+      text-align: center;
+    }
+
+    .coach-cta-panel h3 {
+      color: white;
+      justify-content: center;
+    }
+
+    .coach-cta-panel p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .coach-cta-panel .btn-accent {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* ─── Responsive ─────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .coach-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .mode-strip {
+        flex-wrap: wrap;
+      }
+
+      .mode-strip-btn {
+        flex: 1 1 calc(50% - 4px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .mode-strip-btn {
+        flex: 1 1 100%;
+      }
+
+      .prompt-starters {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="hub-leadership">
+<div class="bg-blobs" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+  <div class="bg-blob bg-blob-4"></div>
+  <div class="bg-blob bg-blob-5"></div>
+  <div class="bg-blob bg-blob-6"></div>
+</div>
+
+  <!-- ────────────────────────────────────────────────────────
+       Navigation
+       ──────────────────────────────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <div class="logo">AG</div>
+        Agape's Sandbox
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li>
+          <span class="nav-dropdown-trigger">Classroom</span>
+          <div class="nav-dropdown">
+            <a href="classroom.html">Proposal Overview</a>
+            <a href="planner.html">Lesson Planner</a>
+            <a href="portfolio.html">Portfolio</a>
+            <a href="work-sample.html">Work Sample Interpretation</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">Leadership</span>
+          <div class="nav-dropdown">
+            <a href="leadership.html">Proposal Overview</a>
+            <a href="coach.html" class="active">AI Coach</a>
+            <a href="lna.html">Learning Needs Analysis</a>
+            <a href="observation.html">AI Lesson Observation</a>
+            <a href="dashboard.html">Leadership Dashboard</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">SproutSpace</span>
+          <div class="nav-dropdown">
+            <a href="sproutspace.html">Proposal Overview</a>
+            <a href="sproutspace-layout.html">Layout Planner</a>
+            <a href="sproutspace-inventory.html">Resource Inventory</a>
+            <a href="sproutspace-control.html">Leadership Control</a>
+          </div>
+        </li>
+        <li>
+          <span class="nav-dropdown-trigger">Home</span>
+          <div class="nav-dropdown">
+            <a href="home.html">Proposal Overview</a>
+            <a href="home-phonics-studio.html">Phonics Studio</a>
+            <a href="home-benchmark.html">Termly Benchmark</a>
+            <a href="home-reading-coach.html">Reading Coach</a>
+            <a href="home-draw-reflect.html">Draw &amp; Reflect</a>
+            <a href="home-dictionary.html">Talking Dictionary</a>
+          </div>
+        </li>
+        <li><a href="index.html#compliance">Compliance</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- ────────────────────────────────────────────────────────
+       Page Header
+       ──────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>&rsaquo;</span>
+        <a href="leadership.html">Leadership</a>
+        <span>&rsaquo;</span>
+        <span class="current">AI Coach</span>
+      </div>
+      <h1>AI Coaching Agent</h1>
+      <p>Multiple coaching modes aligned to ECDA Quality Teaching Tool, from supportive reflection to rigorous scenario analysis.</p>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────
+       Main Content
+       ──────────────────────────────────────────────────────── -->
+  <div class="container" style="padding-top: 80px;">
+    <div class="coach-layout">
+
+      <!-- ─── Left Column: Chat Interface ───────────────── -->
+      <div class="coach-main">
+
+        <!-- Mode Selector Strip -->
+        <div class="mode-strip">
+          <button class="mode-strip-btn active" data-mode="reflective">
+            <span class="mode-strip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A7 7 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5"/></svg></span>
+            <span class="mode-strip-label">Reflective Practice</span>
+          </button>
+          <button class="mode-strip-btn" data-mode="qtt">
+            <span class="mode-strip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+            <span class="mode-strip-label">QTT Deep Dive</span>
+          </button>
+          <button class="mode-strip-btn" data-mode="socratic">
+            <span class="mode-strip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+            <span class="mode-strip-label">Socratic Inquiry</span>
+          </button>
+          <button class="mode-strip-btn" data-mode="scenario">
+            <span class="mode-strip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span>
+            <span class="mode-strip-label">Scenario Analysis</span>
+          </button>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="chat-standalone">
+          <div class="chat-standalone-header">
+            <h4 id="chatModeTitle">AI Coach: Reflective Practice Mode</h4>
+            <div class="chat-header-meta">
+              <span class="status-text">
+                <span class="status-dot"></span>
+                Active
+              </span>
+              <span class="qtt-badge">QTT-Aligned</span>
+            </div>
+          </div>
+          <div class="chat-standalone-body chat-demo-body">
+
+            <div class="chat-message assistant">
+              <div class="avatar">PF</div>
+              <div class="chat-bubble">
+                Welcome! I'm your PedaForge Coach. Let's reflect on today's teaching. Can you describe a moment from today where you felt a child was particularly engaged, or particularly struggling?
+              </div>
+            </div>
+
+            <div class="chat-message user">
+              <div class="avatar">You</div>
+              <div class="chat-bubble">
+                During our 'Community Helpers' activity, Leo got frustrated when building the fire station. He threw the blocks and started crying.
+              </div>
+            </div>
+
+            <div class="chat-message assistant">
+              <div class="avatar">PF</div>
+              <div class="chat-bubble">
+                That sounds like a significant moment. Before we explore strategies, tell me: what was your immediate reaction when Leo threw the blocks?
+                <div class="qtt-tag">QTT: Teacher-Child Interaction</div>
+              </div>
+            </div>
+
+            <div class="chat-message user">
+              <div class="avatar">You</div>
+              <div class="chat-bubble">
+                I sat at his eye level, acknowledged his anger, and offered him a different tool.
+              </div>
+            </div>
+
+            <div class="chat-message assistant">
+              <div class="avatar">PF</div>
+              <div class="chat-bubble">
+                Excellent emotional scaffolding. You instinctively acted as Leo's Key Person by getting to his level and validating his feelings. For tomorrow, consider guiding Leo to articulate what frustrated him before offering alternatives. This builds his self-regulation vocabulary. What specific words might you use?
+                <div class="qtt-tag">QTT: Sustained Shared Thinking</div>
+              </div>
+            </div>
+
+          </div>
+          <div class="chat-standalone-input chat-demo-input">
+            <input type="text" placeholder="Share your reflection...">
+            <button>Send</button>
+          </div>
+        </div>
+
+        <!-- Prompt Starters -->
+        <div class="prompt-starters">
+          <button class="prompt-starter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> A child in my class is struggling with peer interactions</button>
+          <button class="prompt-starter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> I want to improve my questioning techniques</button>
+          <button class="prompt-starter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Help me reflect on today's outdoor learning session</button>
+          <button class="prompt-starter"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> How can I better support a child with additional needs?</button>
+        </div>
+
+      </div>
+
+      <!-- ─── Right Column: Sidebar ─────────────────────── -->
+      <div class="coach-sidebar">
+
+        <!-- Session Info Panel -->
+        <div class="sidebar-panel">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> Session Info</h3>
+          <dl class="session-meta">
+            <dt>Session</dt>
+            <dd>Today's Reflection</dd>
+            <dt>Date</dt>
+            <dd>May 2026</dd>
+            <dt>Mode</dt>
+            <dd id="sidebarModeName">Reflective Practice</dd>
+            <dt>Messages</dt>
+            <dd id="sidebarMsgCount">5</dd>
+            <dt>QTT Domains</dt>
+            <dd>Teacher-Child Interaction, Sustained Shared Thinking</dd>
+          </dl>
+        </div>
+
+        <!-- Coaching Modes Explained -->
+        <div class="sidebar-panel">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Coaching Modes</h3>
+
+          <div class="mode-explained">
+            <div class="mode-explained-header">
+              <span class="mode-explained-name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A7 7 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5"/></svg> Reflective Practice</span>
+              <div class="mode-intensity">
+                <span class="mode-intensity-bar filled"></span>
+                <span class="mode-intensity-bar"></span>
+                <span class="mode-intensity-bar"></span>
+                <span class="mode-intensity-bar"></span>
+              </div>
+            </div>
+            <div class="mode-explained-desc">Gibbs' Reflective Cycle for structured self-evaluation.</div>
+            <span class="mode-explained-tag">Best for: Daily reflection</span>
+          </div>
+
+          <div class="mode-explained">
+            <div class="mode-explained-header">
+              <span class="mode-explained-name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> QTT Deep Dive</span>
+              <div class="mode-intensity">
+                <span class="mode-intensity-bar filled"></span>
+                <span class="mode-intensity-bar filled"></span>
+                <span class="mode-intensity-bar"></span>
+                <span class="mode-intensity-bar"></span>
+              </div>
+            </div>
+            <div class="mode-explained-desc">ECDA Quality Teaching Tool domains for targeted coaching.</div>
+            <span class="mode-explained-tag">Best for: Targeted improvement</span>
+          </div>
+
+          <div class="mode-explained">
+            <div class="mode-explained-header">
+              <span class="mode-explained-name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Socratic Inquiry</span>
+              <div class="mode-intensity">
+                <span class="mode-intensity-bar filled"></span>
+                <span class="mode-intensity-bar filled"></span>
+                <span class="mode-intensity-bar filled"></span>
+                <span class="mode-intensity-bar"></span>
+              </div>
+            </div>
+            <div class="mode-explained-desc">Deep questioning to surface hidden pedagogical assumptions.</div>
+            <span class="mode-explained-tag">Best for: Surfacing assumptions</span>
+          </div>
+
+          <div class="mode-explained">
+            <div class="mode-explained-header">
+              <span class="mode-explained-name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> Scenario Analysis</span>
+              <div class="mode-intensity">
+                <span class="mode-intensity-bar filled"></span>
+                <span class="mode-intensity-bar filled"></span>
+                <span class="mode-intensity-bar filled"></span>
+                <span class="mode-intensity-bar filled"></span>
+              </div>
+            </div>
+            <div class="mode-explained-desc">Pre-mortem planning to stress-test lessons before delivery.</div>
+            <span class="mode-explained-tag">Best for: Lesson preparation</span>
+          </div>
+        </div>
+
+        <!-- QTT Progress Panel -->
+        <div class="sidebar-panel">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> QTT Progress</h3>
+          <div class="qtt-progress-list">
+            <div class="qtt-progress-item">
+              <div class="qtt-progress-label">
+                <span class="qtt-progress-name">Learning Environment</span>
+                <span class="qtt-progress-value">80%</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 80%; background: linear-gradient(90deg, var(--primary), var(--primary-light));"></div>
+              </div>
+            </div>
+            <div class="qtt-progress-item">
+              <div class="qtt-progress-label">
+                <span class="qtt-progress-name">Teacher-Child Interaction</span>
+                <span class="qtt-progress-value">60%</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 60%; background: linear-gradient(90deg, var(--info), #60a5fa);"></div>
+              </div>
+            </div>
+            <div class="qtt-progress-item">
+              <div class="qtt-progress-label">
+                <span class="qtt-progress-name">Curriculum &amp; Pedagogy</span>
+                <span class="qtt-progress-value">90%</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 90%; background: linear-gradient(90deg, var(--success), #34d399);"></div>
+              </div>
+            </div>
+            <div class="qtt-progress-item">
+              <div class="qtt-progress-label">
+                <span class="qtt-progress-name">Assessment for Learning</span>
+                <span class="qtt-progress-value">40%</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 40%; background: linear-gradient(90deg, var(--accent), var(--accent-light));"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Speak to a Real Coach CTA -->
+        <div class="sidebar-panel coach-cta-panel">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Need Human Support?</h3>
+          <p>Connect with your leaders for personalised guidance beyond what AI can offer.</p>
+          <a href="#" class="btn btn-accent" onclick="alert('This feature connects you with your centre\'s leaders and mentors. Available in the full platform.'); return false;">Connect with Your Leaders</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────
+       Footer
+       ──────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Agape's Sandbox</h4>
+          <p>Four AI-enabled proposals from one Singapore early childhood operator, aligned with ECDA's IDP 2.0 vision for future-ready preschools.</p>
+        </div>
+        <div>
+          <h4>Classroom</h4>
+          <ul>
+            <li><a href="classroom.html">Proposal Overview</a></li>
+            <li><a href="planner.html">Lesson Planner</a></li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="work-sample.html">Work Sample Interpretation</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Leadership</h4>
+          <ul>
+            <li><a href="leadership.html">Proposal Overview</a></li>
+            <li><a href="coach.html">AI Coach</a></li>
+            <li><a href="lna.html">Learning Needs Analysis</a></li>
+            <li><a href="observation.html">AI Lesson Observation</a></li>
+            <li><a href="dashboard.html">Leadership Dashboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>SproutSpace</h4>
+          <ul>
+            <li><a href="sproutspace.html">Proposal Overview</a></li>
+            <li><a href="sproutspace-layout.html">Layout Planner</a></li>
+            <li><a href="sproutspace-inventory.html">Resource Inventory</a></li>
+            <li><a href="sproutspace-control.html">Leadership Control</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Home</h4>
+          <ul>
+            <li><a href="home.html">Proposal Overview</a></li>
+            <li><a href="home-phonics-studio.html">Phonics Studio</a></li>
+            <li><a href="home-benchmark.html">Termly Benchmark</a></li>
+            <li><a href="home-reading-coach.html">Reading Coach</a></li>
+            <li><a href="home-draw-reflect.html">Draw &amp; Reflect</a></li>
+            <li><a href="home-dictionary.html">Talking Dictionary</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Busy Bees &middot; Prepared by Anita Teo</span>
+        <div class="footer-badges">
+          <span class="footer-badge">PDPA Compliant</span>
+          <span class="footer-badge">SG Data Residency</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    /* ─── Coach Page: Mode Strip + Chat Integration ─────── */
+    (() => {
+      const MODE_TITLES = {
+        reflective: 'AI Coach: Reflective Practice Mode',
+        qtt: 'AI Coach: QTT Deep Dive Mode',
+        socratic: 'AI Coach: Socratic Inquiry Mode',
+        scenario: 'AI Coach: Scenario Analysis Mode'
+      };
+
+      const MODE_NAMES = {
+        reflective: 'Reflective Practice',
+        qtt: 'QTT Deep Dive',
+        socratic: 'Socratic Inquiry',
+        scenario: 'Scenario Analysis'
+      };
+
+      const stripBtns = document.querySelectorAll('.mode-strip-btn');
+      const chatTitle = document.getElementById('chatModeTitle');
+      const sidebarMode = document.getElementById('sidebarModeName');
+
+      if (stripBtns.length === 0) return;
+
+      stripBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mode = btn.getAttribute('data-mode');
+          if (!mode) return;
+
+          // Update strip active state
+          stripBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          // Update chat header title
+          if (chatTitle) {
+            chatTitle.innerHTML = MODE_TITLES[mode] || MODE_TITLES.reflective;
+          }
+
+          // Update sidebar mode name
+          if (sidebarMode) {
+            sidebarMode.textContent = MODE_NAMES[mode] || MODE_NAMES.reflective;
+          }
+
+          // Render conversation from app.js COACHING_CONVERSATIONS
+          if (typeof renderConversation === 'function') {
+            renderConversation(mode);
+          }
+
+          // Update message count after rendering
+          setTimeout(() => {
+            const msgCount = document.getElementById('sidebarMsgCount');
+            const messages = document.querySelectorAll('.chat-demo-body .chat-message');
+            if (msgCount) {
+              msgCount.textContent = messages.length;
+            }
+          }, 1200);
+        });
+      });
+
+      // Observation handoff: ?handoff=obs-20260514 opens Reflective mode
+      // with a scripted opener that references the replayed observation.
+      // The param is only a key into canned text — never rendered raw.
+      const HANDOFF_OPENERS = {
+        'obs-20260514': 'I’ve read Mdm Lim’s 14 May observation of your K1 lesson, Sarah. Your Sustained Shared Thinking goal is now evidenced — the water-table exchange with Amira was a textbook open question. Shall we plan the small-group inquiry stretch goal, or talk through the pack-away transition first?'
+      };
+      const handoffKey = new URLSearchParams(window.location.search).get('handoff');
+      const opener = HANDOFF_OPENERS[handoffKey];
+      if (opener) {
+        const reflectiveBtn = document.querySelector('.mode-strip-btn[data-mode="reflective"]');
+        if (reflectiveBtn) reflectiveBtn.click();
+        // Reflective mode renders 5 canned messages over ~2.2s; land after them.
+        setTimeout(() => {
+          const body = document.querySelector('.chat-demo-body');
+          if (body && typeof createChatMessage === 'function') {
+            const typing = document.createElement('div');
+            typing.className = 'chat-message assistant';
+            typing.innerHTML = '<div class="avatar">PF</div><div class="chat-bubble typing-indicator"><span></span><span></span><span></span></div>';
+            body.appendChild(typing);
+            body.scrollTop = body.scrollHeight;
+            setTimeout(() => {
+              typing.remove();
+              body.appendChild(createChatMessage('assistant', opener));
+              body.scrollTop = body.scrollHeight;
+            }, 900);
+          }
+        }, 2600);
+      }
+
+      // Persist coaching sessions: observe the chat body and upsert the
+      // transcript (canned demo AI + real user inputs) per page visit.
+      (function initCoachPersistence() {
+        const body = document.querySelector('.chat-demo-body');
+        if (!body || !window.MutationObserver) return;
+        let sessionId = null, saveTimer = null, saving = false;
+
+        function currentMode() {
+          const active = document.querySelector('.mode-strip-btn.active');
+          return active ? active.getAttribute('data-mode') : 'reflective';
+        }
+        function transcript() {
+          return Array.from(body.querySelectorAll('.chat-message')).map(el => ({
+            role: el.classList.contains('user') ? 'user' : 'assistant',
+            text: (el.querySelector('.chat-bubble') || el).textContent.trim()
+          })).filter(m => m.text && !/^\s*$/.test(m.text));
+        }
+        function save() {
+          if (saving || !(window.pfDb && window.pfUser)) return;
+          const msgs = transcript();
+          if (msgs.length < 2) return;
+          saving = true;
+          const rec = { user_id: window.pfUser.id, mode: currentMode(), messages: msgs };
+          const op = sessionId
+            ? window.pfDb.from('coach_sessions').update(rec).eq('id', sessionId)
+            : window.pfDb.from('coach_sessions').insert(rec).select('id').single();
+          op.then(r => {
+            saving = false;
+            if (!r.error && r.data && r.data.id) sessionId = r.data.id;
+          });
+        }
+        new MutationObserver(() => {
+          clearTimeout(saveTimer);
+          saveTimer = setTimeout(save, 2500);
+        }).observe(body, { childList: true, subtree: true });
+      })();
+
+      // Prompt starters: populate chat input on click
+      const starters = document.querySelectorAll('.prompt-starter');
+      const chatInput = document.querySelector('.chat-standalone-input input, .chat-demo-input input');
+
+      starters.forEach(starter => {
+        starter.addEventListener('click', () => {
+          if (!chatInput) return;
+          // Strip the leading HTML entity icon character
+          const raw = starter.textContent.trim();
+          // Remove leading emoji/symbol (first 2 chars if they are non-ascii)
+          const cleaned = raw.replace(/^[^\w\d"'(]+/, '').trim();
+          chatInput.value = cleaned;
+          chatInput.focus();
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
