@@ -1,10 +1,12 @@
 /* ═══════════════════════════════════════════════════════════════
-   PedaForge Home — Draw, Write & Reflect demo
+   PedaForge Home — Draw, Write & Reflect
    Pointer-events canvas drawing (brush / eraser / star stamp,
-   colour swatches), immutable stroke-array undo, feeling faces,
-   and an "I'm done" canned AI reflection bubble with a typing
-   indicator (visible Simulated badge — never misleads the panel).
-   Requires js/home-speech.js (for the sim badge helper only).
+   colour swatches), immutable stroke-array undo, feeling faces.
+   "I'm done" uploads the canvas to storage, inserts an `artworks`
+   row for the picked child, and asks the AI for a warm reflection
+   (falling back to friendly canned prompts on AI error). The
+   gallery rail shows the child's last 6 artworks via signed URLs.
+   Requires pf-auth.js + pf-api.js.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -27,6 +29,10 @@
   var drawing = false;
   var promptIndex = 0;
   var reflecting = false;
+  var pickedChild = null;  // {id,name} or null
+  var pickedFeeling = 'happy';
+
+  var FEEL_LABEL = { happy: 'Happy', okay: 'Okay', tricky: 'Tricky' };
 
   function reducedMotion() {
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -167,9 +173,15 @@
   }
 
   /* ─── Feelings ───────────────────────────────────────────── */
+  function feelingOf(btn) {
+    var label = btn.querySelector('.dr-feeling-label');
+    return label ? label.textContent.trim().toLowerCase() : 'happy';
+  }
+
   function wireFeelings() {
     els.feelings.forEach(function (btn) {
       btn.addEventListener('click', function () {
+        pickedFeeling = feelingOf(btn);
         els.feelings.forEach(function (b) {
           var active = b === btn;
           b.classList.toggle('active', active);
@@ -179,13 +191,10 @@
     });
   }
 
-  /* ─── Canned AI reflection with typing indicator ─────────── */
-  function showReflection() {
-    if (reflecting) return;
-    reflecting = true;
+  /* ─── "I'm done": save artwork + real AI reflection ──────── */
+  function makeBubble() {
     els.reflectChat.hidden = false;
     els.reflectChat.textContent = '';
-
     var bubbleWrap = document.createElement('div');
     bubbleWrap.className = 'chat-message assistant';
     var avatar = document.createElement('div');
@@ -200,22 +209,161 @@
     bubbleWrap.appendChild(avatar);
     bubbleWrap.appendChild(bubble);
     els.reflectChat.appendChild(bubbleWrap);
+    var badge = document.createElement('div');
+    badge.style.marginTop = '8px';
+    var badgeSpan = document.createElement('span');
+    badgeSpan.className = 'pf-ai-badge';
+    badgeSpan.textContent = '✦ AI-generated · editable';
+    badge.appendChild(badgeSpan);
+    els.reflectChat.appendChild(badge);
+    return bubble;
+  }
 
-    if (window.pfSpeech) {
-      var badgeRow = document.createElement('div');
-      badgeRow.style.marginTop = '8px';
-      els.reflectChat.appendChild(badgeRow);
-      window.pfSpeech.simBadge(badgeRow, 'Simulated AI response');
+  function saveArtwork(reflection) {
+    if (!(window.pfDb && window.pfUser && window.pfApi)) return Promise.resolve(null);
+    return new Promise(function (resolve) {
+      els.canvas.toBlob(function (blob) {
+        if (!blob) { resolve(null); return; }
+        var file = new File([blob], 'drawing.png', { type: 'image/png' });
+        window.pfApi.uploadArtefact(file, 'artwork')
+          .then(function (path) {
+            return window.pfDb.from('artworks').insert({
+              owner: window.pfUser.id,
+              child_id: pickedChild ? pickedChild.id : null,
+              image_path: path,
+              feeling: pickedFeeling,
+              reflection: reflection || null
+            });
+          })
+          .then(function (r) {
+            if (r && r.error) {
+              if (window.pfToast) pfToast('Could not save the picture: ' + r.error.message);
+              resolve(null);
+              return;
+            }
+            if (window.pfToast) pfToast('Picture saved to ' + (pickedChild ? pickedChild.name + '’s' : 'your') + ' gallery');
+            loadGallery();
+            resolve(true);
+          })
+          .catch(function (e) {
+            if (window.pfToast) pfToast('Could not save the picture: ' + e.message);
+            resolve(null);
+          });
+      }, 'image/png');
+    });
+  }
+
+  function showReflection() {
+    if (reflecting) return;
+    if (strokes.length === 0) {
+      if (window.pfToast) pfToast('Draw something first — then press I’m done!');
+      return;
     }
+    reflecting = true;
+    var done = window.pfApi ? window.pfApi.spinner(els.doneBtn, 'Saving…') : function () {};
+    var bubble = makeBubble();
 
-    var text = REFLECTION_PROMPTS[promptIndex % REFLECTION_PROMPTS.length];
+    var fallback = REFLECTION_PROMPTS[promptIndex % REFLECTION_PROMPTS.length];
     promptIndex += 1;
 
-    setTimeout(function () {
-      bubble.textContent = text; /* canned copy, no user input involved */
-      reflecting = false;
-    }, reducedMotion() ? 250 : 1400);
+    var aiPromise = (window.pfApi && window.pfApi.ai)
+      ? window.pfApi.ai('reflect', {
+          description: 'a child\'s drawing' + (pickedFeeling ? ' while feeling ' + pickedFeeling : ''),
+          feeling: pickedFeeling
+        })
+      : Promise.reject(new Error('AI unavailable'));
+
+    aiPromise
+      .catch(function (e) {
+        if (window.pfToast) pfToast('AI reflection unavailable — using a friendly prompt instead');
+        return fallback;
+      })
+      .then(function (text) {
+        var reflection = (typeof text === 'string' && text.trim()) ? text.trim() : fallback;
+        bubble.textContent = reflection; /* textContent — safe for AI output */
+        return saveArtwork(reflection);
+      })
+      .then(function () {
+        done();
+        reflecting = false;
+      });
   }
+
+  /* ─── Live gallery (last 6 artworks, signed URLs) ────────── */
+  function loadGallery() {
+    var host = document.getElementById('drGallery');
+    var hint = document.getElementById('drGalleryHint');
+    if (!host || !(window.pfDb && window.pfUser)) return;
+    var q = window.pfDb.from('artworks')
+      .select('id,image_path,feeling,reflection,created_at')
+      .order('created_at', { ascending: false })
+      .limit(6);
+    if (pickedChild) q = q.eq('child_id', pickedChild.id);
+    q.then(function (r) {
+      host.textContent = '';
+      if (r.error) { if (hint) hint.textContent = 'Could not load the gallery: ' + r.error.message; return; }
+      var rows = r.data || [];
+      if (!rows.length) {
+        if (hint) {
+          hint.textContent = pickedChild
+            ? 'No pictures for ' + pickedChild.name + ' yet — press “I’m done!” to save the first one.'
+            : 'Finished pictures land here — press “I’m done!” to save the first one.';
+        }
+        return;
+      }
+      if (hint) hint.textContent = (pickedChild ? pickedChild.name + '’s' : 'Your') + ' latest little stories.';
+      rows.forEach(function (art) {
+        var card = document.createElement('div');
+        card.className = 'dr-story';
+        var thumb = document.createElement('div');
+        thumb.className = 'dr-story-thumb';
+        thumb.style.background = 'rgba(14,143,168,0.10)';
+        thumb.style.overflow = 'hidden';
+        var img = document.createElement('img');
+        img.alt = 'Saved drawing';
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:14px;';
+        thumb.appendChild(img);
+        window.pfApi.artefactUrl(art.image_path).then(function (url) {
+          if (url) img.src = url;
+        });
+        var body = document.createElement('div');
+        body.className = 'dr-story-body';
+        var title = document.createElement('div');
+        title.className = 'dr-story-title';
+        title.textContent = art.reflection ? art.reflection.slice(0, 48) + (art.reflection.length > 48 ? '…' : '') : 'A little story';
+        var date = document.createElement('div');
+        date.className = 'dr-story-date';
+        date.textContent = window.pfApi.ago(art.created_at);
+        body.appendChild(title);
+        body.appendChild(date);
+        if (art.feeling && FEEL_LABEL[art.feeling]) {
+          var tag = document.createElement('span');
+          tag.className = 'dr-feel-tag ' + art.feeling;
+          tag.textContent = FEEL_LABEL[art.feeling];
+          body.appendChild(tag);
+        }
+        card.appendChild(thumb);
+        card.appendChild(body);
+        host.appendChild(card);
+      });
+    });
+  }
+
+  /* ─── Child picker ───────────────────────────────────────── */
+  function initChildPicker() {
+    var host = document.getElementById('drPickerHost');
+    var title = document.getElementById('drPickerTitle');
+    if (!host || !window.pfApi || !window.pfApi.childPicker) { loadGallery(); return; }
+    window.pfApi.childPicker(host, {
+      allowNone: true,
+      onPick: function (child) {
+        pickedChild = child ? { id: child.id, name: child.name } : null;
+        if (title) title.textContent = pickedChild ? pickedChild.name + ' is drawing today' : 'Who is drawing today?';
+        loadGallery();
+      }
+    });
+  }
+  if (window.pfAuthReady) window.pfAuthReady.then(initChildPicker);
 
   /* ─── Init ───────────────────────────────────────────────── */
   function init() {

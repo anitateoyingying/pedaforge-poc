@@ -68,7 +68,7 @@
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html" class="active">Dashboard</a></li>
         <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
-          <a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
+          <a href="classes.html">My Classes</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
         <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
           <a href="coach.html">AI Coach</a><a href="observation.html">Lesson Observation</a><a href="lna.html">Learning Needs</a><a href="dashboard.html">PD Dashboard</a></div></li>
         <li><span class="nav-dropdown-trigger">Spaces</span><div class="nav-dropdown">
@@ -91,6 +91,13 @@
     </div>
 
     <div class="app-grid">
+      <div class="app-card">
+        <h3><span class="dot" style="background:#e8063c;"></span> My Classes</h3>
+        <div><span class="app-stat" id="statClasses">–</span><span class="app-stat-sub" id="statClassesSub">classes</span></div>
+        <div class="app-list" id="cardClasses"><span class="app-empty">Loading…</span></div>
+        <a href="classes.html" class="btn btn-secondary btn-sm">Manage Classes &amp; Children</a>
+      </div>
+
       <div class="app-card">
         <h3><span class="dot" style="background:#1c9c6b;"></span> Classroom Layouts</h3>
         <div class="app-list" id="cardLayouts"><span class="app-empty">Loading…</span></div>
@@ -145,6 +152,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/pf-auth.js"></script>
+  <script src="js/pf-api.js"></script>
   <script src="js/app.js"></script>
   <script src="js/pf-dashboard.js"></script>
 </body>

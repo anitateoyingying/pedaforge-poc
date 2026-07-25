@@ -612,6 +612,29 @@
   /* Cloud persistence (Supabase, RLS-scoped to the signed-in user).
      Falls back to localStorage if the data layer is unavailable. */
   var savedRows = [];
+  var classSel = null;
+
+  /* Optional class tag: if the educator has classes, offer a select whose
+     name is prefixed into the layout name ("K1 Sunshine · ..."). */
+  function fetchClasses() {
+    if (!(window.pfApi && window.pfUser && classSel)) return;
+    window.pfApi.myClasses().then(function (classes) {
+      if (!classes.length) { classSel.hidden = true; return; }
+      classSel.innerHTML = '';
+      var o0 = document.createElement('option');
+      o0.value = ''; o0.textContent = 'Tag a class (optional)…';
+      classSel.appendChild(o0);
+      classes.forEach(function (c) {
+        var o = document.createElement('option');
+        o.value = c.name; o.textContent = c.name + ' (' + c.age_group.toUpperCase() + ')';
+        classSel.appendChild(o);
+      });
+      classSel.hidden = false;
+    }).catch(function () { classSel.hidden = true; });
+  }
+  function classPrefix() {
+    return (classSel && !classSel.hidden && classSel.value) ? classSel.value + ' · ' : '';
+  }
 
   function refreshSavedList() {
     savedSel.innerHTML = '';
@@ -642,7 +665,7 @@
       });
   }
   function saveLayout() {
-    var name = AGE_RULES[state.age].label + ' · ' + lastEval.score + '% · ' + new Date().toLocaleDateString('en-SG');
+    var name = classPrefix() + AGE_RULES[state.age].label + ' · ' + lastEval.score + '% · ' + new Date().toLocaleDateString('en-SG');
     var rec = { name: name, age: state.age, items: state.items, score: lastEval.score };
     if (window.pfDb && window.pfUser) {
       window.pfDb.from('layouts').insert({
@@ -674,7 +697,7 @@
   function submitLayout() {
     if (lastEval.score !== 100) return;
     if (!(window.pfDb && window.pfUser)) { flashButton(submitBtn, '✓ Submitted to Director'); return; }
-    var name = AGE_RULES[state.age].label + ' · submitted ' + new Date().toLocaleDateString('en-SG');
+    var name = classPrefix() + AGE_RULES[state.age].label + ' · submitted ' + new Date().toLocaleDateString('en-SG');
     var payload = {
       owner: window.pfUser.id, name: name, age_group: state.age,
       items: state.items, score: lastEval.score,
@@ -711,6 +734,7 @@
     savedSel = $('lpSaved');
     hintEl = $('lpHint');
     submitBtn = $('lpSubmit');
+    classSel = $('lpClassSel');
 
     initCanvasDrag();
     initPaletteDrag();
@@ -728,7 +752,7 @@
       if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); }
     });
 
-    if (window.pfAuthReady) window.pfAuthReady.then(fetchSaved);
+    if (window.pfAuthReady) window.pfAuthReady.then(function () { fetchSaved(); fetchClasses(); });
     else fetchSaved();
 
     /* Start on the K1 preset */

@@ -10,19 +10,7 @@
   <link rel="stylesheet" href="css/style.css">
   <style>
     /* ─── Observation page local layout (accent-aware) ─────── */
-    .obs-context-bar {
-      display: flex; align-items: center; flex-wrap: wrap; gap: 10px 18px;
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-left: 4px solid var(--accent-proposal);
-      border-radius: var(--radius); padding: 16px 22px;
-      margin-bottom: 28px; font-size: 0.88rem; color: var(--text);
-    }
-    .obs-context-bar .obs-ctx-item { display: flex; align-items: center; gap: 7px; }
-    .obs-context-bar .obs-ctx-item svg { color: var(--accent-proposal); flex-shrink: 0; }
-    .obs-context-bar .obs-ctx-sep { color: var(--border); }
-    .obs-context-bar strong { color: var(--secondary); font-weight: 600; }
-
-    /* captured anecdotal-note cards (Stage 2) */
+    /* captured anecdotal-note cards */
     .note-feed { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
     .note-card {
       background: var(--bg); border: 1px solid var(--border);
@@ -77,15 +65,7 @@
     }
     .focus-chip strong { color: var(--secondary); font-weight: 600; }
 
-    /* IDP goal pills (Stage 1 obs-evidence) */
-    .idp-goal-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-    .idp-goal-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 0.85rem; color: var(--text); line-height: 1.45; }
-    .idp-goal-list li::before {
-      content: ''; flex-shrink: 0; margin-top: 7px; width: 6px; height: 6px;
-      border-radius: 50%; background: var(--accent-proposal);
-    }
-
-    /* Follow-up plan steps (Stage 3 recommendation-box, accent-aware) */
+    /* Follow-up plan steps (recommendation-box, accent-aware) */
     .obs-rec-box {
       margin-top: 14px; padding: 16px 20px;
       background: var(--accent-proposal-soft);
@@ -114,20 +94,6 @@
 
     /* sidebar bits */
     .obs-side { display: flex; flex-direction: column; gap: 20px; }
-    .obs-meta-grid {
-      display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; font-size: 0.85rem;
-    }
-    .obs-meta-grid dt { color: var(--text-muted); font-weight: 500; }
-    .obs-meta-grid dd { color: var(--text); font-weight: 500; }
-    .bar-row { margin-bottom: 14px; }
-    .bar-row:last-child { margin-bottom: 0; }
-    .bar-row .bar-label {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
-    }
-    .bar-row .bar-name { font-size: 0.82rem; color: var(--text); font-weight: 500; }
-    .bar-row .bar-pct { font-size: 0.82rem; color: var(--text-muted); font-weight: 700; }
-    .bar-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
-    .bar-track .bar-fill { height: 100%; border-radius: 4px; }
     .obs-cta-panel {
       background: linear-gradient(135deg, var(--secondary) 0%, #3d2663 100%);
       color: #fff; border: none; text-align: center;
@@ -141,80 +107,15 @@
       .obs-stage { padding-bottom: 28px; }
     }
 
-    /* ─── Live Session Replay player ─────────────────────── */
-    .play-shell {
-      background: var(--bg-card); border-radius: var(--radius);
-      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
-      padding: 26px 26px 22px; margin-bottom: 34px;
-    }
-    .play-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-    .play-head h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--secondary); margin: 0; }
-    .play-sim-badge {
-      display: inline-flex; align-items: center; gap: 6px; padding: 4px 13px;
-      border-radius: 100px; font-size: 0.72rem; font-weight: 700;
-      background: var(--accent-proposal-soft); color: var(--accent-proposal);
-      border: 1px solid var(--accent-proposal-line);
-    }
-    .play-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; }
-    @media (max-width: 900px) { .play-grid { grid-template-columns: 1fr; } }
-    .play-stage {
-      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm);
-      padding: 16px; height: 320px; overflow-y: auto; scroll-behavior: smooth;
-    }
-    .play-scene { font-style: italic; font-size: 0.82rem; color: var(--text-muted); text-align: center; margin: 10px 0; }
-    .play-stage .chat-message { margin-bottom: 10px; }
-    .play-who { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 3px; }
-    .play-empty { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 40px 10px; }
-    .play-feed-col h4, .play-report h5 { font-size: 0.85rem; color: var(--secondary); margin-bottom: 10px; }
-    .play-evidence { display: flex; flex-direction: column; gap: 10px; max-height: 210px; overflow-y: auto; margin-bottom: 14px; }
-    .play-meter .bar-row { margin-bottom: 10px; }
-    .play-meter .bar-fill { transition: width 0.6s ease; background: linear-gradient(90deg, var(--accent-proposal), #9b6fb0); }
-    .play-transport { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
-    .play-btn {
-      width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; flex-shrink: 0;
-      background: var(--accent-proposal); color: #fff; font-size: 0.95rem;
-      box-shadow: 0 4px 12px var(--accent-proposal-line);
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .play-btn:hover { transform: translateY(-2px); }
-    .play-scrub { flex: 1; accent-color: var(--accent-proposal); cursor: pointer; }
-    .play-time { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); min-width: 86px; text-align: right; }
-    .play-rate {
-      border: 1px solid var(--border); background: var(--bg); border-radius: 100px;
-      padding: 4px 12px; font-size: 0.75rem; font-weight: 700; color: var(--text); cursor: pointer;
-    }
-    .play-rate:hover { border-color: var(--accent-proposal); color: var(--accent-proposal); }
-    .play-synth { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; color: var(--text-muted); padding: 10px 2px 0; }
-    .play-synth .dots span {
-      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent-proposal); margin-right: 3px; animation: play-dot 1s ease infinite;
-    }
-    .play-synth .dots span:nth-child(2) { animation-delay: 0.15s; }
-    .play-synth .dots span:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes play-dot { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
-    .play-report { margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 16px; }
+    /* ─── Report sections (strengths / growth / follow-up) ── */
     .play-rep-sec { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 13px 16px; margin-bottom: 10px; }
-    .play-rep-sec h5 { margin-bottom: 5px; }
+    .play-rep-sec h5 { font-size: 0.85rem; color: var(--secondary); margin-bottom: 8px; }
     .play-rep-sec p { font-size: 0.85rem; color: var(--text); line-height: 1.55; margin: 0; }
+    .play-rep-sec textarea.form-control { background: var(--bg-card); }
     .play-rep-growth { border-left: 3px solid var(--warning); }
     .play-rep-strengths { border-left: 3px solid var(--success); }
     .play-rep-followup { border-left: 3px solid var(--accent-proposal); }
-    .play-enter { animation: play-in 0.35s ease both; }
-    .play-enter-pop { animation: play-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
-    @keyframes play-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-    @keyframes play-pop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-    .play-filed { animation: play-file 1s ease both; }
-    @keyframes play-file {
-      0% { box-shadow: 0 0 0 0 var(--accent-proposal-line); }
-      35% { box-shadow: 0 0 0 6px var(--accent-proposal-line); transform: translateY(-4px); }
-      100% { box-shadow: none; transform: translateY(0); opacity: 0.55; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .play-enter, .play-enter-pop, .play-filed { animation: none; }
-      .play-filed { opacity: 0.55; }
-      .play-meter .bar-fill { transition: none; }
-      .play-stage { scroll-behavior: auto; }
-    }
+    .app-obs-empty { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
   </style>
 </head>
 <body class="hub-leadership">
@@ -236,7 +137,7 @@
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Dashboard</a></li>
         <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
-          <a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
+          <a href="classes.html">My Classes</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
         <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
           <a href="coach.html">AI Coach</a><a href="observation.html">Lesson Observation</a><a href="lna.html">Learning Needs</a><a href="dashboard.html">PD Dashboard</a></div></li>
         <li><span class="nav-dropdown-trigger">Spaces</span><div class="nav-dropdown">
@@ -262,7 +163,7 @@
       </div>
       <span class="hub-pill">PedaForge Leadership</span>
       <h1 class="mt-1">AI Lesson Observation</h1>
-      <p>A full-cycle observation companion for centre leaders - surfacing each educator&rsquo;s IDP goals before the lesson, tagging anecdotal evidence to ECDA QTT indicators in real time, and synthesising a growth-focused feedback summary for the appraisal conversation.</p>
+      <p>A full-cycle observation companion for centre leaders - capture anecdotal notes during the lesson, tag each one to ECDA QTT indicators with AI in real time, and synthesise a growth-focused feedback report for the appraisal conversation.</p>
     </div>
   </section>
 
@@ -271,260 +172,88 @@
        ──────────────────────────────────────────────────────── -->
   <div class="container main-content-spacing">
 
-    <!-- Context bar: who is being observed -->
-    <div class="obs-context-bar">
-      <span class="obs-ctx-item">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Observation of <strong>Sarah L.</strong>
-      </span>
-      <span class="obs-ctx-sep">&middot;</span>
-      <span class="obs-ctx-item">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg>
-        <strong>K1 Sunshine</strong>
-      </span>
-      <span class="obs-ctx-sep">&middot;</span>
-      <span class="obs-ctx-item">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        Observed by <strong>Director Mdm Lim</strong>
-      </span>
-      <span class="obs-ctx-sep">&middot;</span>
-      <span class="obs-ctx-item">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <strong>14 May 2026</strong>
-      </span>
-    </div>
-
-    <!-- ─── Live Session Replay ─────────────────────────── -->
-    <div class="play-shell" id="obsPlayer">
-      <div class="play-head">
-        <h3>Watch a Live Observation</h3>
-        <span class="play-sim-badge">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          Simulated session &middot; scripted demo data
-        </span>
-      </div>
-      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Replay Mdm Lim&rsquo;s 14 May session with Sarah&rsquo;s K1 class &mdash; 90 seconds. Watch classroom moments land, AI evidence tag itself to QTT indicators in real time, and the draft feedback report assemble at the end. Pause or scrub anywhere.</p>
-
-      <div class="play-grid">
-        <div>
-          <div class="play-stage" id="playStage">
-            <div class="play-empty" id="playEmpty">Press play to start the session replay &mdash; the classroom transcript appears here.</div>
-          </div>
-          <div class="play-transport">
-            <button class="play-btn" id="playBtn" aria-label="Play">&#9654;</button>
-            <input type="range" class="play-scrub" id="playScrub" min="0" max="90" step="0.1" value="0" aria-label="Scrub session timeline">
-            <span class="play-time" id="playTime">0:00 / 1:30</span>
-            <button class="play-rate" id="playRate" aria-label="Playback speed">1&times;</button>
-          </div>
-        </div>
-
-        <div class="play-feed-col">
-          <h4><span class="ai-stamp">✦ AI Evidence Feed</span></h4>
-          <div class="play-evidence" id="playEvidence" aria-live="polite"></div>
-          <div class="play-meter" id="playMeter">
-            <div class="bar-row">
-              <div class="bar-label"><span class="bar-name">Teacher-Child Interaction</span><span class="bar-pct" id="meterpct-tci">0%</span></div>
-              <div class="bar-track"><div class="bar-fill" id="meter-tci" style="width:0%;"></div></div>
-            </div>
-            <div class="bar-row">
-              <div class="bar-label"><span class="bar-name">Sustained Shared Thinking</span><span class="bar-pct" id="meterpct-sst">0%</span></div>
-              <div class="bar-track"><div class="bar-fill" id="meter-sst" style="width:0%;"></div></div>
-            </div>
-            <div class="bar-row">
-              <div class="bar-label"><span class="bar-name">Learning Environment</span><span class="bar-pct" id="meterpct-env">0%</span></div>
-              <div class="bar-track"><div class="bar-fill" id="meter-env" style="width:0%;"></div></div>
-            </div>
-          </div>
-          <div class="play-synth" id="playSynth" style="display:none;">
-            <span class="dots"><span></span><span></span><span></span></span>
-            Synthesising observation report&hellip;
-          </div>
-        </div>
-      </div>
-
-      <div class="play-report" id="playReport" hidden>
-        <h5 style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--secondary);">Draft Observation Report <span class="ai-stamp" style="margin-left:6px;">✦ AI-synthesised &middot; editable</span></h5>
-        <div id="playReportBody"></div>
-        <div id="playCta" style="display:none;margin-top:14px;">
-          <a href="coach.html?handoff=obs-20260514" class="btn btn-primary">Discuss this feedback with Sarah&rsquo;s AI Coach &rarr;</a>
-        </div>
-      </div>
-    </div>
-
     <div class="demo-two-col">
 
-      <!-- ═══════════ Main column: 3-stage stepper ═══════════ -->
+      <!-- ═══════════ Main column: live observation tool ═══════════ -->
       <div>
-        <div class="obs-stepper">
 
-          <!-- ─── Stage 1: Pre-Observation ─── -->
-          <div class="obs-stage">
-            <span class="obs-marker">1</span>
-            <div class="obs-stage-card">
-              <span class="obs-when">Before the lesson</span>
-              <h4>Pre-Observation</h4>
-              <p>PedaForge pulls Sarah&rsquo;s current Individual Development Plan and her last three observation records, then recommends two ECDA QTT domains for Mdm Lim to focus on - so the observation targets where Sarah is actively trying to grow, not a generic checklist.</p>
+        <!-- ─── New observation ─── -->
+        <div class="dash-panel mb-3">
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> New Observation</h3>
 
-              <div class="obs-evidence">
-                <div class="obs-evidence-label">Educator&rsquo;s current IDP goals</div>
-                <ul class="idp-goal-list">
-                  <li>Deepen <strong>sustained shared thinking</strong> during free play (open-ended questioning, extending child-led ideas).</li>
-                  <li>Strengthen <strong>formative assessment</strong> - capturing anecdotal evidence in the moment (CWF05).</li>
-                </ul>
-              </div>
-
-              <div class="obs-evidence">
-                <div class="obs-evidence-label">Recommended QTT Focus <span class="ai-stamp"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> AI-Recommended</span></div>
-                <div class="focus-chips">
-                  <div class="focus-chip"><span class="focus-num">1</span> <span><strong>Teacher-Child Interaction</strong> - responsiveness, emotional scaffolding, Key Person attunement.</span></div>
-                  <div class="focus-chip"><span class="focus-num">2</span> <span><strong>Sustained Shared Thinking</strong> - co-constructing ideas, open questions, extending child reasoning.</span></div>
-                </div>
-              </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:16px;">
+            <div>
+              <label for="obsEducator" style="display:block;font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:6px;">Educator being observed</label>
+              <input type="text" id="obsEducator" class="form-control" placeholder="e.g. Sarah Lim" autocomplete="off">
+            </div>
+            <div>
+              <label for="obsClass" style="display:block;font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:6px;">Class (optional)</label>
+              <input type="text" id="obsClass" class="form-control" placeholder="e.g. K1 Sunshine" autocomplete="off">
             </div>
           </div>
 
-          <!-- ─── Stage 2: Actual Observation ─── -->
-          <div class="obs-stage">
-            <span class="obs-marker">2</span>
-            <div class="obs-stage-card">
-              <span class="obs-when">During the lesson</span>
-              <h4>Actual Observation</h4>
-              <p>Mdm Lim captures multimodal notes - quick voice memos and typed lines - on a centre-managed HQ device. As each note lands, PedaForge transcribes it on-device and auto-tags the anecdotal evidence to the targeted QTT indicators in real time, so the Director stays present with the children instead of buried in a clipboard.</p>
-
-              <div class="note-feed">
-
-                <div class="note-card">
-                  <div class="note-head">
-                    <span class="note-source"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg> Voice note</span>
-                    <span class="note-time">09:42</span>
-                  </div>
-                  <div class="note-raw">&ldquo;Sat at Leo&rsquo;s eye level when he got frustrated with the blocks, named the feeling - &lsquo;you&rsquo;re cross because the tower fell&rsquo; - then waited.&rdquo;</div>
-                  <div class="note-tagline">
-                    <span class="ai-stamp"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> Auto-tagged</span>
-                    <span class="qtt-tag met">QTT: Teacher-Child Interaction <span class="tag-state">&middot; Met</span></span>
-                  </div>
-                </div>
-
-                <div class="note-card">
-                  <div class="note-head">
-                    <span class="note-source"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> Typed note</span>
-                    <span class="note-time">09:55</span>
-                  </div>
-                  <div class="note-raw">&ldquo;At the water table, asked Amira &lsquo;what do you think will happen if we add more cups?&rsquo; - then built on her answer rather than correcting it.&rdquo;</div>
-                  <div class="note-tagline">
-                    <span class="ai-stamp"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> Auto-tagged</span>
-                    <span class="qtt-tag met">QTT: Sustained Shared Thinking <span class="tag-state">&middot; Met</span></span>
-                  </div>
-                </div>
-
-                <div class="note-card">
-                  <div class="note-head">
-                    <span class="note-source"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg> Voice note</span>
-                    <span class="note-time">10:08</span>
-                  </div>
-                  <div class="note-raw">&ldquo;During pack-away, several children were unsure where blocks go. Sarah gave the instruction once to the whole group; a few drifted off without a follow-up prompt.&rdquo;</div>
-                  <div class="note-tagline">
-                    <span class="ai-stamp"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> Auto-tagged</span>
-                    <span class="qtt-tag emerging">QTT: Learning Environment <span class="tag-state">&middot; Emerging</span></span>
-                  </div>
-                </div>
-
-              </div>
-            </div>
+          <label for="obsNoteInput" style="display:block;font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:6px;">Anecdotal note &mdash; what did you just see or hear?</label>
+          <textarea id="obsNoteInput" class="form-control" rows="3" placeholder="e.g. Sat at Leo's eye level when he got frustrated with the blocks, named the feeling, then waited."></textarea>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+            <button class="btn btn-primary btn-sm" id="obsTagBtn" type="button">Tag with AI</button>
+            <span style="font-size:0.76rem;color:var(--text-muted);align-self:center;">Each note is matched to an ECDA QTT indicator (met / emerging) with a rationale. Ctrl+Enter to tag.</span>
           </div>
 
-          <!-- ─── Stage 3: Post-Observation & Follow-Up ─── -->
-          <div class="obs-stage">
-            <span class="obs-marker">3</span>
-            <div class="obs-stage-card">
-              <span class="obs-when">After the lesson</span>
-              <h4>Post-Observation &amp; Follow-Up</h4>
-              <p>PedaForge synthesises today&rsquo;s evidence against Sarah&rsquo;s historical QTT trajectory, drafts a balanced feedback summary, and proposes an updated follow-up plan. Mdm Lim reviews and edits before the appraisal conversation - the AI prepares, the leader decides.</p>
+          <div class="note-feed" id="obsNoteFeed"></div>
 
-              <div class="narrative-box mt-3">
-                <div class="narrative-label">Draft Feedback Summary <span class="ai-stamp" style="margin-left:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> AI-synthesised &middot; editable</span></div>
-                <div class="narrative-text">
-                  Sarah showed clear, sustained growth in <strong>Teacher-Child Interaction</strong>: her response to Leo - getting to eye level and naming the emotion before offering a solution - is exactly the emotional scaffolding flagged in her last IDP review, now consistently evidenced. Her water-table exchange with Amira marks a genuine step forward on her <strong>Sustained Shared Thinking</strong> goal: she posed a true open question and extended the child&rsquo;s thinking rather than closing it. The one growth point is transition management - the pack-away instruction was given once to the whole group and a few children disengaged. This is a small environment-and-routine adjustment, not an interaction concern, and a natural next focus.
-                </div>
-              </div>
-
-              <div class="obs-rec-box">
-                <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Follow-Up Plan</h4>
-                <ul class="followup-steps">
-                  <li>
-                    <span class="step-num">1</span>
-                    <span class="step-body"><strong>Mark the SST goal as met.</strong> Update Sarah&rsquo;s IDP to evidence sustained shared thinking with today&rsquo;s anecdotal record attached, and set a stretch goal: model SST during a small-group inquiry next term.</span>
-                  </li>
-                  <li>
-                    <span class="step-num">2</span>
-                    <span class="step-body"><strong>Target transitions.</strong> Co-plan one visual pack-away routine with Sarah and revisit it in a 10-minute walkthrough in two weeks - pair her with Siti R., whose K2 transitions are a centre strength.<br>
-                    <span class="sfw-pill">SFw for ECCE &middot; Manage the Learning Environment (ECE-LEC-3001-1.1, WSQ)</span></span>
-                  </li>
-                  <li>
-                    <span class="step-num">3</span>
-                    <span class="step-body"><strong>Feed into the appraisal.</strong> Carry this summary into the half-yearly appraisal conversation and into the Leadership Dashboard so the centre PD plan reflects Sarah&rsquo;s progress.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;border-top:1px dashed var(--border);padding-top:16px;">
+            <button class="btn btn-primary" id="obsGenerate" type="button" disabled title="Capture at least 2 tagged notes first">Generate Report</button>
+            <span style="font-size:0.76rem;color:var(--text-muted);align-self:center;">Needs at least 2 tagged notes.</span>
           </div>
-
         </div>
+
+        <!-- ─── Draft report ─── -->
+        <div class="dash-panel mb-3" id="obsReportCard" hidden>
+          <h3>Draft Observation Report <span class="pf-ai-badge">✦ AI-generated &middot; editable</span></h3>
+          <div class="play-rep-sec play-rep-strengths">
+            <h5>Strengths</h5>
+            <textarea id="obsRepStrengths" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="play-rep-sec play-rep-growth">
+            <h5>Growth areas</h5>
+            <textarea id="obsRepGrowth" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="play-rep-sec play-rep-followup">
+            <h5>Follow-up plan</h5>
+            <textarea id="obsRepFollowup" class="form-control" rows="3"></textarea>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+            <button class="btn btn-primary" id="obsSave" type="button">Save Observation</button>
+            <a href="coach.html?handoff=latest" class="btn btn-secondary">Discuss with AI Coach &rarr;</a>
+          </div>
+        </div>
+
+        <!-- ─── Past observations ─── -->
+        <div class="dash-panel">
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg> Past Observations</h3>
+          <div class="note-feed" id="obsPastList" style="margin-top:4px;"><span class="app-obs-empty">Loading&hellip;</span></div>
+        </div>
+
       </div>
 
       <!-- ═══════════ Sidebar (340px) ═══════════ -->
       <aside class="obs-side">
 
-        <!-- Observation Context -->
+        <!-- How it works -->
         <div class="dash-panel">
-          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg> Observation Context</h3>
-          <dl class="obs-meta-grid">
-            <dt>Educator</dt>
-            <dd>Sarah L. &middot; Preschool Educator</dd>
-            <dt>Class</dt>
-            <dd>K1 Sunshine (18 children)</dd>
-            <dt>Observer</dt>
-            <dd>Director Mdm Lim</dd>
-            <dt>IDP goals</dt>
-            <dd>Sustained shared thinking; formative assessment (CWF05)</dd>
-            <dt>Last observation</dt>
-            <dd>06 Feb 2026</dd>
-            <dt>Cycle</dt>
-            <dd>Term 2 &middot; appraisal-linked</dd>
-          </dl>
-        </div>
-
-        <!-- QTT Domains in Focus -->
-        <div class="dash-panel">
-          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> QTT Domains in Focus</h3>
-          <div class="bar-row">
-            <div class="bar-label">
-              <span class="bar-name">Teacher-Child Interaction</span>
-              <span class="bar-pct">85%</span>
-            </div>
-            <div class="bar-track"><div class="bar-fill" style="width:85%; background: linear-gradient(90deg, var(--success), #34d399);"></div></div>
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> How It Works</h3>
+          <div class="focus-chips">
+            <div class="focus-chip"><span class="focus-num">1</span> <span><strong>Capture</strong> - type an anecdotal note the moment you see it; AI tags it to an ECDA QTT indicator with a met / emerging judgement and rationale.</span></div>
+            <div class="focus-chip"><span class="focus-num">2</span> <span><strong>Synthesise</strong> - once you have two or more notes, AI drafts a balanced report: strengths, growth areas, and a follow-up plan.</span></div>
+            <div class="focus-chip"><span class="focus-num">3</span> <span><strong>Decide</strong> - you edit every section before saving. The AI prepares, the leader decides.</span></div>
           </div>
-          <div class="bar-row">
-            <div class="bar-label">
-              <span class="bar-name">Sustained Shared Thinking</span>
-              <span class="bar-pct">70%</span>
-            </div>
-            <div class="bar-track"><div class="bar-fill" style="width:70%; background: linear-gradient(90deg, var(--accent-proposal), #9b6fb0);"></div></div>
-          </div>
-          <div class="bar-row">
-            <div class="bar-label">
-              <span class="bar-name">Learning Environment</span>
-              <span class="bar-pct">55%</span>
-            </div>
-            <div class="bar-track"><div class="bar-fill" style="width:55%; background: linear-gradient(90deg, var(--warning), #ffc266);"></div></div>
-          </div>
-          <p style="font-size:0.76rem; color:var(--text-muted); line-height:1.5; margin-top:14px;">Live read from today&rsquo;s tagged evidence, weighted against Sarah&rsquo;s prior observation records.</p>
+          <p style="font-size:0.76rem; color:var(--text-muted); line-height:1.5; margin-top:14px;">Saved observations are visible to you; centre directors can review all observations across the team.</p>
         </div>
 
         <!-- CTA panel -->
         <div class="dash-panel obs-cta-panel">
           <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14"/></svg> Close the Loop</h3>
-          <p>This observation feeds directly into the centre-wide professional development picture and Sarah&rsquo;s appraisal record.</p>
+          <p>Every saved observation feeds the centre-wide professional development picture and the educator&rsquo;s appraisal record.</p>
           <a href="dashboard.html" class="btn btn-accent">View Leadership Dashboard</a>
           <a href="index.html" class="btn btn-secondary">Back to Dashboard</a>
         </div>
@@ -543,7 +272,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/pf-auth.js"></script>
+  <script src="js/pf-api.js"></script>
   <script src="js/app.js"></script>
-  <script src="js/obs-player.js"></script>
+  <script src="js/pf-observation.js"></script>
 </body>
 </html>

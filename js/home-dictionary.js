@@ -19,6 +19,7 @@
   var typeTimer = null;
   var tts = false;
   var hasZh = false;
+  var pickedChild = null;  // {id,name} or null (educator/general jar)
 
   function reducedMotion() {
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -34,6 +35,7 @@
 
   function saveProgress(next) {
     progress = next;
+    if (pickedChild) return; /* child jars live in the cloud, not this device */
     try { window.localStorage.setItem(STORE_KEY, JSON.stringify(next)); } catch (err) { /* quota */ }
   }
 
@@ -43,28 +45,77 @@
       user_id: window.pfUser.id,
       word: word,
       status: statusOf(word),
+      child_id: pickedChild ? pickedChild.id : null,
       updated_at: new Date().toISOString()
-    }).then(function () { /* fire-and-forget */ });
+    }).then(function (r) {
+      if (r.error && window.pfToast) pfToast('Could not sync word: ' + r.error.message);
+    });
+  }
+
+  function applyCloudRows(rows, replace) {
+    var next = {};
+    if (!replace) {
+      Object.keys(progress).forEach(function (k) { next[k] = progress[k]; });
+    }
+    var rank = { 'new': 0, learning: 1, known: 2 };
+    rows.forEach(function (row) {
+      var local = replace ? 'new' : statusOf(row.word);
+      if (rank[row.status] > rank[local]) {
+        next[row.word] = { heard: true, spelled: row.status === 'known' };
+      }
+    });
+    progress = next;
+    if (!pickedChild) saveProgress(next);
+    renderJar();
   }
 
   function hydrateFromCloud() {
     if (!(window.pfDb && window.pfUser)) return;
+    if (pickedChild) {
+      /* Child jar: hydrate strictly from that child's rows;
+         fall back to the educator's own rows when none exist yet. */
+      window.pfDb.from('dictionary_progress').select('word,status')
+        .eq('child_id', pickedChild.id)
+        .then(function (r) {
+          if (r.error) { renderJar(); return; }
+          if (r.data && r.data.length) { applyCloudRows(r.data, true); return; }
+          window.pfDb.from('dictionary_progress').select('word,status')
+            .is('child_id', null)
+            .then(function (r2) {
+              applyCloudRows((r2.data || []), true);
+            });
+        });
+      return;
+    }
     window.pfDb.from('dictionary_progress').select('word,status').then(function (r) {
       if (r.error || !r.data || !r.data.length) return;
-      var next = {};
-      Object.keys(progress).forEach(function (k) { next[k] = progress[k]; });
-      r.data.forEach(function (row) {
-        var local = statusOf(row.word);
-        var rank = { 'new': 0, learning: 1, known: 2 };
-        if (rank[row.status] > rank[local]) {
-          next[row.word] = { heard: true, spelled: row.status === 'known' };
-        }
-      });
-      saveProgress(next);
-      renderJar();
+      applyCloudRows(r.data, false);
     });
   }
-  if (window.pfAuthReady) window.pfAuthReady.then(hydrateFromCloud);
+
+  function initChildPicker() {
+    var host = document.getElementById('dictPickerHost');
+    var title = document.getElementById('dictPickerTitle');
+    var jarSub = document.getElementById('dictJarSub');
+    if (!host || !window.pfApi || !window.pfApi.childPicker) { hydrateFromCloud(); return; }
+    window.pfApi.childPicker(host, {
+      allowNone: true,
+      onPick: function (child) {
+        pickedChild = child ? { id: child.id, name: child.name } : null;
+        if (title) title.textContent = pickedChild ? pickedChild.name + '’s Words Jar' : 'Whose Words Jar is this?';
+        if (jarSub) {
+          jarSub.textContent = pickedChild
+            ? 'Every word ' + pickedChild.name + ' explores drops into their jar. Hear a word and spell it to move it from New to Learning to Known.'
+            : 'Every word explored drops into the jar. Hear a word and spell it to move it from New to Learning to Known. Tap any word to open it.';
+        }
+        if (pickedChild) progress = {}; /* fresh jar view, filled from the child's cloud rows */
+        else progress = loadProgress();
+        renderJar();
+        hydrateFromCloud();
+      }
+    });
+  }
+  if (window.pfAuthReady) window.pfAuthReady.then(initChildPicker);
 
   function recordEvent(word, field) {
     var entry = progress[word] || { heard: false, spelled: false };
@@ -240,6 +291,7 @@
   var STATUS_LABEL = { 'new': 'New', learning: 'Learning', known: 'Known' };
 
   function renderJar() {
+    if (!els.jarGrid) return; /* picker may fire before init() wires the DOM */
     els.jarGrid.textContent = '';
     var knownCount = 0;
     words.forEach(function (entry) {

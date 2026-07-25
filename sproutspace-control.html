@@ -4,7 +4,7 @@
 <script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="SproutSpace Leadership & Organization Control: an HQ/Director view giving Singapore early childhood operators network-wide visibility over smart procurement, resource durability, centralised environment standards, and classroom-layout approvals across the pilot centres.">
+  <meta name="description" content="SproutSpace Leadership & Organization Control: an HQ/Director view giving Singapore early childhood operators live visibility over resource use, condition-based replacement planning, and classroom-layout approvals.">
   <title>SproutSpace: Leadership &amp; Organization Control</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
@@ -26,7 +26,7 @@
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Dashboard</a></li>
         <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
-          <a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
+          <a href="classes.html">My Classes</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
         <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
           <a href="coach.html">AI Coach</a><a href="observation.html">Lesson Observation</a><a href="lna.html">Learning Needs</a><a href="dashboard.html">PD Dashboard</a></div></li>
         <li><span class="nav-dropdown-trigger">Spaces</span><div class="nav-dropdown">
@@ -53,7 +53,7 @@
         SproutSpace
       </span>
       <h1>Leadership &amp; Organization Control</h1>
-      <p>A single HQ and Centre Director command view across all pilot centres. Watch resources rotate, spot what needs replacing before budgets are committed, push one set of environment standards network-wide, and approve classroom layouts - turning scattered spreadsheets into safe, evidence-based decisions.</p>
+      <p>A single HQ and Centre Director command view. Watch resources move in real time, spot what needs replacing before the next order is placed, and approve classroom layouts submitted by your educators - all computed live from the centre&rsquo;s own data.</p>
       <div class="mt-2">
         <a href="index.html" class="btn btn-secondary btn-sm">&larr; Back to Dashboard</a>
       </div>
@@ -132,27 +132,27 @@
     })();
     </script>
 
-    <!-- ─── Stats Row ───────────────────────────────────────── -->
+    <!-- ─── Live Stats Row (computed from DB) ───────────────── -->
     <div class="dashboard-stats">
       <div class="dash-stat">
-        <div class="stat-label">PILOT CENTRES</div>
-        <div class="stat-value">11</div>
-        <div class="stat-change positive">All connected to HQ</div>
+        <div class="stat-label">TRACKED RESOURCES</div>
+        <div class="stat-value" id="hqStatItems">&ndash;</div>
+        <div class="stat-change" id="hqStatItemsSub">Shared inventory</div>
       </div>
       <div class="dash-stat">
-        <div class="stat-label">TRACKED ASSETS</div>
-        <div class="stat-value">3,540</div>
-        <div class="stat-change positive">QR-tagged network-wide</div>
+        <div class="stat-label">CHECKED OUT NOW</div>
+        <div class="stat-value" id="hqStatOut">&ndash;</div>
+        <div class="stat-change" id="hqStatOutSub">In active use</div>
       </div>
       <div class="dash-stat">
-        <div class="stat-label">AVG QUARTERLY ROTATION</div>
-        <div class="stat-value">96%</div>
-        <div class="stat-change positive">+8% vs baseline</div>
+        <div class="stat-label">WORN &middot; REPLACE SOON</div>
+        <div class="stat-value" id="hqStatWorn">&ndash;</div>
+        <div class="stat-change" id="hqStatWornSub">Condition-flagged</div>
       </div>
       <div class="dash-stat">
-        <div class="stat-label">DUPLICATE-SPEND SAVED</div>
-        <div class="stat-value">32%</div>
-        <div class="stat-change positive">vs. pre-sandbox</div>
+        <div class="stat-label">EDUCATORS ON PLATFORM</div>
+        <div class="stat-value" id="hqStatEducators">&ndash;</div>
+        <div class="stat-change positive">Live profiles</div>
       </div>
     </div>
 
@@ -162,66 +162,23 @@
       <!-- ═══════════ Left Column ═══════════ -->
       <div>
 
-        <!-- Panel 1: Smart Procurement Dashboard -->
+        <!-- Panel 1: Inventory by category (live) -->
         <div class="dash-panel mb-3">
-          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Smart Procurement Dashboard <span class="tag tag-ai tag-sm">Auto-tracked from QR scans</span></h3>
-          <p class="profile-meta mb-3" style="line-height:1.55;">Usage rate is the share of each category currently in active rotation across the network. High-use categories nearing end-of-life are flagged for reorder or replacement before stock runs short.</p>
-          <div class="proc-bars">
-            <div class="proc-row">
-              <span class="proc-label">Sensory Materials</span>
-              <div class="proc-track"><div class="proc-fill warn" style="width:88%;"></div></div>
-              <span class="proc-val">88%</span>
-            </div>
-            <div class="proc-row">
-              <span class="proc-label">Construction Blocks</span>
-              <div class="proc-track"><div class="proc-fill" style="width:64%;"></div></div>
-              <span class="proc-val">64%</span>
-            </div>
-            <div class="proc-row">
-              <span class="proc-label">Art Supplies</span>
-              <div class="proc-track"><div class="proc-fill danger" style="width:92%;"></div></div>
-              <span class="proc-val">92%</span>
-            </div>
-            <div class="proc-row">
-              <span class="proc-label">Books</span>
-              <div class="proc-track"><div class="proc-fill" style="width:47%;"></div></div>
-              <span class="proc-val">47%</span>
-            </div>
-            <div class="proc-row">
-              <span class="proc-label">Fine-Motor Kits</span>
-              <div class="proc-track"><div class="proc-fill" style="width:71%;"></div></div>
-              <span class="proc-val">71%</span>
-            </div>
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Inventory by Category <span class="tag tag-sprout tag-sm">Live from check-in/out data</span></h3>
+          <p class="profile-meta mb-3" style="line-height:1.55;">Share of all tracked resources per category. Categories with a high worn share are flagged for replacement budgeting.</p>
+          <div class="proc-bars" id="hqCatBars">
+            <p class="profile-meta">Loading inventory&hellip;</p>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border);">
-            <span class="status-badge needs-support">Sensory Materials &middot; reorder soon</span>
-            <span class="status-badge" style="background:rgba(220,38,38,0.1);color:var(--danger);">Art Supplies &middot; replace</span>
-          </div>
-          <p class="profile-meta" style="margin-top:14px;line-height:1.55;">These rates feed directly into HQ budget planning, so the next financial-year order is sized to real usage - not last year&rsquo;s guess.</p>
+          <div id="hqReplaceList" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border);"></div>
         </div>
 
-        <!-- Panel 2: Resource Durability -->
+        <!-- Panel 2: Recent inventory activity (live) -->
         <div class="dash-panel mb-3">
-          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg> Resource Durability <span class="tag tag-sprout tag-sm">Avg lifespan vs expected</span></h3>
-          <p class="profile-meta mb-3" style="line-height:1.55;">Real lifespan measured from first scan-in to retirement, compared with the supplier&rsquo;s rated life. Categories falling short flag a value-for-money review.</p>
-          <div class="proc-bars">
-            <div class="proc-row">
-              <span class="proc-label">Wooden Furniture</span>
-              <div class="proc-track"><div class="proc-fill" style="width:95%;"></div></div>
-              <span class="proc-val">95%</span>
-            </div>
-            <div class="proc-row">
-              <span class="proc-label">Soft Furnishings</span>
-              <div class="proc-track"><div class="proc-fill warn" style="width:68%;"></div></div>
-              <span class="proc-val">68%</span>
-            </div>
-            <div class="proc-row">
-              <span class="proc-label">Plastic Manipulatives</span>
-              <div class="proc-track"><div class="proc-fill danger" style="width:54%;"></div></div>
-              <span class="proc-val">54%</span>
-            </div>
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg> Recent Inventory Activity</h3>
+          <p class="profile-meta mb-3" style="line-height:1.55;">The last ten check-outs, check-ins and condition logs across the centre, newest first.</p>
+          <div id="hqEventFeed">
+            <p class="profile-meta">Loading activity&hellip;</p>
           </div>
-          <p class="profile-meta" style="margin-top:14px;line-height:1.55;">Soft furnishings and budget plastics retire well under their rated life - evidence HQ can take back to suppliers when renewing contracts.</p>
         </div>
 
       </div>
@@ -229,118 +186,224 @@
       <!-- ═══════════ Right Column ═══════════ -->
       <div>
 
-        <!-- Panel 3: Centralized Environment Control -->
+        <!-- Panel 3: Layouts by status (live) -->
         <div class="dash-panel mb-3">
-          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg> Centralized Environment Control</h3>
-          <p class="profile-meta mb-3" style="line-height:1.55;">Standards set once at HQ and enforced across every branch - so a layout in Centre&nbsp;01 follows the same safety and brand rules as Centre&nbsp;11.</p>
-          <div class="control-list">
-            <div class="control-row">
-              <div>
-                <h5>Furniture height &le;1.2&nbsp;m near windows</h5>
-                <span class="control-meta">Preserves educator sightlines</span>
-              </div>
-              <span class="toggle-pill">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                Enforced
-              </span>
-            </div>
-            <div class="control-row">
-              <div>
-                <h5>Busy Bees colour palette v2</h5>
-                <span class="control-meta">Signage, finishes &amp; trim</span>
-              </div>
-              <span class="toggle-pill">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                Enforced
-              </span>
-            </div>
-            <div class="control-row">
-              <div>
-                <h5>Min. 2 evacuation paths per room</h5>
-                <span class="control-meta">Aligned to SCDF licensing</span>
-              </div>
-              <span class="toggle-pill">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                Enforced
-              </span>
-            </div>
-            <div class="control-row">
-              <div>
-                <h5>Quarterly resource audit</h5>
-                <span class="control-meta">Next cycle: Q3 2026</span>
-              </div>
-              <span class="toggle-pill" style="background:rgba(59,130,246,0.1);color:var(--info);">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>
-                Scheduled
-              </span>
-            </div>
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg> Layout Pipeline</h3>
+          <p class="profile-meta mb-3" style="line-height:1.55;">Classroom layouts from the <a href="sproutspace-layout.html">Layout Planner</a>, grouped by review status.</p>
+          <div class="proc-bars" id="hqLayoutBars">
+            <p class="profile-meta">Loading layouts&hellip;</p>
           </div>
-          <button class="btn btn-primary mt-3" style="width:100%;justify-content:center;background:var(--sprout);border-color:var(--sprout);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-            Push standards to all centres
-          </button>
         </div>
 
-        <!-- Panel 4: Layout Approvals -->
+        <!-- Panel 4: Educators (live) -->
         <div class="dash-panel mb-3">
-          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg> Layout Approvals</h3>
+          <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Educators on the Platform</h3>
+          <p class="profile-meta mb-3" style="line-height:1.55;">Every signed-up educator, with the layouts they have drafted or submitted. Counts reflect what your role is permitted to see.</p>
           <div class="table-scroll">
             <table class="budget-table">
               <thead>
                 <tr>
-                  <th>Centre</th>
-                  <th>Classroom</th>
-                  <th>Status</th>
+                  <th>Educator</th>
+                  <th>Role</th>
+                  <th style="text-align:right;">Layouts</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Tampines</strong></td>
-                  <td>K1 - Sunbeam</td>
-                  <td><span class="status-badge on-track">Approved</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Punggol</strong></td>
-                  <td>N2 - Acorn</td>
-                  <td><span class="status-badge needs-support">Pending</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Jurong West</strong></td>
-                  <td>Playgroup - Sprout</td>
-                  <td><span class="status-badge on-track">Approved</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Bishan</strong></td>
-                  <td>K2 - Maple</td>
-                  <td><span class="status-badge needs-support">Pending</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Sengkang</strong></td>
-                  <td>N1 - Pebble</td>
-                  <td><span class="status-badge on-track">Approved</span></td>
-                </tr>
+              <tbody id="hqEducatorRows">
+                <tr><td colspan="3" class="profile-meta">Loading educators&hellip;</td></tr>
               </tbody>
             </table>
           </div>
-          <p class="profile-meta" style="margin-top:14px;line-height:1.55;">Every submission arrives pre-checked by the Layout Planner, so Directors approve digitally - no re-measuring on paper.</p>
         </div>
 
       </div>
 
     </div>
 
-    <!-- ─── Closing note ────────────────────────────────────── -->
-    <div class="panel-card mt-4">
-      <div class="section-header" style="text-align:left;margin-bottom:20px;">
-        <span class="section-label" style="color:var(--sprout);">Why HQ Visibility Matters</span>
-        <h2 style="font-size:1.5rem;">One Network View, Safer and Smarter Budgets</h2>
-        <p style="margin:0;">Before SproutSpace, HQ had no live picture of what its centres owned, how it was used, or whether new layouts were safe. Spreadsheets aged the moment they were saved, resources were duplicated or quietly lost, and budgets were set on guesswork.</p>
-      </div>
-      <div class="narrative-box">
-        <span class="narrative-label">The leadership payoff</span>
-        <p class="narrative-text">This control view turns the whole network into evidence. Real usage rates and durability data size the next order, the <strong>32% cut in duplicate purchasing</strong> across centres flows straight from shared visibility, and centralised standards mean a single safety or brand update reaches every room at once. Layout approvals close the loop - supporting the sandbox KPI of <strong>100% first-time classroom-layout safety approval</strong> - so HQ governs by data, not by site visits and paperwork.</p>
-      </div>
-    </div>
+    <script>
+    (function () {
+      'use strict';
+
+      var CAT_LABEL = { sensory: 'Sensory', construction: 'Construction', art: 'Art', books: 'Books', 'fine-motor': 'Fine-motor', general: 'General' };
+      var STATUS_LABEL = { draft: 'Draft', submitted: 'Awaiting review', approved: 'Approved', changes_requested: 'Changes requested' };
+      var ACTION_LABEL = { check_out: 'checked out', check_in: 'checked in', condition: 'logged condition on' };
+
+      function el(id) { return document.getElementById(id); }
+
+      function bar(label, count, total, extraClass) {
+        var pctv = total > 0 ? Math.round((count / total) * 100) : 0;
+        var row = document.createElement('div');
+        row.className = 'proc-row';
+        var name = document.createElement('span');
+        name.className = 'proc-label';
+        name.textContent = label;
+        var track = document.createElement('div');
+        track.className = 'proc-track';
+        var fill = document.createElement('div');
+        fill.className = 'proc-fill' + (extraClass ? ' ' + extraClass : '');
+        fill.style.width = pctv + '%';
+        track.appendChild(fill);
+        var val = document.createElement('span');
+        val.className = 'proc-val';
+        val.textContent = count;
+        row.appendChild(name); row.appendChild(track); row.appendChild(val);
+        return row;
+      }
+
+      function loadInventory() {
+        window.pfDb.from('inventory_items').select('id,name,category,condition,status').then(function (r) {
+          if (r.error) { el('hqCatBars').textContent = 'Could not load inventory: ' + r.error.message; return; }
+          var rows = r.data || [];
+          el('hqStatItems').textContent = String(rows.length);
+          var out = rows.filter(function (i) { return i.status === 'out'; }).length;
+          el('hqStatOut').textContent = String(out);
+          el('hqStatOutSub').textContent = (rows.length - out) + ' on the shelf';
+          var worn = rows.filter(function (i) { return i.condition === 'worn'; });
+          el('hqStatWorn').textContent = String(worn.length);
+          el('hqStatWornSub').textContent = worn.length ? 'Review the list below' : 'Nothing flagged';
+
+          var byCat = {};
+          rows.forEach(function (i) { byCat[i.category] = (byCat[i.category] || 0) + 1; });
+          var host = el('hqCatBars');
+          host.textContent = '';
+          if (!rows.length) {
+            var p = document.createElement('p');
+            p.className = 'profile-meta';
+            p.innerHTML = 'No resources tracked yet — add the first item in the <a href="sproutspace-inventory.html">Resource Inventory</a>.';
+            host.appendChild(p);
+          } else {
+            Object.keys(byCat).sort(function (a, b) { return byCat[b] - byCat[a]; }).forEach(function (cat) {
+              var wornShare = rows.filter(function (i) { return i.category === cat && i.condition === 'worn'; }).length;
+              var cls = wornShare > 0 ? (wornShare >= byCat[cat] / 2 ? 'danger' : 'warn') : '';
+              host.appendChild(bar(CAT_LABEL[cat] || cat, byCat[cat], rows.length, cls));
+            });
+          }
+
+          var repl = el('hqReplaceList');
+          repl.textContent = '';
+          if (worn.length) {
+            var lbl = document.createElement('span');
+            lbl.className = 'profile-meta';
+            lbl.style.width = '100%';
+            lbl.textContent = 'Replace soon:';
+            repl.appendChild(lbl);
+            worn.slice(0, 8).forEach(function (i) {
+              var pill = document.createElement('span');
+              pill.className = 'status-badge needs-support';
+              pill.textContent = i.name;
+              repl.appendChild(pill);
+            });
+          }
+        });
+      }
+
+      function loadEvents() {
+        window.pfDb.from('inventory_events')
+          .select('action,detail,created_at,profiles:actor(full_name),inventory_items:item_id(name)')
+          .order('created_at', { ascending: false })
+          .limit(10)
+          .then(function (r) {
+            var host = el('hqEventFeed');
+            host.textContent = '';
+            if (r.error) { host.textContent = 'Could not load activity: ' + r.error.message; return; }
+            var rows = r.data || [];
+            if (!rows.length) {
+              host.textContent = 'No activity yet — the feed fills as educators check resources in and out.';
+              host.className = 'profile-meta';
+              return;
+            }
+            rows.forEach(function (ev) {
+              var line = document.createElement('div');
+              line.style.cssText = 'display:flex;gap:8px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.84rem;';
+              var who = document.createElement('strong');
+              who.textContent = (ev.profiles && ev.profiles.full_name) || 'Someone';
+              var what = document.createElement('span');
+              what.style.flex = '1';
+              what.textContent = ' ' + (ACTION_LABEL[ev.action] || ev.action) + ' “' + ((ev.inventory_items && ev.inventory_items.name) || 'an item') + '”' + (ev.action === 'condition' && ev.detail ? ' (' + ev.detail + ')' : '');
+              var when = document.createElement('span');
+              when.className = 'profile-meta';
+              when.textContent = window.pfApi.ago(ev.created_at);
+              line.appendChild(who); line.appendChild(what); line.appendChild(when);
+              host.appendChild(line);
+            });
+          });
+      }
+
+      function loadLayoutsAndEducators() {
+        Promise.all([
+          window.pfDb.from('layouts').select('owner,status'),
+          window.pfDb.from('profiles').select('id,full_name,role')
+        ]).then(function (results) {
+          var lr = results[0], pr = results[1];
+          var layouts = lr.error ? [] : (lr.data || []);
+          var profiles = pr.error ? [] : (pr.data || []);
+
+          /* Layout pipeline bars */
+          var host = el('hqLayoutBars');
+          host.textContent = '';
+          if (lr.error) {
+            host.textContent = 'Could not load layouts: ' + lr.error.message;
+          } else if (!layouts.length) {
+            var p = document.createElement('p');
+            p.className = 'profile-meta';
+            p.innerHTML = 'No layouts yet — design one in the <a href="sproutspace-layout.html">Layout Planner</a>.';
+            host.appendChild(p);
+          } else {
+            var byStatus = {};
+            layouts.forEach(function (l) { byStatus[l.status] = (byStatus[l.status] || 0) + 1; });
+            ['submitted', 'approved', 'changes_requested', 'draft'].forEach(function (st) {
+              if (!byStatus[st]) return;
+              var cls = st === 'changes_requested' ? 'warn' : '';
+              host.appendChild(bar(STATUS_LABEL[st] || st, byStatus[st], layouts.length, cls));
+            });
+          }
+
+          /* Educator stats + table */
+          el('hqStatEducators').textContent = String(profiles.length);
+          var byOwner = {};
+          layouts.forEach(function (l) { byOwner[l.owner] = (byOwner[l.owner] || 0) + 1; });
+          var tbody = el('hqEducatorRows');
+          tbody.textContent = '';
+          if (pr.error || !profiles.length) {
+            var tr0 = document.createElement('tr');
+            var td0 = document.createElement('td');
+            td0.colSpan = 3;
+            td0.className = 'profile-meta';
+            td0.textContent = pr.error ? ('Could not load educators: ' + pr.error.message) : 'No educators registered yet.';
+            tr0.appendChild(td0);
+            tbody.appendChild(tr0);
+            return;
+          }
+          profiles
+            .slice()
+            .sort(function (a, b) { return (byOwner[b.id] || 0) - (byOwner[a.id] || 0); })
+            .forEach(function (prof) {
+              var tr = document.createElement('tr');
+              var tdName = document.createElement('td');
+              var strong = document.createElement('strong');
+              strong.textContent = prof.full_name || 'Unnamed';
+              tdName.appendChild(strong);
+              var tdRole = document.createElement('td');
+              tdRole.textContent = prof.role || 'educator';
+              var tdN = document.createElement('td');
+              tdN.style.textAlign = 'right';
+              tdN.textContent = String(byOwner[prof.id] || 0);
+              tr.appendChild(tdName); tr.appendChild(tdRole); tr.appendChild(tdN);
+              tbody.appendChild(tr);
+            });
+        });
+      }
+
+      function start(ctx) {
+        if (!ctx || !ctx.user || !window.pfDb) return;
+        loadInventory();
+        loadEvents();
+        loadLayoutsAndEducators();
+      }
+      function boot() { if (window.pfAuthReady) window.pfAuthReady.then(start); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+      else boot();
+    })();
+    </script>
 
   </main>
 
@@ -353,6 +416,7 @@
   <button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/pf-auth.js"></script>
+  <script src="js/pf-api.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

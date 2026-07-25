@@ -44,6 +44,9 @@
   };
   var simBadgeEl = null;
   var support = { stt: false, tts: false };
+  var pickedChild = null;   // {id,name} from pfApi.childPicker (or null = general)
+
+  function childName() { return pickedChild ? pickedChild.name : 'friend'; }
 
   function reducedMotion() {
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -293,15 +296,82 @@
     if (!(window.pfDb && window.pfUser)) return;
     window.pfDb.from('reading_sessions').insert({
       user_id: window.pfUser.id,
+      child_id: pickedChild ? pickedChild.id : null,
       passage: passage.join(' '),
       wcpm: wcpm,
       accuracy: accuracy,
       miscues: miscues,
       mode: state.mode === 'sim' ? 'simulated' : 'live'
     }).then(function (r) {
-      if (!r.error && window.pfToast) pfToast('Reading session saved — WCPM ' + wcpm);
+      if (r.error) {
+        if (window.pfToast) pfToast('Could not save session: ' + r.error.message);
+        return;
+      }
+      if (window.pfToast) pfToast('Reading session saved — WCPM ' + wcpm);
+      loadRecentSessions();
     });
   }
+
+  /* ─── Recent sessions (live from reading_sessions) ───────── */
+  function loadRecentSessions() {
+    var list = document.getElementById('rcSessionsList');
+    var sub = document.getElementById('rcSessionsSub');
+    if (!list || !(window.pfDb && window.pfUser)) return;
+    var q = window.pfDb.from('reading_sessions')
+      .select('wcpm,accuracy,mode,created_at')
+      .order('created_at', { ascending: false })
+      .limit(6);
+    q = pickedChild ? q.eq('child_id', pickedChild.id) : q.is('child_id', null);
+    q.then(function (r) {
+      list.textContent = '';
+      if (r.error) { sub.textContent = 'Could not load sessions: ' + r.error.message; return; }
+      var rows = r.data || [];
+      if (!rows.length) {
+        sub.textContent = pickedChild
+          ? 'No saved reads for ' + pickedChild.name + ' yet — press the big circle to start the first one!'
+          : 'No saved reads yet — press the big circle to start the first one!';
+        return;
+      }
+      sub.textContent = (pickedChild ? pickedChild.name + '’s' : 'Your') + ' latest reads, newest first.';
+      rows.forEach(function (s) {
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border);font-size:0.86rem;';
+        var wcpm = document.createElement('strong');
+        wcpm.style.color = 'var(--secondary)';
+        wcpm.textContent = s.wcpm + ' WCPM';
+        var acc = document.createElement('span');
+        acc.textContent = s.accuracy + '% accuracy';
+        var mode = document.createElement('span');
+        mode.style.cssText = 'font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;';
+        mode.textContent = s.mode;
+        var when = document.createElement('span');
+        when.style.cssText = 'margin-left:auto;color:var(--text-muted);font-size:0.76rem;';
+        when.textContent = window.pfApi ? window.pfApi.ago(s.created_at) : '';
+        row.appendChild(wcpm); row.appendChild(acc); row.appendChild(mode); row.appendChild(when);
+        list.appendChild(row);
+      });
+    });
+  }
+
+  /* ─── Child picker (pfApi) ───────────────────────────────── */
+  function initChildPicker() {
+    var host = document.getElementById('rcPickerHost');
+    var title = document.getElementById('rcChildTitle');
+    if (!host || !window.pfApi || !window.pfApi.childPicker) return;
+    window.pfApi.childPicker(host, {
+      allowNone: true,
+      onPick: function (child) {
+        pickedChild = child ? { id: child.id, name: child.name } : null;
+        if (title) title.textContent = pickedChild ? pickedChild.name + '’s reading time' : 'Reading time';
+        if (els.mascotTitle && !state.hasResult) els.mascotTitle.textContent = 'Hello, ' + childName() + '!';
+        loadRecentSessions();
+      }
+    });
+  }
+  if (window.pfAuthReady) window.pfAuthReady.then(initChildPicker);
+  else document.addEventListener('DOMContentLoaded', function () {
+    if (window.pfAuthReady) window.pfAuthReady.then(initChildPicker);
+  });
 
   function showResults(elapsedSec, reason) {
     var ok = countOk();
@@ -316,16 +386,16 @@
     var title;
     var body;
     if (attempted === 0) {
-      title = 'I didn’t quite hear you, Amira!';
+      title = 'I didn’t quite hear you, ' + childName() + '!';
       body = 'Let’s try again together — press the big circle and read nice and loud.';
     } else if (accuracy >= 95) {
-      title = 'Superstar reading, Amira!';
-      body = 'You read ' + ok + ' of ' + total + ' words beautifully. Your garden is going to love this!';
+      title = 'Superstar reading, ' + childName() + '!';
+      body = 'You read ' + ok + ' of ' + total + ' words beautifully!';
     } else if (accuracy >= 75) {
-      title = 'Great reading, Amira!';
+      title = 'Great reading, ' + childName() + '!';
       body = 'You read ' + ok + ' of ' + total + ' words clearly.';
     } else {
-      title = 'Good trying, Amira!';
+      title = 'Good trying, ' + childName() + '!';
       body = 'Every read makes your reading muscles stronger. You got ' + ok + ' words this time.';
     }
     if (miscues.length > 0) {

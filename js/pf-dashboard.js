@@ -43,6 +43,31 @@
       $('greetSub').textContent = "Network view — your educators' activity and pending approvals.";
     }
 
+    /* Classes & lessons card */
+    var clsQ = isDirector
+      ? db.from('classes').select('name,age_group,children(id),profiles:owner(full_name)')
+      : db.from('classes').select('name,age_group,children(id)').eq('owner', ctx.user.id);
+    clsQ.limit(4).then(function (r) {
+      var data = r.data || [];
+      var kidTotal = data.reduce(function (n, c) { return n + (c.children ? c.children.length : 0); }, 0);
+      $('statClasses').textContent = data.length;
+      $('statClassesSub').textContent = kidTotal + ' children enrolled';
+      var rows = data.map(function (c) {
+        var who = c.profiles && c.profiles.full_name ? c.profiles.full_name + ' · ' : '';
+        return row(c.name, who + c.age_group.toUpperCase(), (c.children ? c.children.length : 0) + ' children', 'approved');
+      });
+      fill($('cardClasses'), rows, 'No classes yet — create your first class to unlock every module.');
+    });
+    var lesQ = isDirector
+      ? db.from('lessons').select('theme,created_at,profiles:owner(full_name)')
+      : db.from('lessons').select('theme,created_at').eq('owner', ctx.user.id);
+    lesQ.order('created_at', { ascending: false }).limit(2).then(function (r) {
+      (r.data || []).forEach(function (l) {
+        var who = l.profiles && l.profiles.full_name ? l.profiles.full_name + ' · ' : '';
+        $('cardClasses').appendChild(row(l.theme, who + ago(l.created_at), 'lesson', 'draft'));
+      });
+    });
+
     /* Layouts card */
     var layoutQ = isDirector
       ? db.from('layouts').select('name,status,score,updated_at,profiles:owner(full_name)').neq('status', 'draft')

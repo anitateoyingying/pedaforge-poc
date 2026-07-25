@@ -106,6 +106,48 @@
       line-height: 1.5;
     }
 
+    /* ─── AI Result Cards ─────────────────────────────── */
+    .lna-goal-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+    }
+    .lna-goal-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; flex-wrap: wrap; margin-bottom: 8px;
+    }
+    .lna-goal-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--accent-proposal); color: #fff;
+      font-size: 0.74rem; font-weight: 700; flex-shrink: 0;
+    }
+    .lna-goal-tags { display: inline-flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .lna-qtt-tag {
+      display: inline-block; padding: 3px 11px; border-radius: 100px;
+      font-size: 0.72rem; font-weight: 700;
+      background: var(--accent-proposal-soft); color: var(--accent-proposal);
+      border: 1px solid var(--accent-proposal-line);
+    }
+    .sfw-pill {
+      display: inline-block; padding: 3px 11px;
+      background: rgba(139,92,246,0.1); color: #8b5cf6;
+      border-radius: 100px; font-size: 0.7rem; font-weight: 700;
+    }
+    .lna-goal-text { font-size: 0.9rem; color: var(--text); line-height: 1.6; margin: 0; }
+    .lna-pd-box {
+      margin-top: 6px; margin-bottom: 14px; padding: 16px 20px;
+      background: var(--accent-proposal-soft);
+      border: 1px solid var(--accent-proposal-line);
+      border-radius: var(--radius-sm);
+    }
+    .lna-pd-box h4 { font-size: 0.9rem; color: var(--accent-proposal); margin-bottom: 8px; }
+    .lna-pd-box p { font-size: 0.88rem; color: var(--text); line-height: 1.55; margin: 0; }
+    .lna-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .lna-empty { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
+
     /* ─── Sidebar ─────────────────────────────────────── */
     .lna-sidebar {
       display: flex;
@@ -265,7 +307,7 @@
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Dashboard</a></li>
         <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
-          <a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
+          <a href="classes.html">My Classes</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
         <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
           <a href="coach.html">AI Coach</a><a href="observation.html">Lesson Observation</a><a href="lna.html">Learning Needs</a><a href="dashboard.html">PD Dashboard</a></div></li>
         <li><span class="nav-dropdown-trigger">Spaces</span><div class="nav-dropdown">
@@ -300,192 +342,44 @@
   <div class="container" style="padding-top: 80px;">
     <div class="lna-layout">
 
-      <!-- ─── Left Column: LNA Steps ───────────────────── -->
+      <!-- ─── Left Column: LNA Tool ────────────────────── -->
       <div class="lna-main">
 
-        <!-- Step 1: Educator Profile -->
+        <!-- Step 1: Your Profile & Self-Assessment -->
         <div class="step-card">
-          <h3><span class="step-number">1</span> Educator Profile</h3>
+          <h3><span class="step-number">1</span> Your Profile &amp; Self-Assessment</h3>
 
           <div class="lna-form-row">
             <div class="lna-form-group">
-              <label>Name</label>
-              <input type="text" class="lna-select" value="Sarah Tan" disabled style="background:var(--bg);border:1px solid var(--border);padding:10px 14px;border-radius:var(--radius-sm);font-family:var(--font);font-size:0.9rem;color:var(--text);width:100%;box-sizing:border-box;">
-            </div>
-            <div class="lna-form-group">
-              <label>Centre</label>
-              <input type="text" class="lna-select" value="Busy Bees @ Novena" disabled style="background:var(--bg);border:1px solid var(--border);padding:10px 14px;border-radius:var(--radius-sm);font-family:var(--font);font-size:0.9rem;color:var(--text);width:100%;box-sizing:border-box;">
-            </div>
-          </div>
-
-          <div class="lna-form-row">
-            <div class="lna-form-group">
-              <label>Designation</label>
-              <select class="lna-select">
-                <option>Early Years Educator</option>
-                <option selected>Preschool Educator</option>
-                <option>Senior Preschool Educator</option>
+              <label for="lnaDesignation">Designation</label>
+              <select class="lna-select" id="lnaDesignation">
+                <option>Educator</option>
+                <option>Senior Educator</option>
+                <option>Lead Educator</option>
+                <option>Deputy Director</option>
               </select>
             </div>
             <div class="lna-form-group">
-              <label>Years of Experience</label>
-              <select class="lna-select">
-                <option>0&ndash;2 years</option>
-                <option selected>3&ndash;5 years</option>
-                <option>6&ndash;10 years</option>
-                <option>10+ years</option>
-              </select>
+              <label for="lnaExperience">Years of experience</label>
+              <input type="number" class="lna-select" id="lnaExperience" min="0" max="60" step="1" placeholder="e.g. 4" inputmode="numeric">
             </div>
           </div>
 
-          <div class="lna-form-row">
-            <div class="lna-form-group">
-              <label>Age Group</label>
-              <select class="lna-select">
-                <option>Infant Care (2&ndash;18 months)</option>
-                <option>Playgroup (18 months&ndash;3 years)</option>
-                <option>Nursery (3&ndash;4 years)</option>
-                <option selected>K1 (4&ndash;5 years)</option>
-                <option>K2 (5&ndash;6 years)</option>
-              </select>
-            </div>
-            <div class="lna-form-group">
-              <label>Qualification</label>
-              <select class="lna-select">
-                <option>Certificate in Early Childhood</option>
-                <option selected>Diploma in Early Childhood</option>
-                <option>Degree in Early Childhood</option>
-                <option>Postgraduate in Education</option>
-              </select>
-            </div>
+          <div class="lna-form-group" style="margin-top:12px;">
+            <label for="lnaSelf">Where do you want to grow?</label>
+            <textarea class="form-control" id="lnaSelf" rows="5" placeholder="Describe your strengths, the areas you find hardest, and what you'd like to be doing more confidently a year from now. The more specific you are, the sharper the AI's goals will be."></textarea>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+            <button class="btn btn-primary" id="lnaAnalyse" type="button">Analyse</button>
+            <span style="font-size:0.76rem;color:var(--text-muted);align-self:center;">AI maps your reflection to QTT domains and SFw for ECCE references.</span>
           </div>
         </div>
 
-        <!-- Step 2: CWF Self-Assessment -->
-        <div class="step-card">
-          <h3><span class="step-number">2</span> Proficiency Self-Assessment (Critical Work Functions)</h3>
-
-          <p class="profile-meta" style="margin-bottom: 16px;">Rate your current proficiency for each CWF from the Skills Framework for Early Childhood Care and Education (SFw for ECCE).</p>
-
-          <div class="cwf-grid">
-            <div class="cwf-item">
-              <span class="cwf-item-name">CWF01: Develop the Whole Child</span>
-              <span class="cwf-item-level developing">Developing</span>
-            </div>
-            <div class="cwf-item">
-              <span class="cwf-item-name">CWF02: Collaborate with Families</span>
-              <span class="cwf-item-level proficient">Proficient</span>
-            </div>
-            <div class="cwf-item">
-              <span class="cwf-item-name">CWF03: Build Professional Capacity</span>
-              <span class="cwf-item-level developing">Developing</span>
-            </div>
-            <div class="cwf-item">
-              <span class="cwf-item-name">CWF04: Ensure Health &amp; Safety</span>
-              <span class="cwf-item-level accomplished">Accomplished</span>
-            </div>
-            <div class="cwf-item">
-              <span class="cwf-item-name">CWF05: Curriculum &amp; Pedagogy</span>
-              <span class="cwf-item-level proficient">Proficient</span>
-            </div>
-            <div class="cwf-item">
-              <span class="cwf-item-name">CWF06: Environment &amp; Resources</span>
-              <span class="cwf-item-level proficient">Proficient</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 3: Self-Reflection -->
-        <div class="step-card">
-          <h3><span class="step-number">3</span> Self-Reflection</h3>
-
-          <div class="lna-form-row">
-            <div class="narrative-box">
-              <p class="narrative-label">Strengths</p>
-              <p class="narrative-text">Strong rapport with families. Confident in creating safe, inclusive environments. Experienced with outdoor learning and nature-based pedagogy.</p>
-            </div>
-            <div class="narrative-box">
-              <p class="narrative-label">Areas for Growth</p>
-              <p class="narrative-text">Need to deepen intentional teaching strategies for sustained shared thinking. Want to improve documentation of children&rsquo;s learning through observation and assessment.</p>
-            </div>
-          </div>
-
-          <div class="narrative-box" style="margin-top: 16px;">
-            <p class="narrative-label">Professional Goals (next 12 months)</p>
-            <p class="narrative-text">Become more confident in using open-ended questioning to extend children&rsquo;s thinking during play. Develop systematic approaches to documenting learning stories that connect observations to NEL outcomes.</p>
-          </div>
-        </div>
-
-        <!-- Step 4: AI-Identified Learning Goals -->
-        <div class="step-card">
-          <h3><span class="step-number">4</span> <span class="inline-tag-title"><span class="tag tag-ai tag-sm">AI-Identified</span> Learning Goals</span></h3>
-
-          <p class="profile-meta" style="margin-bottom: 16px;">Based on your profile, CWF assessment, and self-reflection, PedaForge has identified the following priority learning goals.</p>
-
-          <div class="lna-goals">
-            <div class="lna-goal-item">
-              <span class="lna-goal-badge">CWF01</span>
-              <span><strong>Strengthen sustained shared thinking:</strong> Develop strategies to extend children&rsquo;s thinking through open-ended questioning and responsive dialogue during play-based learning.</span>
-            </div>
-            <div class="lna-goal-item">
-              <span class="lna-goal-badge">CWF05</span>
-              <span><strong>Formative assessment practices:</strong> Build confidence in observing, documenting, and interpreting children&rsquo;s learning to inform curriculum planning and differentiation.</span>
-            </div>
-            <div class="lna-goal-item">
-              <span class="lna-goal-badge">CWF03</span>
-              <span><strong>Reflective professional practice:</strong> Establish a habit of structured self-reflection (using Gibbs&rsquo; Cycle) after teaching episodes to identify patterns and plan improvements.</span>
-            </div>
-          </div>
-
-          <div style="margin-top: 20px; padding: 16px; background: rgba(232,6,60,0.04); border-radius: var(--radius-sm); border: 1px solid rgba(232,6,60,0.12);">
-            <p class="profile-meta" style="margin: 0;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-              These goals are AI-generated recommendations. You and your centre leaders can review, adjust, and finalise them before they flow into your Individual Development Plan.
-            </p>
-          </div>
-        </div>
-
-        <!-- Step 5: IDP Foundation -->
-        <div class="step-card idp-card">
-          <h3><span class="step-number" style="background: rgba(255,255,255,0.2); color: white;">5</span> Individual Development Plan (IDP)</h3>
-
-          <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 20px; line-height: 1.6;">Your IDP is built from the learning goals identified above, mapped to recommended professional development pathways aligned with the Skills Framework for ECCE.</p>
-
-          <div class="idp-timeline">
-            <div class="idp-item">
-              <div class="idp-item-marker">Q1</div>
-              <div class="idp-item-content">
-                <h5>Sustained Shared Thinking Workshop</h5>
-                <p>Attend centre-based PD on open-ended questioning techniques. Practice with AI Coach (Socratic Inquiry mode) 2x weekly. Document 3 classroom episodes showing SST strategies.</p>
-              </div>
-            </div>
-            <div class="idp-item">
-              <div class="idp-item-marker">Q2</div>
-              <div class="idp-item-content">
-                <h5>Observation &amp; Documentation Skills</h5>
-                <p>Complete online module on learning stories (NEL-aligned). Use PedaForge Portfolio to capture 5 observations per week with AI-assisted narrative drafting. Peer review with a colleague.</p>
-              </div>
-            </div>
-            <div class="idp-item">
-              <div class="idp-item-marker">Q3</div>
-              <div class="idp-item-content">
-                <h5>Reflective Practice Habit</h5>
-                <p>Establish weekly AI coaching reflections using Gibbs&rsquo; Cycle. Share one reflection per month at PLC meeting. Centre leader to observe and provide feedback on one teaching episode.</p>
-              </div>
-            </div>
-            <div class="idp-item">
-              <div class="idp-item-marker">Q4</div>
-              <div class="idp-item-content">
-                <h5>Review &amp; Next Cycle</h5>
-                <p>Complete end-of-year self-assessment. Review QTT progress with centre leader. Update CWF proficiency ratings. Set goals for next IDP cycle based on growth trajectory.</p>
-              </div>
-            </div>
-          </div>
-
-          <p style="font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-top: 20px; display: flex; align-items: center; gap: 6px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            This IDP can be exported as a PDF or shared directly with your centre leader for review and endorsement.
-          </p>
+        <!-- Step 2: AI-Identified Learning Goals -->
+        <div class="step-card" id="lnaResultCard" hidden>
+          <h3><span class="step-number">2</span> AI-Identified Learning Goals</h3>
+          <div id="lnaResults"></div>
         </div>
 
       </div>
@@ -495,27 +389,19 @@
 
         <!-- LNA Flow -->
         <div class="sidebar-panel">
-          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> LNA Flow</h3>
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> How It Works</h3>
           <div class="flow-steps">
-            <div class="flow-step completed">
-              <span class="flow-step-icon">&#10003;</span>
-              <span>Educator Profile</span>
-            </div>
-            <div class="flow-step completed">
-              <span class="flow-step-icon">&#10003;</span>
-              <span>CWF Self-Assessment</span>
-            </div>
-            <div class="flow-step completed">
-              <span class="flow-step-icon">&#10003;</span>
-              <span>Self-Reflection</span>
-            </div>
-            <div class="flow-step active">
-              <span class="flow-step-icon">4</span>
-              <span>AI Learning Goals</span>
+            <div class="flow-step">
+              <span class="flow-step-icon">1</span>
+              <span>Share your designation, experience &amp; growth areas</span>
             </div>
             <div class="flow-step">
-              <span class="flow-step-icon">5</span>
-              <span>Individual Development Plan</span>
+              <span class="flow-step-icon">2</span>
+              <span>AI identifies 3 priority learning goals</span>
+            </div>
+            <div class="flow-step">
+              <span class="flow-step-icon">3</span>
+              <span>Copy the goals into your IDP &amp; review with your leader</span>
             </div>
           </div>
         </div>
@@ -560,6 +446,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/pf-auth.js"></script>
+  <script src="js/pf-api.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/pf-lna.js"></script>
 </body>
 </html>

@@ -17,12 +17,7 @@
       padding-bottom: 60px;
     }
 
-    .ws-upload-col {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
+    .ws-upload-col,
     .ws-result-col {
       display: flex;
       flex-direction: column;
@@ -82,11 +77,12 @@
       display: flex;
       gap: 16px;
       align-items: flex-start;
+      text-align: left;
     }
 
     .ws-preview-img {
-      width: 200px;
-      height: 200px;
+      width: 160px;
+      height: 160px;
       border-radius: var(--radius-sm);
       background: var(--bg);
       border: 1px solid var(--border);
@@ -97,9 +93,7 @@
       overflow: hidden;
     }
 
-    .ws-preview-img svg {
-      color: var(--text-muted);
-    }
+    .ws-preview-img img { width: 100%; height: 100%; object-fit: cover; }
 
     .ws-preview-info {
       flex: 1;
@@ -112,6 +106,7 @@
       font-weight: 600;
       font-size: 0.95rem;
       color: var(--text);
+      word-break: break-all;
     }
 
     .ws-preview-meta {
@@ -119,17 +114,7 @@
       color: var(--text-muted);
     }
 
-    .ws-preview-check {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.82rem;
-      color: var(--success);
-      font-weight: 500;
-      margin-top: 4px;
-    }
-
-    /* ─── Domain Selection ────────────────────────────── */
+    /* ─── Panels & domain chips ───────────────────────── */
     .ws-panel {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -200,6 +185,8 @@
       cursor: pointer;
       color: var(--primary);
       line-height: 1;
+      border: none;
+      padding: 0;
     }
 
     .ws-context-input {
@@ -245,12 +232,14 @@
       box-shadow: var(--shadow);
     }
 
-    .ws-analyse-btn:hover {
+    .ws-analyse-btn:hover:not(:disabled) {
       background: var(--primary-dark);
       transform: translateY(-1px);
     }
 
-    /* ─── Result Cards ────────────────────────────────── */
+    .ws-analyse-btn:disabled { opacity: 0.6; cursor: default; }
+
+    /* ─── Results ─────────────────────────────────────── */
     .ws-result-header {
       display: flex;
       align-items: center;
@@ -270,17 +259,13 @@
       flex-shrink: 0;
     }
 
-    .ws-domain-result + .ws-domain-result {
-      margin-top: 16px;
-    }
-
-    .ws-outcome-list {
+    .ws-milestone-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
-    .ws-outcome-item {
+    .ws-milestone-item {
       display: flex;
       align-items: flex-start;
       gap: 10px;
@@ -289,7 +274,7 @@
       color: var(--text);
     }
 
-    .ws-outcome-icon {
+    .ws-milestone-icon {
       width: 20px;
       height: 20px;
       border-radius: 50%;
@@ -299,65 +284,59 @@
       flex-shrink: 0;
       font-size: 0.65rem;
       margin-top: 2px;
-    }
-
-    .ws-outcome-icon.met {
       background: rgba(16,185,129,0.15);
       color: var(--success);
     }
 
-    .ws-outcome-icon.emerging {
-      background: rgba(255,158,24,0.15);
-      color: var(--warning);
+    .ws-next-step {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: rgba(139,92,246,0.06);
+      border: 1px solid rgba(139,92,246,0.18);
+      border-radius: 12px;
+      font-size: 0.86rem;
+      line-height: 1.55;
+      color: var(--text);
     }
+    .ws-next-step strong { color: #8b5cf6; }
 
-    .ws-outcome-badge {
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    .ws-outcome-badge.met {
-      background: rgba(16,185,129,0.1);
-      color: var(--success);
-    }
-
-    .ws-outcome-badge.emerging {
-      background: rgba(255,158,24,0.1);
-      color: var(--warning);
-    }
-
-    /* ─── Summary Bar ─────────────────────────────────── */
-    .ws-summary-bar {
-      display: flex;
+    /* ─── Gallery ─────────────────────────────────────── */
+    .ws-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 16px;
     }
 
-    .ws-summary-stat {
-      flex: 1;
-      text-align: center;
-      padding: 16px;
-      border-radius: var(--radius-sm);
-      background: var(--bg);
+    .ws-gallery-card {
+      background: var(--bg-card);
       border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
     }
 
-    .ws-summary-stat-value {
-      font-size: 1.4rem;
-      font-weight: 700;
-      font-family: 'Playfair Display', serif;
-    }
-
-    .ws-summary-stat-value.met { color: var(--success); }
-    .ws-summary-stat-value.emerging { color: var(--warning); }
-
-    .ws-summary-stat-label {
-      font-size: 0.78rem;
+    .ws-gallery-thumb {
+      height: 140px;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: var(--text-muted);
-      margin-top: 2px;
+      overflow: hidden;
+    }
+    .ws-gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    .ws-gallery-body { padding: 14px 16px; }
+    .ws-gallery-body h5 { font-size: 0.88rem; color: var(--secondary); margin-bottom: 4px; }
+    .ws-gallery-body p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+
+    .ws-empty {
+      padding: 32px 24px;
+      text-align: center;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      font-size: 0.88rem;
+      color: var(--text-muted);
     }
 
     /* ─── Responsive ──────────────────────────────────── */
@@ -387,7 +366,7 @@
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Dashboard</a></li>
         <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
-          <a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
+          <a href="classes.html">My Classes</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
         <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
           <a href="coach.html">AI Coach</a><a href="observation.html">Lesson Observation</a><a href="lna.html">Learning Needs</a><a href="dashboard.html">PD Dashboard</a></div></li>
         <li><span class="nav-dropdown-trigger">Spaces</span><div class="nav-dropdown">
@@ -425,8 +404,9 @@
     <div class="portfolio-header" style="margin-bottom: 8px;">
       <div class="child-avatar"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
       <div style="flex: 1;">
-        <h2 class="profile-name-lg">Leo Tan</h2>
-        <p class="profile-subtitle">K1 (4 years 3 months) &middot; Sunshine Class</p>
+        <h2 class="profile-name-lg" id="wsChildName">Work Samples</h2>
+        <p class="profile-subtitle" id="wsChildMeta">Pick a child (or none for a general sample).</p>
+        <div id="wsPicker" style="margin-top: 10px;"></div>
       </div>
       <a href="portfolio.html" class="btn btn-secondary btn-sm">&larr; Back to Portfolio</a>
     </div>
@@ -443,19 +423,21 @@
             Upload Artwork
           </h3>
 
-          <div class="ws-upload-area has-file">
-            <div class="ws-preview">
-              <div class="ws-preview-img">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <input type="file" id="wsFile" accept="image/*" class="hidden" aria-label="Work sample image">
+          <div class="ws-upload-area" id="wsDropZone" role="button" tabindex="0" aria-label="Choose or drop a photo of the work sample">
+            <div id="wsUploadPrompt">
+              <div class="ws-upload-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               </div>
+              <p class="ws-upload-title">Drop a photo of the child&rsquo;s work, or click to browse</p>
+              <p class="ws-upload-hint">JPG or PNG &middot; optional &mdash; you can analyse from the written context alone</p>
+            </div>
+            <div class="ws-preview hidden" id="wsPreview">
+              <div class="ws-preview-img"><img id="wsPreviewImg" alt="Work sample preview"></div>
               <div class="ws-preview-info">
-                <span class="ws-preview-name">Leo_FireStation_Drawing.jpg</span>
-                <span class="ws-preview-meta">2.4 MB &middot; 2048 &times; 1536 px</span>
-                <span class="ws-preview-meta">Uploaded: 12 May 2026</span>
-                <span class="ws-preview-check">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  Ready for analysis
-                </span>
+                <span class="ws-preview-name" id="wsPreviewName"></span>
+                <span class="ws-preview-meta" id="wsPreviewMeta"></span>
+                <button class="btn btn-secondary btn-sm mt-2" id="wsClearFile" type="button" style="align-self: flex-start;">Remove photo</button>
               </div>
             </div>
           </div>
@@ -469,181 +451,84 @@
           </h3>
           <p class="profile-meta" style="margin-bottom: 12px;">Select one or more NEL learning domains for the AI to evaluate against.</p>
 
-          <select class="domain-select">
-            <option value="" disabled>Add a learning domain&hellip;</option>
-            <option value="aesthetics">Aesthetics &amp; Creative Expression</option>
-            <option value="discovery">Discovery of the World</option>
-            <option value="language">Language &amp; Literacy</option>
-            <option value="motor">Motor Skills Development</option>
-            <option value="numeracy">Numeracy</option>
-            <option value="social">Social &amp; Emotional Development</option>
+          <select class="domain-select" id="wsDomainSelect" aria-label="Add a learning domain">
+            <option value="" selected>Add a learning domain&hellip;</option>
+            <option value="Aesthetics &amp; Creative Expression">Aesthetics &amp; Creative Expression</option>
+            <option value="Discovery of the World">Discovery of the World</option>
+            <option value="Language &amp; Literacy">Language &amp; Literacy</option>
+            <option value="Motor Skills Development">Motor Skills Development</option>
+            <option value="Numeracy">Numeracy</option>
+            <option value="Social &amp; Emotional Development">Social &amp; Emotional Development</option>
           </select>
 
-          <div class="selected-domains">
-            <div class="domain-chip">
-              Aesthetics &amp; Creative Expression
-              <span class="domain-chip-remove">&times;</span>
-            </div>
-            <div class="domain-chip">
-              Motor Skills Development
-              <span class="domain-chip-remove">&times;</span>
-            </div>
-          </div>
+          <div class="selected-domains" id="wsDomainChips"></div>
         </div>
 
         <!-- Context -->
         <div class="ws-panel">
           <h3>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            Context (Optional)
+            Context
           </h3>
-          <textarea class="ws-context-input" placeholder="Add context about the activity, e.g. &quot;During Community Helpers unit, Leo drew a fire station after a visit from the SCDF.&quot;">During the &ldquo;Community Helpers&rdquo; unit, Leo drew a fire station after a visit from the SCDF. He spent 20 minutes on the drawing and narrated while drawing: &ldquo;This is where the firemen sleep, and the truck goes out from here.&rdquo;</textarea>
+          <textarea class="ws-context-input" id="wsContext" placeholder="Describe the work and how it was made, e.g. &quot;During our Community Helpers unit she drew a fire station after the SCDF visit, narrating each part as she drew.&quot;"></textarea>
         </div>
 
         <!-- Analyse Button -->
-        <button class="ws-analyse-btn" disabled>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A7 7 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5"/></svg>
-          Analyse Work Sample
-        </button>
+        <button class="ws-analyse-btn" id="wsAnalyse" type="button">Analyse Work Sample</button>
       </div>
 
       <!-- ─── Right Column: AI Results ───────────────── -->
       <div class="ws-result-col">
 
-        <!-- Summary -->
-        <div class="ws-panel">
+        <div class="ws-panel" id="wsResultEmpty">
           <div class="ws-result-header">
             <div class="ws-result-badge">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A7 7 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5"/></svg>
             </div>
             <div>
-              <h3 style="font-size: 1rem; color: var(--secondary); margin: 0;">
-                <span class="inline-tag-title"><span class="tag tag-ai tag-sm">AI-Powered</span> Interpretation Results</span>
-              </h3>
-              <p class="profile-meta" style="margin-top: 2px;">Analysis of Leo_FireStation_Drawing.jpg</p>
+              <h3 style="font-size: 1rem; color: var(--secondary); margin: 0;">Interpretation Results</h3>
+              <p class="profile-meta" style="margin-top: 2px;">Describe the sample, pick domains, and press Analyse.</p>
             </div>
           </div>
+          <p class="profile-meta">The AI reads your written context against the selected NEL domains and returns observed milestones, a narrative you can edit, framework tags, and a suggested next step.</p>
+        </div>
 
-          <div class="ws-summary-bar">
-            <div class="ws-summary-stat">
-              <div class="ws-summary-stat-value met">4</div>
-              <div class="ws-summary-stat-label">Outcomes Met</div>
+        <div id="wsResults" class="hidden">
+
+          <div class="ws-panel mb-3">
+            <div class="ws-result-header">
+              <div class="ws-result-badge">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A7 7 0 1 0 7.5 11.5c.76.76 1.23 1.52 1.41 2.5"/></svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1rem; color: var(--secondary); margin: 0;">
+                  <span class="inline-tag-title"><span class="pf-ai-badge">&#10022; AI-generated &middot; editable</span></span>
+                </h3>
+                <p class="profile-meta" style="margin-top: 2px;" id="wsResultMeta"></p>
+              </div>
             </div>
-            <div class="ws-summary-stat">
-              <div class="ws-summary-stat-value emerging">2</div>
-              <div class="ws-summary-stat-label">Emerging</div>
-            </div>
-            <div class="ws-summary-stat">
-              <div class="ws-summary-stat-value" style="color: var(--secondary);">2</div>
-              <div class="ws-summary-stat-label">Domains Assessed</div>
-            </div>
+
+            <h4 class="scaffolding-heading" style="margin-top: 0;">Observed Milestones</h4>
+            <div class="ws-milestone-list" id="wsMilestones"></div>
+
+            <h4 class="scaffolding-heading">Narrative (edit before saving)</h4>
+            <textarea class="ws-context-input" id="wsNarrative" rows="5"></textarea>
+
+            <div class="obs-tags mt-2" id="wsTags"></div>
+            <div class="ws-next-step hidden" id="wsNextStep"></div>
+
+            <button class="btn btn-primary mt-2" id="wsSave" type="button">Save Work Sample</button>
           </div>
-        </div>
 
-        <!-- Overall Interpretation -->
-        <div class="ws-panel">
-          <h3>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-            Overall Interpretation
-          </h3>
-          <p class="narrative-text" style="line-height: 1.7;">Leo&rsquo;s fire station drawing demonstrates strong creative representation and fine motor control that exceeds typical K1 developmental expectations. The drawing includes a multi-storey structure with identifiable architectural features (door, windows, garage), a fire truck with proportional details (ladder, wheels, red colouring), and evidence of spatial planning. His verbal narration during the activity (&ldquo;This is where the firemen sleep&rdquo;) indicates purposeful representation linked to real-world understanding from the SCDF visit.</p>
-        </div>
-
-        <!-- Domain 1: Aesthetics & Creative -->
-        <div class="ws-panel">
-          <h3>Aesthetics &amp; Creative Expression</h3>
-
-          <div class="ws-outcome-list">
-            <div class="ws-outcome-item">
-              <span class="ws-outcome-icon met">&#10003;</span>
-              <div>
-                <strong>Purposeful use of colour and shape</strong>
-                <span class="ws-outcome-badge met" style="margin-left: 8px;">Met</span>
-                <p class="profile-meta" style="margin-top: 4px;">Leo uses red deliberately for the fire truck and differentiates building colours. Shape usage shows intentional architectural representation rather than random marks.</p>
-              </div>
-            </div>
-
-            <div class="ws-outcome-item">
-              <span class="ws-outcome-icon met">&#10003;</span>
-              <div>
-                <strong>Representational drawing with recognisable forms</strong>
-                <span class="ws-outcome-badge met" style="margin-left: 8px;">Met</span>
-                <p class="profile-meta" style="margin-top: 4px;">The fire station, truck, and human figures are all recognisable without explanation. This exceeds the K1 expectation of emerging representational skills.</p>
-              </div>
-            </div>
-
-            <div class="ws-outcome-item">
-              <span class="ws-outcome-icon met">&#10003;</span>
-              <div>
-                <strong>Planning and composition</strong>
-                <span class="ws-outcome-badge met" style="margin-left: 8px;">Met</span>
-                <p class="profile-meta" style="margin-top: 4px;">The drawing shows deliberate spatial arrangement: the building occupies the centre, the truck is positioned in the garage bay, and the ground line anchors the composition.</p>
-              </div>
-            </div>
-
-            <div class="ws-outcome-item">
-              <span class="ws-outcome-icon emerging">&#9679;</span>
-              <div>
-                <strong>Experimentation with different media</strong>
-                <span class="ws-outcome-badge emerging" style="margin-left: 8px;">Emerging</span>
-                <p class="profile-meta" style="margin-top: 4px;">Drawing uses pencil and coloured pencils only. Consider introducing mixed media (collage, paint, crayon resist) to extend Leo&rsquo;s creative expression range.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Domain 2: Motor Skills -->
-        <div class="ws-panel">
-          <h3>Motor Skills Development</h3>
-
-          <div class="ws-outcome-list">
-            <div class="ws-outcome-item">
-              <span class="ws-outcome-icon met">&#10003;</span>
-              <div>
-                <strong>Fine motor control in mark-making</strong>
-                <span class="ws-outcome-badge met" style="margin-left: 8px;">Met</span>
-                <p class="profile-meta" style="margin-top: 4px;">Straight lines for the building walls, small details like window panes and ladder rungs demonstrate controlled pencil grip and precision. Above K1 expectations.</p>
-              </div>
-            </div>
-
-            <div class="ws-outcome-item">
-              <span class="ws-outcome-icon emerging">&#9679;</span>
-              <div>
-                <strong>Letter and number formation</strong>
-                <span class="ws-outcome-badge emerging" style="margin-left: 8px;">Emerging</span>
-                <p class="profile-meta" style="margin-top: 4px;">Leo attempted to label the garage door with &ldquo;SCDF&rdquo; but letter formation is inconsistent (S reversed, D partially formed). Continue supporting through meaningful writing contexts.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Next Steps -->
-        <div class="ws-panel" style="background: linear-gradient(135deg, var(--secondary) 0%, #3d2663 100%); color: white; border: none;">
-          <h3 style="color: white;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-            Recommended Next Steps
-          </h3>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
-            <li style="display: flex; gap: 10px; align-items: flex-start;">
-              <span style="width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">1</span>
-              <span style="font-size: 0.88rem; color: rgba(255,255,255,0.85); line-height: 1.5;">Introduce 3D construction projects (clay, recyclable materials) to extend Leo&rsquo;s spatial understanding from 2D drawing into three dimensions.</span>
-            </li>
-            <li style="display: flex; gap: 10px; align-items: flex-start;">
-              <span style="width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">2</span>
-              <span style="font-size: 0.88rem; color: rgba(255,255,255,0.85); line-height: 1.5;">Provide mixed media opportunities (collage, paint, crayon resist) alongside his preferred pencil drawing to expand his creative toolkit.</span>
-            </li>
-            <li style="display: flex; gap: 10px; align-items: flex-start;">
-              <span style="width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">3</span>
-              <span style="font-size: 0.88rem; color: rgba(255,255,255,0.85); line-height: 1.5;">Support letter formation through meaningful contexts (labelling his drawings, creating signs for his constructions) rather than isolated writing practice.</span>
-            </li>
-          </ul>
-          <p style="font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-top: 16px; display: flex; align-items: center; gap: 6px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            This analysis can be saved to Leo&rsquo;s portfolio and shared with parents.
-          </p>
         </div>
 
       </div>
+    </div>
+
+    <!-- Recent samples gallery -->
+    <div style="padding-bottom: 60px;">
+      <h3 class="section-title" style="margin-bottom: 16px;">Recent Samples</h3>
+      <div class="ws-gallery" id="wsGallery"></div>
     </div>
   </main>
 
@@ -657,6 +542,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/pf-auth.js"></script>
+  <script src="js/pf-api.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/pf-worksample.js"></script>
 </body>
 </html>
