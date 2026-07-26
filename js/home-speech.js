@@ -57,6 +57,25 @@
     voiceWaiters.push(fn);
   }
 
+  /* Quality-scored voice picking. Browsers list voices from best to
+     worst in no particular order; the first en-* hit is often a
+     robotic legacy engine (eSpeak on Linux, ancient SAPI on Windows)
+     even when far better voices are installed. Score every candidate
+     and take the best within the preferred-language chain. */
+  function voiceQuality(v) {
+    var name = String(v.name || '');
+    var score = 0;
+    if (/natural|neural/i.test(name)) score += 50;      // Edge online natural voices
+    if (/^Google/i.test(name)) score += 40;             // Chrome Google voices
+    if (/premium|enhanced|superior|hd\b/i.test(name)) score += 30; // macOS enhanced tiers
+    if (/siri|samantha|karen|serena|moira|tessa|libby|sonia|aria|jenny/i.test(name)) score += 15;
+    if (v.localService === false) score += 12;          // cloud voices beat local engines
+    if (/female|woman/i.test(name)) score += 6;         // gentler default for young children
+    if (/espeak|festival|pico|robosoft|klatt/i.test(name)) score -= 60; // robotic engines
+    if (/compact/i.test(name)) score -= 15;             // low-quality compact variants
+    return score;
+  }
+
   function pickVoice(lang) {
     var chain;
     if (lang && lang.indexOf('zh') === 0) {
@@ -66,12 +85,30 @@
     } else {
       chain = ['en-SG', 'en-GB', 'en'];
     }
+
+    /* Manual override (set localStorage 'pedaforge:voice' to a voice
+       name substring to force a specific voice). */
+    var override = '';
+    try { override = localStorage.getItem('pedaforge:voice') || ''; } catch (err) { /* private mode */ }
+    if (override) {
+      for (var o = 0; o < voicesCache.length; o += 1) {
+        if (String(voicesCache[o].name || '').toLowerCase().indexOf(override.toLowerCase()) >= 0) {
+          return voicesCache[o];
+        }
+      }
+    }
+
     for (var i = 0; i < chain.length; i += 1) {
       var pref = chain[i].toLowerCase();
+      var best = null;
+      var bestScore = -Infinity;
       for (var j = 0; j < voicesCache.length; j += 1) {
         var vLang = (voicesCache[j].lang || '').toLowerCase().replace('_', '-');
-        if (vLang.indexOf(pref) === 0) return voicesCache[j];
+        if (vLang.indexOf(pref) !== 0) continue;
+        var s = voiceQuality(voicesCache[j]);
+        if (s > bestScore) { bestScore = s; best = voicesCache[j]; }
       }
+      if (best) return best;
     }
     return null;
   }
