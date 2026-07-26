@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Child Profile - PedaForge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/app-shell.css">
+  <style>
+    .ch-hero { display: flex; align-items: center; gap: 18px; padding: 30px 0 18px; flex-wrap: wrap; }
+    .ch-face {
+      width: 66px; height: 66px; border-radius: 22px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.4rem; font-weight: 800;
+      background: var(--primary);
+      box-shadow: 0 10px 26px rgba(232,6,60,0.3);
+    }
+    .ch-hero h1 { font-size: 1.7rem; margin: 0 0 4px; }
+    .ch-hero .meta { font-size: 0.82rem; color: var(--text-muted); }
+    .ch-hero .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .ch-hero .tags span { font-size: 0.66rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; background: rgba(232,6,60,0.08); color: var(--primary); }
+    .ch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 20px; margin: 8px 0 50px; align-items: start; }
+    .ch-card {
+      background: var(--bg-card); border-radius: var(--radius); padding: 20px 22px;
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
+    }
+    .ch-card h3 { font-family: 'Playfair Display', serif; font-size: 1.02rem; color: var(--secondary); margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+    .ch-card h3 .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .ch-card h3 a.more { margin-left: auto; font-family: var(--font); font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-decoration: none; }
+    .ch-card h3 a.more:hover { color: var(--primary); }
+    .ch-row { padding: 9px 0; border-bottom: 1px dashed var(--border); font-size: 0.83rem; line-height: 1.5; }
+    .ch-row:last-child { border-bottom: none; }
+    .ch-row .when { font-size: 0.68rem; color: var(--text-muted); }
+    .ch-empty { font-size: 0.8rem; color: var(--text-muted); font-style: italic; line-height: 1.6; }
+    .ch-empty a { color: var(--primary); font-weight: 600; }
+    .wcpm-spark { display: flex; align-items: flex-end; gap: 5px; height: 60px; margin: 6px 0 10px; }
+    .wcpm-spark .bar { flex: 1; max-width: 34px; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, #0E8FA8, #2fbd86); min-height: 6px; position: relative; }
+    .wcpm-spark .bar i { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-style: normal; font-size: 0.62rem; font-weight: 700; color: var(--text-muted); }
+    .band-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
+    .band-table th { text-align: left; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); padding: 4px 6px; }
+    .band-table td { padding: 4px 6px; }
+    .band-pill { display: inline-block; padding: 2px 9px; border-radius: 100px; font-size: 0.64rem; font-weight: 700; }
+    .band-emerging { background: rgba(255,158,24,0.12); color: var(--warning); }
+    .band-developing { background: rgba(14,143,168,0.12); color: #0E8FA8; }
+    .band-secure { background: rgba(16,185,129,0.12); color: var(--success); }
+    .art-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .art-strip img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; background: var(--bg); }
+    .word-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+    .word-cloud span { font-size: 0.74rem; font-weight: 600; padding: 4px 12px; border-radius: 100px; background: var(--bg); }
+    .word-cloud .known { background: rgba(16,185,129,0.1); color: var(--success); }
+    .word-cloud .learning { background: rgba(255,158,24,0.1); color: var(--warning); }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="ch-hero">
+      <div class="ch-face" id="chFace">?</div>
+      <div>
+        <h1 id="chName">Loading…</h1>
+        <div class="meta" id="chMeta"></div>
+        <div class="tags" id="chTags"></div>
+      </div>
+    </div>
+
+    <div class="ch-grid">
+      <div class="ch-card">
+        <h3><span class="dot" style="background:#FF9E18;"></span> Learning Stories <a class="more" href="portfolio.html">+ add observation</a></h3>
+        <div id="chObs"><span class="ch-empty">Loading…</span></div>
+      </div>
+
+      <div class="ch-card">
+        <h3><span class="dot" style="background:#0E8FA8;"></span> Reading Journey <a class="more" href="home-reading-coach.html">+ new session</a></h3>
+        <div class="wcpm-spark" id="chSpark"></div>
+        <div id="chReading"><span class="ch-empty">Loading…</span></div>
+      </div>
+
+      <div class="ch-card">
+        <h3><span class="dot" style="background:#1c9c6b;"></span> Benchmarks <a class="more" href="home-benchmark.html">+ new check-in</a></h3>
+        <div id="chBench"><span class="ch-empty">Loading…</span></div>
+      </div>
+
+      <div class="ch-card">
+        <h3><span class="dot" style="background:#fecd1b;"></span> Word Jar <a class="more" href="home-dictionary.html">practise words</a></h3>
+        <div class="word-cloud" id="chWords"><span class="ch-empty">Loading…</span></div>
+      </div>
+
+      <div class="ch-card">
+        <h3><span class="dot" style="background:#773E8B;"></span> Artwork <a class="more" href="home-draw-reflect.html">+ draw</a></h3>
+        <div class="art-strip" id="chArt"></div>
+        <div id="chArtEmpty"></div>
+      </div>
+
+      <div class="ch-card">
+        <h3><span class="dot" style="background:#e8063c;"></span> Work Samples <a class="more" href="work-sample.html">+ analyse one</a></h3>
+        <div id="chSamples"><span class="ch-empty">Loading…</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer"><div class="container"><div class="footer-bottom">
+    <span>PedaForge &middot; Busy Bees network</span>
+    <div class="footer-badges"><span class="footer-badge">PDPA Compliant</span><span class="footer-badge">SG Data Residency</span></div>
+  </div></div></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/pf-api.js"></script>
+  <script src="js/pf-markdown.js"></script>
+  <script src="js/pf-shell.js"></script>
+  <script src="js/pf-child.js"></script>
+</body>
+</html>

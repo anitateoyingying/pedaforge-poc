@@ -100,7 +100,9 @@
         var lab = el('p', 'narrative-label');
         lab.appendChild(el('span', 'pf-ai-badge', '✦ AI-drafted · educator-approved'));
         box.appendChild(lab);
-        box.appendChild(el('p', 'narrative-text', o.ai_narrative));
+        var narr = el('div', 'narrative-text');
+        window.pfMd.renderInto(narr, o.ai_narrative);
+        box.appendChild(narr);
         card.appendChild(box);
       }
       host.appendChild(card);
@@ -147,9 +149,7 @@
         });
         var ns = $('pfoNextStep');
         if (draft.next_step) {
-          ns.innerHTML = '';
-          ns.appendChild(el('strong', null, 'Next step: '));
-          ns.appendChild(document.createTextNode(draft.next_step));
+          window.pfMd.renderInto(ns, '**Next step:** ' + draft.next_step);
           ns.classList.remove('hidden');
         } else {
           ns.classList.add('hidden');
@@ -193,10 +193,33 @@
       .then(done);
   }
 
+  /* ── Cross-module: child profile link ────────────────── */
+  var profileLinkEl = null;
+  function updateProfileLink(child) {
+    if (!profileLinkEl) {
+      if (!document.getElementById('pfXlinkCss')) {
+        var s = document.createElement('style');
+        s.id = 'pfXlinkCss';
+        s.textContent = '.pf-xlink{display:inline-block;margin-top:6px;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-decoration:none;}.pf-xlink:hover{color:var(--accent-proposal,var(--primary));text-decoration:underline;}';
+        document.head.appendChild(s);
+      }
+      profileLinkEl = el('a', 'pf-xlink', 'View full profile →');
+      var meta = $('pfoChildMeta');
+      if (meta && meta.parentNode) meta.parentNode.insertBefore(profileLinkEl, meta.nextSibling);
+    }
+    if (child) {
+      profileLinkEl.href = 'child.html?id=' + encodeURIComponent(child.id);
+      profileLinkEl.hidden = false;
+    } else {
+      profileLinkEl.hidden = true;
+    }
+  }
+
   /* ── Child pick ──────────────────────────────────────── */
   function onPick(child, cls) {
     currentChild = child;
     currentClass = cls;
+    updateProfileLink(child);
     if (!child) {
       $('pfoBody').classList.add('hidden');
       $('pfoChildName').textContent = 'Portfolio';

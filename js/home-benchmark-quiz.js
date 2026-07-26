@@ -183,14 +183,36 @@
   }
 
   /* ─── Child picker ───────────────────────────────────────── */
+  function makeProfileLink(host) {
+    if (!document.getElementById('pfXlinkCss')) {
+      var s = document.createElement('style');
+      s.id = 'pfXlinkCss';
+      s.textContent = '.pf-xlink{display:inline-block;margin-top:6px;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-decoration:none;}.pf-xlink:hover{color:var(--accent-proposal,var(--primary));text-decoration:underline;}';
+      document.head.appendChild(s);
+    }
+    var a = document.createElement('a');
+    a.className = 'pf-xlink';
+    a.textContent = 'View full profile →';
+    a.hidden = true;
+    host.parentNode.insertBefore(a, host.nextSibling);
+    return a;
+  }
+
   function initPicker() {
     var host = el('bmPickerHost');
     if (!host || !window.pfApi || !window.pfApi.childPicker) return;
+    var profileLink = makeProfileLink(host);
     window.pfApi.childPicker(host, {
       onPick: function (child) {
         pickedChild = child ? { id: child.id, name: child.name } : null;
         var title = el('bmChildName');
         if (title) title.textContent = pickedChild ? pickedChild.name + '’s Termly Benchmark' : 'Choose a child to benchmark';
+        if (pickedChild) {
+          profileLink.href = 'child.html?id=' + encodeURIComponent(pickedChild.id);
+          profileLink.hidden = false;
+        } else {
+          profileLink.hidden = true;
+        }
         els.form.hidden = !pickedChild;
         if (pickedChild) {
           loadHistory();

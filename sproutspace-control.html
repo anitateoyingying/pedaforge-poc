@@ -8,6 +8,7 @@
   <title>SproutSpace: Leadership &amp; Organization Control</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/app-shell.css">
 </head>
 <body class="hub-sproutspace">
 <div class="bg-blobs" aria-hidden="true">
@@ -76,12 +77,17 @@
     <script>
     (function () {
       'use strict';
-      function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+      /* quote-safe escape — values are interpolated into attributes (data-owner-name), not just text */
+      function esc(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
       function fmtDate(s) { try { return new Date(s).toLocaleString('en-SG', { dateStyle: 'medium', timeStyle: 'short' }); } catch (e) { return s || ''; } }
 
       function rowHtml(l, canReview) {
         var badge = { submitted: 'warn', approved: 'ok', changes_requested: 'danger' }[l.status] || 'ok';
-        return '<div class="safety-flag ' + badge + '" style="align-items:center;" data-id="' + esc(l.id) + '">' +
+        return '<div class="safety-flag ' + badge + '" style="align-items:center;" data-id="' + esc(l.id) + '" data-owner-name="' + esc(l.owner_name || '') + '">' +
           '<span style="flex:1;"><strong>' + esc(l.name) + '</strong><br>' +
           '<em style="font-size:0.72rem;color:var(--text-muted);">' + esc(l.owner_name || '') + ' · score ' + esc(l.score) + '% · ' + esc(fmtDate(l.submitted_at || l.updated_at)) + ' · ' + esc(l.status.replace('_', ' ')) + '</em></span>' +
           (canReview && l.status === 'submitted'
@@ -108,19 +114,25 @@
             var host = document.getElementById('lpApprovalRows');
             host.innerHTML = rows.map(function (l) { return rowHtml(l, isDirector); }).join('');
             panel.style.display = '';
-            host.addEventListener('click', function (e) {
-              var btn = e.target.closest('button[data-act]');
-              if (!btn) return;
-              var row = btn.closest('[data-id]');
-              window.pfDb.from('layouts')
-                .update({ status: btn.dataset.act, reviewed_by: ctx.user.id, review_note: btn.dataset.act === 'approved' ? 'Approved by Director' : 'Changes requested by Director' })
-                .eq('id', row.dataset.id)
-                .then(function (res) {
-                  if (res.error) { if (window.pfToast) pfToast('Update failed: ' + res.error.message); return; }
-                  if (window.pfToast) pfToast(btn.dataset.act === 'approved' ? 'Layout approved' : 'Changes requested');
-                  load(ctx);
-                });
-            }, { once: true });
+            if (!host.dataset.wired) {
+              host.dataset.wired = '1';
+              host.addEventListener('click', function (e) {
+                var btn = e.target.closest('button[data-act]');
+                if (!btn) return;
+                var row = btn.closest('[data-id]');
+                window.pfDb.from('layouts')
+                  .update({ status: btn.dataset.act, reviewed_by: ctx.user.id, review_note: btn.dataset.act === 'approved' ? 'Approved by Director' : 'Changes requested by Director' })
+                  .eq('id', row.dataset.id)
+                  .then(function (res) {
+                    if (res.error) { if (window.pfToast) pfToast('Update failed: ' + res.error.message); return; }
+                    if (window.pfToast) {
+                      var who = row.dataset.ownerName ? ' — ' + row.dataset.ownerName + ' will see the update' : '';
+                      pfToast((btn.dataset.act === 'approved' ? 'Layout approved' : 'Changes requested') + who);
+                    }
+                    load(ctx);
+                  });
+              });
+            }
           });
       }
       // pf-auth.js loads at the end of <body>; defer until it exists.
@@ -417,6 +429,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/pf-auth.js"></script>
   <script src="js/pf-api.js"></script>
+  <script src="js/pf-markdown.js"></script>
+  <script src="js/pf-shell.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

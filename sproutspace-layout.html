@@ -8,6 +8,7 @@
   <title>SproutSpace: Interactive Layout Planner</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/app-shell.css">
   <style>
     /* ── Interactive layout planner ── */
     .layout-canvas { touch-action: none; user-select: none; -webkit-user-select: none; overflow: hidden; }
@@ -62,6 +63,18 @@
     .lp-cite { font-size: 0.7rem; color: var(--text-muted); font-style: italic; }
     .lp-dim { margin-left: auto; font-size: 0.68rem; color: var(--text-muted); }
     #lpSubmit:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    /* ─── Shell fit (page-local) ─────────────────────────── */
+    /* 240px/1fr/260px is cramped in the shell's narrower main area:
+       drop the inspector to a full-width row below at <1400px */
+    @media (max-width: 1400px) {
+      body.pf-shell .layout-shell { grid-template-columns: 220px minmax(0, 1fr); }
+      body.pf-shell .layout-inspector { grid-column: 1 / -1; }
+    }
+    @media (max-width: 1024px) {
+      body.pf-shell .layout-shell { grid-template-columns: 1fr; }
+      body.pf-shell .layout-inspector { grid-column: auto; }
+    }
   </style>
 </head>
 <body class="hub-sproutspace">
@@ -332,6 +345,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/pf-auth.js"></script>
   <script src="js/pf-api.js"></script>
+  <script src="js/pf-markdown.js"></script>
+  <script src="js/pf-shell.js"></script>
   <script src="js/app.js"></script>
   <script src="js/sproutspace-layout.js"></script>
 </body>

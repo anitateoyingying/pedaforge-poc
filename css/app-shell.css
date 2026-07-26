@@ -1,0 +1,217 @@
+/* PedaForge app shell — warm studio craft.
+   Deep-indigo studio sidebar + cream paper workspace. Applied by js/pf-shell.js
+   which sets body.pf-shell and injects the chrome. */
+
+:root {
+  --shell-w: 248px;
+  --shell-bg: #221d44;
+  --shell-bg-2: #2d2a5e;
+  --shell-ink: rgba(255, 255, 255, 0.82);
+  --shell-ink-dim: rgba(255, 255, 255, 0.45);
+  --shell-line: rgba(255, 255, 255, 0.08);
+  --shell-accent: #fecd1b;
+  --paper: #faf6f0;
+}
+
+body.pf-shell { background: var(--paper); }
+
+/* Hide legacy navbar/footer chrome once shell is active */
+body.pf-shell > nav.navbar { display: none !important; }
+body.pf-shell .back-to-top { display: none !important; }
+
+/* ── Grid ─────────────────────────────────────────────── */
+body.pf-shell {
+  display: grid;
+  grid-template-columns: var(--shell-w) 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "side top" "side main";
+  min-height: 100vh;
+}
+body.pf-shell > .bg-blobs { display: none; }
+.pf-side { grid-area: side; }
+.pf-top { grid-area: top; }
+body.pf-shell > main,
+body.pf-shell > .container.main-content-spacing,
+body.pf-shell > div.container,
+body.pf-shell > header.page-header,
+body.pf-shell > section.page-header,
+body.pf-shell > footer.footer {
+  grid-area: main;
+}
+/* pages have multiple top-level blocks: stack them inside main area */
+body.pf-shell { position: relative; }
+.pf-main-wrap {
+  grid-area: main;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 34px 40px;
+}
+.pf-main-wrap > header.page-header,
+.pf-main-wrap > section.page-header {
+  background: none;
+  padding: 26px 0 6px;
+}
+.pf-main-wrap > header.page-header .container,
+.pf-main-wrap > section.page-header .container { padding: 0; max-width: none; }
+.pf-main-wrap .page-header h1 { font-size: 1.7rem; }
+.pf-main-wrap .page-header p { max-width: 720px; font-size: 0.92rem; }
+.pf-main-wrap > .container { max-width: none; padding: 0; }
+.pf-main-wrap > main.container { max-width: none; padding: 0; }
+.pf-main-wrap > footer.footer {
+  margin-top: auto;
+  background: none;
+  border-top: 1px solid var(--border);
+  padding: 18px 0 6px;
+}
+.pf-main-wrap > footer.footer .container { padding: 0; }
+.pf-main-wrap > footer.footer .footer-grid { display: none; }
+.pf-main-wrap .breadcrumb { display: none; }
+
+/* ── Sidebar ──────────────────────────────────────────── */
+.pf-side {
+  background:
+    radial-gradient(140% 60% at 0% 0%, rgba(254, 205, 27, 0.08), transparent 55%),
+    linear-gradient(178deg, var(--shell-bg-2) 0%, var(--shell-bg) 68%);
+  color: var(--shell-ink);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px 16px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  z-index: 40;
+}
+.pf-brand {
+  display: flex; align-items: center; gap: 11px;
+  padding: 4px 10px 18px; text-decoration: none; color: #fff;
+}
+.pf-brand .logo {
+  width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, #e8063c, #f44068);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.95rem; color: #fff;
+  box-shadow: 0 6px 16px rgba(232, 6, 60, 0.35);
+}
+.pf-brand b {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.18rem; font-weight: 700; letter-spacing: 0.01em;
+}
+.pf-brand small {
+  display: block; font-family: var(--font); font-size: 0.6rem;
+  font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--shell-ink-dim);
+}
+
+.pf-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.pf-nav-label {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--shell-ink-dim);
+  padding: 16px 12px 6px;
+}
+.pf-nav a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: 10px;
+  color: var(--shell-ink); text-decoration: none;
+  font-size: 0.84rem; font-weight: 500;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.pf-nav a:hover { background: var(--shell-line); transform: translateX(2px); }
+.pf-nav a.active {
+  background: rgba(254, 205, 27, 0.13);
+  color: #ffe066;
+  font-weight: 600;
+}
+.pf-nav a.active .pf-ico { color: var(--shell-accent); }
+.pf-nav .pf-ico {
+  width: 17px; height: 17px; flex-shrink: 0; opacity: 0.85;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.pf-nav .pf-ico svg { width: 100%; height: 100%; }
+
+.pf-side-foot {
+  border-top: 1px solid var(--shell-line);
+  margin-top: 14px; padding: 12px 6px 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.pf-side-foot .pf-avatar {
+  width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--shell-accent); color: var(--shell-bg);
+  font-weight: 800; font-size: 0.8rem;
+}
+.pf-side-foot .who { min-width: 0; flex: 1; }
+.pf-side-foot .who b { display: block; font-size: 0.78rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-side-foot .who span { font-size: 0.62rem; color: var(--shell-ink-dim); text-transform: capitalize; }
+.pf-side-foot button {
+  border: none; background: none; color: var(--shell-ink-dim); cursor: pointer;
+  font-size: 0.9rem; padding: 6px; border-radius: 8px;
+}
+.pf-side-foot button:hover { color: #fff; background: var(--shell-line); }
+
+/* ── Topbar ───────────────────────────────────────────── */
+.pf-top {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 34px 0;
+  min-height: 30px;
+}
+.pf-top .pf-crumb { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+.pf-top .pf-crumb b { color: var(--secondary); }
+.pf-top .pf-top-spacer { flex: 1; }
+.pf-quick {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 0.76rem; font-weight: 600; color: var(--secondary);
+  background: var(--bg-card); border: none; border-radius: 100px;
+  padding: 7px 15px; cursor: pointer; text-decoration: none;
+  box-shadow: 0 1px 2px rgba(45, 42, 94, 0.05), 0 4px 12px rgba(45, 42, 94, 0.07);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+.pf-quick:hover { transform: translateY(-2px); box-shadow: 0 3px 6px rgba(45, 42, 94, 0.08), 0 8px 20px rgba(45, 42, 94, 0.1); }
+.pf-quick .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); }
+
+/* ── Mobile ───────────────────────────────────────────── */
+.pf-burger {
+  display: none; position: fixed; top: 14px; left: 14px; z-index: 60;
+  width: 42px; height: 42px; border-radius: 12px; border: none; cursor: pointer;
+  background: var(--shell-bg-2); color: #fff; font-size: 1.1rem;
+  box-shadow: 0 6px 18px rgba(34, 29, 68, 0.35);
+}
+@media (max-width: 900px) {
+  body.pf-shell { grid-template-columns: 1fr; grid-template-areas: "top" "main"; }
+  .pf-side {
+    position: fixed; left: 0; top: 0; bottom: 0; width: min(78vw, 300px);
+    transform: translateX(-102%);
+    transition: transform 0.28s ease;
+    box-shadow: 24px 0 60px rgba(34, 29, 68, 0.35);
+  }
+  body.pf-shell.pf-side-open .pf-side { transform: none; }
+  .pf-burger { display: block; }
+  .pf-top { padding: 16px 18px 0 66px; }
+  .pf-main-wrap { padding: 0 18px 32px; }
+  .pf-scrim {
+    position: fixed; inset: 0; background: rgba(34, 29, 68, 0.4);
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 35;
+  }
+  body.pf-shell.pf-side-open .pf-scrim { opacity: 1; pointer-events: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pf-side, .pf-nav a, .pf-quick { transition: none; }
+}
+
+/* ── Markdown output (AI text) ────────────────────────── */
+.pf-md p { margin: 0 0 0.7em; }
+.pf-md p:last-child { margin-bottom: 0; }
+.pf-md ul, .pf-md ol { margin: 0.3em 0 0.8em; padding-left: 1.25em; }
+.pf-md li { margin-bottom: 0.3em; }
+.pf-md strong { color: var(--secondary); font-weight: 700; }
+.pf-md h4, .pf-md h5 {
+  font-family: var(--font); font-size: 0.85em; font-weight: 800;
+  letter-spacing: 0.02em; margin: 0.9em 0 0.35em; color: var(--secondary);
+}
+.pf-md code {
+  font-family: var(--font-mono, monospace); font-size: 0.85em;
+  background: rgba(45, 42, 94, 0.07); border-radius: 5px; padding: 1px 5px;
+}
+.pf-md em { color: inherit; }

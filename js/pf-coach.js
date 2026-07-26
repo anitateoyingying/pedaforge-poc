@@ -38,7 +38,9 @@
     var wrap = el('div', 'chat-message ' + role);
     wrap.appendChild(el('div', 'avatar', role === 'assistant' ? 'PF' : 'You'));
     var b = el('div', 'chat-bubble');
-    b.textContent = text;
+    // AI replies arrive as markdown — render it (escape-first, XSS-safe).
+    if (role === 'assistant' && window.pfMd) window.pfMd.renderInto(b, text);
+    else b.textContent = text;
     wrap.appendChild(b);
     return wrap;
   }

@@ -114,8 +114,9 @@
     var block = el('div', 'activity-block');
     block.appendChild(el('h3', 'activity-title', plan.title || currentTheme || 'Lesson plan'));
     if (plan.intro) {
-      var intro = el('p', 'narrative-text', plan.intro);
+      var intro = el('div', 'narrative-text');
       intro.style.lineHeight = '1.7';
+      window.pfMd.renderInto(intro, plan.intro);
       block.appendChild(intro);
     }
     out.appendChild(block);
@@ -124,7 +125,11 @@
       var card = el('div', 'scaffolding-item');
       card.style.display = 'block';
       card.appendChild(el('h4', null, act.name || 'Activity'));
-      if (act.description) card.appendChild(el('p', null, act.description));
+      if (act.description) {
+        var desc = el('div', null);
+        window.pfMd.renderInto(desc, act.description);
+        card.appendChild(desc);
+      }
       var ftags = el('div', 'obs-tags');
       ftags.style.marginTop = '8px';
       (act.framework_tags || []).forEach(function (t) {
@@ -134,7 +139,9 @@
       (act.differentiation || []).forEach(function (d) {
         var row = el('div', 'planner-diff-row');
         row.appendChild(el('strong', null, d.profile || ''));
-        row.appendChild(el('span', null, d.strategy || ''));
+        var strat = el('span', null);
+        window.pfMd.renderInto(strat, d.strategy || '');
+        row.appendChild(strat);
         card.appendChild(row);
       });
       out.appendChild(card);
@@ -155,7 +162,9 @@
     if (plan.rehearse_retrieve) {
       var box = el('div', 'callout callout-warning');
       box.appendChild(el('h4', null, 'Rehearse & Retrieve Prompt'));
-      box.appendChild(el('p', null, plan.rehearse_retrieve));
+      var rr = el('div', null);
+      window.pfMd.renderInto(rr, plan.rehearse_retrieve);
+      box.appendChild(rr);
       out.appendChild(box);
     }
 
@@ -207,7 +216,7 @@
     }).select().single()
       .then(function (r) {
         if (r.error) throw r.error;
-        window.pfToast('Lesson saved.');
+        window.pfToast('Saved — capture how it went in Portfolios');
         $('plannerSaveWrap').classList.add('hidden');
         return loadLessons();
       })
@@ -265,6 +274,11 @@
             if (e.key === 'Enter') { e.preventDefault(); open(); }
           });
           row.appendChild(info);
+          var pLink = el('a', 'pf-xlink', '→ Portfolio');
+          pLink.href = 'portfolio.html';
+          pLink.title = 'Capture how this lesson went in Portfolios';
+          pLink.style.marginRight = '10px';
+          row.appendChild(pLink);
           var del = el('button', 'btn btn-secondary btn-sm', 'Delete');
           del.type = 'button';
           del.addEventListener('click', function () { deleteLesson(l.id, row); });
@@ -275,10 +289,19 @@
       .catch(function (e) { window.pfToast('Could not load lessons: ' + e.message); });
   }
 
+  function injectXlinkCss() {
+    if (document.getElementById('pfXlinkCss')) return;
+    var s = document.createElement('style');
+    s.id = 'pfXlinkCss';
+    s.textContent = '.pf-xlink{align-self:center;flex-shrink:0;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-decoration:none;}.pf-xlink:hover{color:var(--accent-proposal,var(--primary));text-decoration:underline;}';
+    document.head.appendChild(s);
+  }
+
   /* ── Boot ────────────────────────────────────────────── */
   function init(ctx) {
     if (!ctx || !ctx.user) return;
     if (!$('plannerGenerate')) return;
+    injectXlinkCss();
 
     $('plannerGenerate').addEventListener('click', generate);
     $('plannerSave').addEventListener('click', saveLesson);

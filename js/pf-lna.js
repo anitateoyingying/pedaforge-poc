@@ -22,7 +22,9 @@
     if (g.sfw_ref) tags.appendChild(el('span', 'sfw-pill', g.sfw_ref));
     head.appendChild(tags);
     card.appendChild(head);
-    card.appendChild(el('p', 'lna-goal-text', g.goal || ''));
+    var goalText = el('div', 'lna-goal-text');
+    window.pfMd.renderInto(goalText, g.goal || '');
+    card.appendChild(goalText);
     return card;
   }
 
@@ -46,7 +48,9 @@
     if (r && r.pd_suggestion) {
       var box = el('div', 'lna-pd-box');
       box.appendChild(el('h4', null, 'Suggested professional development'));
-      box.appendChild(el('p', null, r.pd_suggestion));
+      var pd = el('div', null);
+      window.pfMd.renderInto(pd, r.pd_suggestion);
+      box.appendChild(pd);
       host.appendChild(box);
     }
 

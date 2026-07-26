@@ -37,8 +37,9 @@
     line.appendChild(tag);
     card.appendChild(line);
     if (n.rationale) {
-      var why = el('div', null, n.rationale);
+      var why = el('div', null);
       why.style.cssText = 'font-size:0.78rem;color:var(--text-muted);margin-top:8px;line-height:1.5;';
+      window.pfMd.renderInto(why, n.rationale);
       card.appendChild(why);
     }
     return card;
@@ -105,6 +106,22 @@
       .then(done);
   }
 
+  /* ── Cross-module: AI Coach follow-up link ───────────── */
+  function showCoachLink() {
+    if (document.getElementById('obsCoachLink')) return;
+    if (!document.getElementById('pfXlinkCss')) {
+      var s = document.createElement('style');
+      s.id = 'pfXlinkCss';
+      s.textContent = '.pf-xlink{display:inline-block;margin-top:10px;font-size:0.82rem;font-weight:600;color:var(--text-muted);text-decoration:none;}.pf-xlink:hover{color:var(--accent-proposal,var(--primary));text-decoration:underline;}';
+      document.head.appendChild(s);
+    }
+    var a = el('a', 'pf-xlink', 'Saved — discuss this observation with the AI Coach →');
+    a.id = 'obsCoachLink';
+    a.href = 'coach.html';
+    var card = $('obsReportCard');
+    if (card && card.parentNode) card.parentNode.insertBefore(a, card.nextSibling);
+  }
+
   function saveObservation() {
     var educator = $('obsEducator').value.trim();
     var className = $('obsClass').value.trim();
@@ -127,7 +144,8 @@
     db.from('observations').insert(rec).then(function (r) {
       done();
       if (r.error) { window.pfToast('Save failed: ' + r.error.message); return; }
-      window.pfToast('Observation saved.');
+      window.pfToast('Observation saved — discuss it with the AI Coach');
+      showCoachLink();
       notes = [];
       report = null;
       $('obsReportCard').hidden = true;
@@ -142,7 +160,13 @@
   function reportSection(title, text, cls) {
     var box = el('div', 'play-rep-sec ' + cls);
     box.appendChild(el('h5', null, title));
-    box.appendChild(el('p', null, text || '—'));
+    if (text) {
+      var body = el('div', null);
+      window.pfMd.renderInto(body, text);
+      box.appendChild(body);
+    } else {
+      box.appendChild(el('p', null, '—'));
+    }
     return box;
   }
 
