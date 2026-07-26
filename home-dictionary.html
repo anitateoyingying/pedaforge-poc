@@ -11,6 +11,12 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/kids.css?v=2">
   <style>
+    /* ── Curriculum theme line ──────────────────────────────── */
+    .dj-theme {
+      font-family: var(--k-hand); font-size: 1.05rem; color: var(--k-ink-soft);
+      margin-top: 6px;
+    }
+
     /* ── Word lab panel ─────────────────────────────────────── */
     .dj-lab { margin-bottom: 24px; }
     .dj-search-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
@@ -234,6 +240,7 @@
     <div class="k-hero">
       <h1>Word Jar</h1>
       <p>Tap a word to hear it, then spell it to fill your jar!</p>
+      <p class="dj-theme" id="dictTheme" hidden></p>
     </div>
 
     <!-- Word lab: hear it, see it, say it -->
@@ -265,7 +272,7 @@
         <span id="dictExample"></span>
       </div>
 
-      <div class="dj-starter-label">Now you try - finish a sentence out loud</div>
+      <div class="dj-starter-label" id="dictStarterLabel">Now you try - finish a sentence out loud</div>
       <div class="dj-starters" id="dictStarters"></div>
     </div>
 

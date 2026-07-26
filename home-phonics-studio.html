@@ -25,6 +25,17 @@
     }
     .k-sound[data-phoneme="/sh/"] { border-color: var(--k-teal); background: #eefafc; }
     .k-sound[data-phoneme="/ch/"] { border-color: var(--k-purple); background: #f7f1fc; }
+    /* Curriculum-built chips cycle through friendly colours */
+    .k-sound-row .k-sound:nth-child(4n+3) { border-color: var(--k-red); background: #fff2ef; }
+    .k-sound-row .k-sound:nth-child(4n) { border-color: var(--k-sun); background: #fff9e8; }
+    .k-sound-row .k-sound:nth-child(4n+1):not([data-phoneme="/sh/"]) { border-color: var(--k-teal); background: #eefafc; }
+    .k-sound-row .k-sound:nth-child(4n+2):not([data-phoneme="/ch/"]) { border-color: var(--k-purple); background: #f7f1fc; }
+
+    /* Class theme label under the hero title */
+    .k-theme-label {
+      font-family: var(--k-hand); font-size: 1.15rem;
+      color: var(--k-ink-soft); margin: 4px 0 0;
+    }
 
     /* Blend-a-word centerpiece */
     .k-blend-panel { text-align: center; padding: 30px 24px 32px; }
@@ -123,6 +134,7 @@
   <div class="k-wrap">
     <div class="k-hero">
       <h1>Sound Studio</h1>
+      <p class="k-theme-label" id="psThemeLabel" hidden></p>
       <p>Tap a sound, squish some letters, hear a word pop out!</p>
     </div>
 

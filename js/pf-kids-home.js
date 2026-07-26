@@ -49,11 +49,46 @@
     return streak;
   }
 
+  var MODULE_DOORS = {
+    reading: 'home-reading-coach.html',
+    phonics: 'home-phonics-studio.html',
+    dictionary: 'home-dictionary.html',
+    draw: 'home-draw-reflect.html',
+    benchmark: 'home-benchmark.html'
+  };
+
+  function applyCurriculum() {
+    var cur = window.pfKids && window.pfKids.curriculum ? window.pfKids.curriculum() : null;
+    var mods = (cur && cur.modules) || null;
+    document.querySelectorAll('.k-door').forEach(function (door) {
+      var href = door.getAttribute('href');
+      var key = Object.keys(MODULE_DOORS).filter(function (k) { return MODULE_DOORS[k] === href; })[0];
+      if (!key) return;
+      var open = !mods || mods[key] !== false;
+      door.style.opacity = open ? '' : '0.45';
+      door.style.pointerEvents = open ? '' : 'none';
+      door.setAttribute('aria-disabled', String(!open));
+      var lock = door.querySelector('.k-door-lock');
+      if (!open && !lock) {
+        lock = el('span', 'k-door-badge k-door-lock', 'Locked');
+        lock.style.background = 'rgba(63,74,61,0.12)';
+        lock.style.color = '#6b7a68';
+        door.appendChild(lock);
+      } else if (open && lock) {
+        lock.remove();
+      }
+    });
+    var sub = $('kHiSub');
+    if (cur && cur.theme) sub.textContent = cur.theme;
+    else sub.textContent = 'What shall we play today?';
+  }
+
   function load(kid) {
     var db = window.pfDb;
     if (!db || !window.pfUser) return;
     var greetName = kid ? kid.name.split(' ')[0] : 'friend';
     $('kHi').textContent = 'Hello, ' + greetName + '!';
+    applyCurriculum();
 
     var qs = {
       reading: db.from('reading_sessions').select('created_at,wcpm'),

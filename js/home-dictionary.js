@@ -97,6 +97,69 @@
     });
   }
 
+  /* ─── Class curriculum (admin-set word bank) ─────────────── */
+  function defaultBank() {
+    return window.PF_DICTIONARY || [];
+  }
+
+  function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function normalizeCustomWord(cw) {
+    if (!cw || typeof cw.word !== 'string') return null;
+    var w = cw.word.trim();
+    if (!w) return null;
+    var def = (typeof cw.definition === 'string' && cw.definition.trim())
+      ? cw.definition.trim()
+      : w + ' is one of our class words.';
+    var ex = (typeof cw.example === 'string' && cw.example.trim())
+      ? cw.example.trim()
+      : 'We can use the word ' + w + ' in a sentence.';
+    return { word: w, syllables: [w], definition: def, example: ex, starters: [], zh: null };
+  }
+
+  function buildBank(curriculum) {
+    if (!curriculum) return defaultBank();
+    var std = Array.isArray(curriculum.words) ? curriculum.words : [];
+    var custom = Array.isArray(curriculum.custom_words) ? curriculum.custom_words : [];
+    if (!std.length && !custom.length) return defaultBank();
+    var bank = [];
+    var seen = {};
+    std.forEach(function (key) {
+      var entry = window.pfDictionaryLookup ? window.pfDictionaryLookup(key) : null;
+      if (entry && !seen[entry.word]) { seen[entry.word] = true; bank.push(entry); }
+    });
+    custom.forEach(function (cw) {
+      var entry = normalizeCustomWord(cw);
+      if (entry && !seen[entry.word]) { seen[entry.word] = true; bank.push(entry); }
+    });
+    return bank.length ? bank : defaultBank();
+  }
+
+  function applyCurriculum() {
+    var curriculum = (window.pfKids && typeof window.pfKids.curriculum === 'function')
+      ? window.pfKids.curriculum()
+      : null;
+    words = buildBank(curriculum);
+
+    var themeEl = document.getElementById('dictTheme');
+    if (themeEl) {
+      var theme = (curriculum && typeof curriculum.theme === 'string') ? curriculum.theme.trim() : '';
+      themeEl.hidden = !theme;
+      themeEl.textContent = theme ? 'This week: ' + theme : '';
+    }
+
+    /* If the open word left the bank (or nothing is open), open the first word. */
+    var stillHere = false;
+    if (current) {
+      for (var i = 0; i < words.length; i += 1) {
+        if (words[i].word === current.word) { stillHere = true; break; }
+      }
+    }
+    if (!stillHere && words.length && els.jarGrid) loadWord(words[0].word);
+  }
+
   /* ─── Dock child (pf-kids.js drives whose jar this is) ───── */
   function applyKid(kid) {
     pickedChild = kid ? { id: kid.id, name: kid.name } : null;
@@ -108,6 +171,7 @@
     }
     if (pickedChild) progress = {}; /* fresh jar view, filled from the child's cloud rows */
     else progress = loadProgress();
+    applyCurriculum(); /* class word bank may differ per child */
     renderJar();
     hydrateFromCloud();
   }
@@ -202,6 +266,8 @@
 
   function renderStarters(entry) {
     els.starters.textContent = '';
+    var starterLabel = document.getElementById('dictStarterLabel');
+    if (starterLabel) starterLabel.hidden = !entry.starters.length;
     entry.starters.forEach(function (starter) {
       var pill = document.createElement('button');
       pill.type = 'button';
@@ -266,7 +332,7 @@
     els.definition.textContent = '';
     var strong = document.createElement('strong');
     strong.textContent = entry.word;
-    var defParts = entry.definition.split(new RegExp('\\b' + entry.word + '\\b', 'i'));
+    var defParts = entry.definition.split(new RegExp('\\b' + escapeRegExp(entry.word) + '\\b', 'i'));
     if (defParts.length >= 2) {
       els.definition.appendChild(document.createTextNode(defParts[0]));
       els.definition.appendChild(strong);
@@ -400,7 +466,7 @@
   /* ─── Init ───────────────────────────────────────────────── */
   function init() {
     if (!window.pfSpeech || !window.PF_DICTIONARY) return;
-    words = window.PF_DICTIONARY;
+    words = defaultBank();
     progress = loadProgress();
     tts = window.pfSpeech.detect().tts;
 
@@ -477,7 +543,8 @@
       if (chip) loadWord(chip.dataset.word);
     });
 
-    loadWord('ship');
+    applyCurriculum();
+    if (!current && words.length) loadWord(words[0].word);
   }
 
   if (document.readyState === 'loading') {

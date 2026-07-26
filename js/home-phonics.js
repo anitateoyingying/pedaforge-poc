@@ -15,6 +15,20 @@
     '/ch/': { sound: 'chh', cue: 'ch... as in chip' }
   };
 
+  /* Curriculum sound keys -> display + speech. Used only when the
+     active child's class curriculum lists sounds; otherwise the
+     hardcoded default pair above stays untouched. */
+  var SOUND_DEFS = {
+    sh: { label: '/sh/', example: 'as in ship', speak: 'shh... as in ship' },
+    ch: { label: '/ch/', example: 'as in chip', speak: 'ch... as in chip' },
+    th: { label: '/th/', example: 'as in thumb', speak: 'th... as in thumb' },
+    a: { label: '/a/', example: 'as in apple', speak: 'ah... as in apple' },
+    e: { label: '/e/', example: 'as in egg', speak: 'eh... as in egg' },
+    i: { label: '/i/', example: 'as in igloo', speak: 'ih... as in igloo' },
+    o: { label: '/o/', example: 'as in octopus', speak: 'oh... as in octopus' },
+    u: { label: '/u/', example: 'as in umbrella', speak: 'uh... as in umbrella' }
+  };
+
   var READER_LINES = {
     'Ship in the Fog': 'The big ship sails through the thick grey fog.',
     'Chip and the Chimp': 'Chip the chimp chomps on a big chunk of cherries.',
@@ -47,16 +61,79 @@
   }
 
   /* ─── This week's sounds bubbles ─────────────────────────── */
+  var defaultSoundRowHTML = null;
+
   function wireSoundChips() {
     var chips = document.querySelectorAll('.k-sound');
     chips.forEach(function (chip) {
       if (!tts) chip.title = 'Audio unavailable in this browser';
       chip.addEventListener('click', function () {
-        var info = PHONEME_SPEECH[chip.dataset.phoneme];
+        var cue = chip.dataset.speak;
+        if (!cue) {
+          var info = PHONEME_SPEECH[chip.dataset.phoneme];
+          cue = info ? info.cue : '';
+        }
         wiggle(chip);
-        if (info && tts) window.pfSpeech.speak(info.cue, { rate: 0.72 });
+        if (cue && tts) window.pfSpeech.speak(cue, { rate: 0.72 });
       });
     });
+  }
+
+  function buildSoundChip(key) {
+    var def = SOUND_DEFS[key];
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'k-chip k-sound';
+    chip.dataset.phoneme = def.label;
+    chip.dataset.speak = def.speak;
+    chip.setAttribute('aria-label', 'Hear the sound ' + key + ', ' + def.example);
+    chip.textContent = def.label;
+    var small = document.createElement('small');
+    small.textContent = def.example;
+    chip.appendChild(small);
+    return chip;
+  }
+
+  function curriculumSounds() {
+    var cur = (window.pfKids && window.pfKids.curriculum) ? window.pfKids.curriculum() : null;
+    if (!cur || !Array.isArray(cur.sounds)) return [];
+    return cur.sounds.filter(function (key) {
+      return Object.prototype.hasOwnProperty.call(SOUND_DEFS, key);
+    });
+  }
+
+  function curriculumTheme() {
+    var cur = (window.pfKids && window.pfKids.curriculum) ? window.pfKids.curriculum() : null;
+    if (!cur || typeof cur.theme !== 'string') return '';
+    return cur.theme.trim();
+  }
+
+  function applySoundRow() {
+    var row = document.querySelector('.k-sound-row');
+    if (!row) return;
+    if (defaultSoundRowHTML === null) defaultSoundRowHTML = row.innerHTML;
+
+    var keys = curriculumSounds();
+    if (keys.length > 0) {
+      row.textContent = '';
+      keys.forEach(function (key) { row.appendChild(buildSoundChip(key)); });
+    } else {
+      row.innerHTML = defaultSoundRowHTML;  /* exact hardcoded default pair */
+    }
+    wireSoundChips();
+  }
+
+  function applyThemeLabel() {
+    var el = document.getElementById('psThemeLabel');
+    if (!el) return;
+    var theme = curriculumTheme();
+    el.textContent = theme ? 'Theme: ' + theme : '';
+    el.hidden = !theme;
+  }
+
+  function applyCurriculum() {
+    applySoundRow();
+    applyThemeLabel();
   }
 
   /* ─── Blend-a-word strip ─────────────────────────────────── */
@@ -207,10 +284,11 @@
   function init() {
     if (!window.pfSpeech) return;
     tts = window.pfSpeech.detect().tts;
-    wireSoundChips();
+    applyCurriculum();
     wireBlendStrip();
     wireReaders();
     wireReadAlong();
+    document.addEventListener('pf-kid-change', applyCurriculum);
     /* honesty badge: karaoke word-timing is scripted in this POC */
     window.pfSpeech.simBadge(document.getElementById('psReadalongSim'), 'Simulated timing');
   }

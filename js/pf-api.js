@@ -18,7 +18,7 @@
 
   /* ── Classes & children ──────────────────────────────── */
   function myClasses() {
-    return db().from('classes').select('id,name,age_group,centre,children(id,name,profile_tags,notes)')
+    return db().from('classes').select('id,name,age_group,centre,curriculum,children(id,name,profile_tags,notes)')
       .order('created_at', { ascending: false })
       .then(function (r) { if (r.error) throw r.error; return r.data || []; });
   }

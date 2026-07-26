@@ -113,8 +113,19 @@
       var row = el('button', 'k-kid-switch');
       row.type = 'button';
       row.style.justifyContent = 'flex-start';
-      row.innerHTML = '<span class="k-face" style="background:' + k.color + ';">' + initials(k.name) + '</span><span>' + k.name.replace(/</g, '&lt;') + '</span>';
-      row.addEventListener('click', function () { pickKid(k); pop.remove(); });
+      var lockIco = k.locked
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-left:auto;opacity:0.55;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
+        : '';
+      row.innerHTML = '<span class="k-face" style="background:' + (k.locked ? '#b9c0b7' : k.color) + ';">' + initials(k.name) + '</span><span>' + k.name.replace(/</g, '&lt;') + '</span>' + lockIco;
+      if (k.locked) {
+        row.style.opacity = '0.6';
+        row.title = 'Not enrolled yet - ask your teacher';
+        row.addEventListener('click', function () {
+          if (window.pfToast) pfToast(k.name.split(' ')[0] + ' is not enrolled in PedaForge Home yet.');
+        });
+      } else {
+        row.addEventListener('click', function () { pickKid(k); pop.remove(); });
+      }
       pop.appendChild(row);
     });
     document.body.appendChild(pop);
@@ -174,6 +185,12 @@
   window.pfKids = {
     activeChild: function () { return state.active; },
     children: function () { return state.kids; },
+    /* Curriculum for the active child's class (null = school defaults). */
+    curriculum: function () {
+      var kid = state.active;
+      if (!kid || !state.curriculumByClass) return null;
+      return state.curriculumByClass[kid.classId] || null;
+    },
     celebrate: window.pfKidsCelebrate,
     refreshStars: loadStars
   };
@@ -185,17 +202,38 @@
     document.body.insertBefore(scene(), document.body.firstChild);
     document.body.insertBefore(dock(), document.body.children[1]);
 
-    window.pfApi.myClasses().then(function (classes) {
+    Promise.all([
+      window.pfApi.myClasses(),
+      window.pfDb.from('home_enrolments').select('child_id,status')
+    ]).then(function (rs) {
+      var classes = rs[0];
+      var enrolRows = (rs[1] && rs[1].data) || [];
+      var enrolByChild = {};
+      enrolRows.forEach(function (e) { enrolByChild[e.child_id] = e.status; });
+      /* Enrolment gate: once ANY child in the account has an enrolment
+         record, only 'active' children may enter. Accounts that have
+         never used enrolments are grandfathered (everything open). */
+      var gateOn = enrolRows.length > 0;
+
       var kids = [];
+      var curriculumByClass = {};
       classes.forEach(function (c) {
-        (c.children || []).forEach(function (k) { kids.push({ id: k.id, name: k.name, tags: k.profile_tags || [] }); });
+        curriculumByClass[c.id] = c.curriculum || null;
+        (c.children || []).forEach(function (k) {
+          kids.push({
+            id: k.id, name: k.name, tags: k.profile_tags || [], classId: c.id,
+            locked: gateOn && enrolByChild[k.id] !== 'active'
+          });
+        });
       });
       kids.sort(function (a, b) { return a.name.localeCompare(b.name); });
       kids.forEach(function (k, i) { k.color = FACE_COLORS[i % FACE_COLORS.length]; });
       state.kids = kids;
+      state.curriculumByClass = curriculumByClass;
       var savedId = '';
       try { savedId = localStorage.getItem(LS_KID) || ''; } catch (e) {}
-      state.active = kids.filter(function (k) { return k.id === savedId; })[0] || kids[0] || null;
+      var unlocked = kids.filter(function (k) { return !k.locked; });
+      state.active = unlocked.filter(function (k) { return k.id === savedId; })[0] || unlocked[0] || null;
       renderActive();
       loadStars();
     });

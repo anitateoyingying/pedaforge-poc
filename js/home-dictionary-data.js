@@ -86,3 +86,14 @@ window.PF_DICTIONARY = [
     zh: '日落'
   }
 ];
+
+/* Helper: find a curated entry by its standard word key (case-insensitive).
+   Used by home-dictionary.js to filter the bank from a class curriculum. */
+window.pfDictionaryLookup = function (word) {
+  var key = String(word || '').trim().toLowerCase();
+  if (!key) return null;
+  for (var i = 0; i < window.PF_DICTIONARY.length; i += 1) {
+    if (window.PF_DICTIONARY[i].word === key) return window.PF_DICTIONARY[i];
+  }
+  return null;
+};

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Home Admin - PedaForge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/app-shell.css">
+  <style>
+    .ka-tabs { display: flex; gap: 8px; margin: 10px 0 22px; flex-wrap: wrap; }
+    .ka-tab {
+      display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
+      border: none; border-radius: 100px; padding: 10px 22px; cursor: pointer;
+      font-family: var(--font); font-size: 0.86rem; font-weight: 600;
+      background: var(--bg-card); color: var(--text-muted);
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 4px 12px rgba(45,42,94,0.06);
+      transition: all 0.2s ease;
+    }
+    .ka-tab.on { background: var(--secondary); color: #fff; }
+    .ka-tab svg { width: 15px; height: 15px; }
+    .ka-panel { display: none; }
+    .ka-panel.on { display: block; }
+    .ka-card {
+      background: var(--bg-card); border-radius: var(--radius); padding: 22px 24px;
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
+      margin-bottom: 20px;
+    }
+    .ka-card h3 { font-family: 'Playfair Display', serif; font-size: 1.08rem; color: var(--secondary); margin: 0 0 6px; }
+    .ka-card .sub { font-size: 0.82rem; color: var(--text-light); margin: 0 0 16px; line-height: 1.55; }
+
+    /* Enrolment rows */
+    .enr-row {
+      display: grid; grid-template-columns: 1.4fr 1.3fr auto auto auto; gap: 12px;
+      align-items: center; padding: 12px 14px; min-height: 56px;
+      background: var(--bg); border-radius: var(--radius-sm); margin-bottom: 8px;
+    }
+    @media (max-width: 980px) { .enr-row { grid-template-columns: 1fr 1fr; } }
+    .enr-kid { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .enr-kid .face {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 0.68rem; font-weight: 800;
+    }
+    .enr-kid b { font-size: 0.9rem; color: var(--text); }
+    .enr-kid small { display: block; font-size: 0.7rem; color: var(--text-muted); }
+    .enr-parent { font-size: 0.78rem; color: var(--text-light); min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 5px 13px; min-height: 30px;
+      border-radius: 100px; font-size: 0.68rem; font-weight: 700; text-transform: capitalize; white-space: nowrap;
+    }
+    .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .pill.unbilled { background: rgba(156,163,175,0.14); color: #6b7280; }
+    .pill.invoiced { background: rgba(255,158,24,0.13); color: var(--warning); }
+    .pill.paid { background: rgba(16,185,129,0.13); color: var(--success); }
+    .pill.waived { background: rgba(14,143,168,0.12); color: #0E8FA8; }
+    .pill.pending { background: rgba(156,163,175,0.14); color: #6b7280; }
+    .pill.active { background: rgba(16,185,129,0.13); color: var(--success); }
+    .pill.suspended { background: rgba(220,38,38,0.1); color: var(--danger); }
+    .enr-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+    .enr-actions .btn { min-height: 38px; }
+
+    /* Curriculum */
+    .cur-class-bar { display: flex; align-items: end; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+    .field label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .field select, .field input, .field textarea {
+      padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-family: var(--font); font-size: 0.9rem; background: #fff; min-height: 44px;
+    }
+    .field textarea { width: 100%; min-height: 90px; resize: vertical; line-height: 1.6; }
+    .mod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .mod-tile {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px; min-height: 60px;
+      background: var(--bg); border-radius: var(--radius-sm); cursor: pointer;
+      border: 2px solid transparent; transition: border-color 0.2s ease;
+    }
+    .mod-tile.on { border-color: var(--success); background: rgba(16,185,129,0.05); }
+    .mod-tile .mt-ico {
+      width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center; color: #fff;
+    }
+    .mod-tile .mt-ico svg { width: 18px; height: 18px; }
+    .mod-tile b { display: block; font-size: 0.86rem; color: var(--text); }
+    .mod-tile small { font-size: 0.68rem; color: var(--text-muted); }
+    .mod-tile .mt-state { margin-left: auto; font-size: 0.66rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); }
+    .mod-tile.on .mt-state { color: var(--success); }
+    .word-bank { display: flex; gap: 8px; flex-wrap: wrap; }
+    .word-chip {
+      font-family: var(--font); font-size: 0.8rem; font-weight: 600; min-height: 38px;
+      padding: 8px 16px; border-radius: 100px; border: 1.5px solid var(--border);
+      background: #fff; color: var(--text); cursor: pointer;
+    }
+    .word-chip.on { border-color: var(--primary); background: rgba(232,6,60,0.06); color: var(--primary); }
+    .cw-row { display: grid; grid-template-columns: 1fr 2fr 2fr auto; gap: 10px; margin-bottom: 8px; align-items: center; }
+    @media (max-width: 900px) { .cw-row { grid-template-columns: 1fr; } }
+    .cw-row input { min-height: 40px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.84rem; }
+    .cw-del { border: none; background: none; color: var(--text-muted); cursor: pointer; width: 36px; height: 36px; border-radius: 10px; }
+    .cw-del:hover { color: var(--danger); background: rgba(220,38,38,0.06); }
+    .cur-save-bar { display: flex; gap: 10px; align-items: center; position: sticky; bottom: 14px; }
+    .cur-save-bar .btn { min-height: 44px; }
+    .cur-status { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* Templates */
+    .tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .tpl-card {
+      background: var(--bg-card); border-radius: var(--radius); padding: 18px 20px;
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
+    }
+    .tpl-card h4 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--secondary); margin: 0 0 4px; }
+    .tpl-meta { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px; }
+    .tpl-mods { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tpl-mods span { font-size: 0.64rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; background: var(--bg); color: var(--text-light); }
+    .tpl-actions { display: flex; gap: 8px; }
+    .empty-note { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
+    .season-tag { font-size: 0.64rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 100px; }
+    .season-term1 { background: rgba(232,6,60,0.08); color: var(--primary); }
+    .season-term2 { background: rgba(255,158,24,0.12); color: var(--warning); }
+    .season-term3 { background: rgba(16,185,129,0.1); color: var(--success); }
+    .season-term4 { background: rgba(14,143,168,0.1); color: #0E8FA8; }
+    .season-holiday { background: rgba(119,62,139,0.1); color: #773E8B; }
+    .season-any { background: var(--bg); color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <div class="container">
+      <h1>PedaForge Home Admin</h1>
+      <p>Control who can use the kids world and what they learn: enrol children after billing, open or close modules, curate words, sounds, and reading passages, and reuse it all as seasonal templates.</p>
+    </div>
+  </header>
+
+  <main class="container" style="padding-bottom:70px;">
+    <div class="ka-tabs" role="tablist">
+      <button class="ka-tab on" data-panel="kaEnrol" role="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+        Enrolments &amp; Billing
+      </button>
+      <button class="ka-tab" data-panel="kaCurriculum" role="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Curriculum
+      </button>
+      <button class="ka-tab" data-panel="kaTemplates" role="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Class Templates
+      </button>
+    </div>
+
+    <!-- ── Enrolments & Billing ── -->
+    <section class="ka-panel on" id="kaEnrol" role="tabpanel">
+      <div class="ka-card">
+        <h3>Enrolment pipeline</h3>
+        <p class="sub">A child can enter the kids world once their enrolment is <strong>active</strong>. The usual path: record the parent, mark the invoice sent, mark it paid (or waive fees), then activate. Suspend anytime - their data stays safe.</p>
+        <div id="enrList"><span class="empty-note">Loading...</span></div>
+      </div>
+    </section>
+
+    <!-- ── Curriculum ── -->
+    <section class="ka-panel" id="kaCurriculum" role="tabpanel">
+      <div class="ka-card">
+        <div class="cur-class-bar">
+          <div class="field">
+            <label for="curClass">Class</label>
+            <select id="curClass"></select>
+          </div>
+          <div class="field" style="flex:1;min-width:220px;">
+            <label for="curTheme">Theme label (shown to children)</label>
+            <input id="curTheme" placeholder="e.g. Term 3: Under the Sea" maxlength="60">
+          </div>
+        </div>
+
+        <h3>Modules available to learn</h3>
+        <p class="sub">Closed modules show as locked doors in the kids world.</p>
+        <div class="mod-grid" id="curModules"></div>
+      </div>
+
+      <div class="ka-card">
+        <h3>Word Jar - words to teach</h3>
+        <p class="sub">Pick from the standard bank, or add your own words below.</p>
+        <div class="word-bank" id="curWords"></div>
+        <div style="margin-top:18px;">
+          <h3 style="font-size:0.95rem;">Custom words</h3>
+          <p class="sub">Your own vocabulary - spoken with the same voice, spelled the same way.</p>
+          <div id="curCustomWords"></div>
+          <button class="btn btn-secondary btn-sm" id="cwAdd" style="min-height:40px;">Add a custom word</button>
+        </div>
+      </div>
+
+      <div class="ka-card">
+        <h3>Sound Studio - sounds of the week</h3>
+        <p class="sub">Choose which phonics sounds are on the wall this week.</p>
+        <div class="word-bank" id="curSounds"></div>
+      </div>
+
+      <div class="ka-card">
+        <h3>Reading Time - passage</h3>
+        <p class="sub">The story children read aloud. Keep it short and decodable (15-30 words). Leave empty to use the standard passage.</p>
+        <div class="field">
+          <textarea id="curPassage" maxlength="400" placeholder="Sam had a red boat. He put it in the pond..."></textarea>
+        </div>
+      </div>
+
+      <div class="cur-save-bar">
+        <button class="btn btn-primary" id="curSave">Save Curriculum</button>
+        <button class="btn btn-secondary" id="curSaveTpl">Save as Template</button>
+        <span class="cur-status" id="curStatus"></span>
+      </div>
+    </section>
+
+    <!-- ── Templates ── -->
+    <section class="ka-panel" id="kaTemplates" role="tabpanel">
+      <div class="ka-card">
+        <h3>Seasonal class templates</h3>
+        <p class="sub">Plan a term once, apply it to any class in one click. Directors see shared templates from across the network.</p>
+        <div class="tpl-grid" id="tplGrid"><span class="empty-note">Loading...</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="container"><div class="footer-bottom">
+    <span>PedaForge - Busy Bees network</span>
+    <div class="footer-badges"><span class="footer-badge">PDPA Compliant</span><span class="footer-badge">SG Data Residency</span></div>
+  </div></div></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/pf-auth.js"></script>
+  <script src="js/pf-api.js"></script>
+  <script src="js/pf-markdown.js"></script>
+  <script src="js/pf-shell.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pf-kids-admin.js"></script>
+</body>
+</html>

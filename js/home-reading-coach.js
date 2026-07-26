@@ -24,6 +24,7 @@
     'sam', 'had', 'fun', 'in', 'the', 'sun'
   ];
   var SIM_HESITATE_BEFORE = { 10: true, 15: true }; // pause before trap words
+  var CUSTOM_SIM_SKIP_INDEX = 3; // deterministic miscue: skip the 4th word
 
   var els = {};
   var chips = [];
@@ -45,6 +46,10 @@
   var simBadgeEl = null;
   var support = { stt: false, tts: false };
   var pickedChild = null;   // {id,name} from the kids dock (or null = general)
+  var defaultChipWords = [];      // display words captured from the HTML chips
+  var customPassageActive = false;
+  var currentPassageText = '';    // normalized current custom passage ('' = default)
+  var themeEl = null;
 
   function childName() { return pickedChild ? pickedChild.name.split(' ')[0] : 'friend'; }
 
@@ -214,21 +219,37 @@
   }
 
   /* ─── Simulated pipeline (identical aligner) ─────────────── */
+  /* Scripted tokens for the current passage. Default passage keeps the
+     hand-tuned SIM_TOKENS. A custom curriculum passage is read perfectly
+     except one deterministic miscue: the 4th word is skipped (only when
+     the passage is long enough for the aligner to catch the skip). */
+  function activeSimTokens() {
+    if (!customPassageActive) return SIM_TOKENS;
+    var tokens = [];
+    var skippable = passage.length > CUSTOM_SIM_SKIP_INDEX + 1;
+    for (var i = 0; i < passage.length; i += 1) {
+      if (skippable && i === CUSTOM_SIM_SKIP_INDEX) continue;
+      tokens.push(passage[i]);
+    }
+    return tokens;
+  }
+
   function startSim() {
+    var tokens = activeSimTokens();
     state.simSpoken = [];
     var i = 0;
     function next() {
       if (!state.running) return;
-      if (i >= SIM_TOKENS.length) {
+      if (i >= tokens.length) {
         state.simTimer = setTimeout(function () { finishRun('complete'); }, 650);
         return;
       }
-      state.simSpoken.push(SIM_TOKENS[i]);
+      state.simSpoken.push(tokens[i]);
       var result = align(state.simSpoken);
       renderStatuses(result);
       i += 1;
       var delay = 300 + Math.random() * 400;
-      if (SIM_HESITATE_BEFORE[i]) delay += 550;
+      if (!customPassageActive && SIM_HESITATE_BEFORE[i]) delay += 550;
       state.simTimer = setTimeout(next, delay);
     }
     state.simTimer = setTimeout(next, 350);
@@ -364,9 +385,70 @@
     });
   }
 
+  /* ─── Curriculum passage (per-class, set in kids admin) ──── */
+  function derivePassage() {
+    chips = Array.prototype.slice.call(els.words.querySelectorAll('.word-chip'));
+    passage = chips.map(function (chip) { return normalize(chip.textContent); });
+    statuses = passage.map(function () { return 'pending'; });
+  }
+
+  function buildChips(words) {
+    els.words.textContent = '';
+    words.forEach(function (word) {
+      var chip = document.createElement('span');
+      chip.className = 'word-chip';
+      chip.textContent = word;
+      els.words.appendChild(chip);
+    });
+    derivePassage();
+  }
+
+  function passageWordsFromText(text) {
+    return String(text).split(/\s+/).filter(function (w) {
+      return normalize(w).length > 0;
+    });
+  }
+
+  function ensureThemeEl() {
+    if (themeEl) return themeEl;
+    var hero = document.querySelector('.k-hero');
+    if (!hero) return null;
+    themeEl = document.createElement('p');
+    themeEl.id = 'rcThemeLabel';
+    themeEl.hidden = true;
+    hero.appendChild(themeEl);
+    return themeEl;
+  }
+
+  function applyTheme(cur) {
+    var label = ensureThemeEl();
+    if (!label) return;
+    var theme = (cur && typeof cur.theme === 'string') ? cur.theme.trim() : '';
+    label.textContent = theme;
+    label.hidden = theme.length === 0;
+  }
+
+  function applyCurriculumPassage() {
+    if (!els.words || !els.micBtn) return; /* init has not run yet */
+    var cur = (window.pfKids && window.pfKids.curriculum) ? window.pfKids.curriculum() : null;
+    applyTheme(cur);
+    var text = (cur && typeof cur.passage === 'string') ? cur.passage.trim() : '';
+    var words = text ? passageWordsFromText(text) : [];
+    var wantCustom = words.length > 0;
+    var normalizedText = wantCustom ? words.map(normalize).join(' ') : '';
+    if (wantCustom === customPassageActive && normalizedText === currentPassageText) return;
+    if (state.running || state.counting) stopEverything();
+    customPassageActive = wantCustom;
+    currentPassageText = normalizedText;
+    buildChips(wantCustom ? words : defaultChipWords);
+    state.hasResult = false;
+    setMicUI('idle');
+  }
+
   /* ─── Dock child (pf-kids.js drives who is reading) ──────── */
   function applyKid(kid) {
     pickedChild = kid ? { id: kid.id, name: kid.name } : null;
+    applyCurriculumPassage();
     if (els.mascotTitle && !state.hasResult) {
       els.mascotTitle.textContent = 'Hello, ' + childName() + '!';
     }
@@ -538,9 +620,8 @@
     els.errors = document.getElementById('rcErrors');
     if (!els.micBtn || !els.words) return;
 
-    chips = Array.prototype.slice.call(els.words.querySelectorAll('.word-chip'));
-    passage = chips.map(function (chip) { return normalize(chip.textContent); });
-    statuses = passage.map(function () { return 'pending'; });
+    derivePassage();
+    defaultChipWords = chips.map(function (chip) { return chip.textContent; });
 
     support = window.pfSpeech.detect();
 
