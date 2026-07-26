@@ -421,9 +421,10 @@
   }
 
   function applyTheme(cur) {
+    var theme = (cur && typeof cur.theme === 'string') ? cur.theme.trim() : '';
+    if (!theme && !themeEl) return; /* nothing to show, keep hero untouched */
     var label = ensureThemeEl();
     if (!label) return;
-    var theme = (cur && typeof cur.theme === 'string') ? cur.theme.trim() : '';
     label.textContent = theme;
     label.hidden = theme.length === 0;
   }
@@ -497,8 +498,9 @@
     els.mascotTitle.textContent = title;
     els.mascotText.textContent = body;
 
-    /* Replay word = first miscue (or ship) */
-    var replayWord = miscues.length > 0 ? miscues[0] : 'ship';
+    /* Replay word = first miscue (or a word from the current passage) */
+    var fallbackWord = customPassageActive && passage.length > 0 ? passage[0] : 'ship';
+    var replayWord = miscues.length > 0 ? miscues[0] : fallbackWord;
     els.replayBtn.dataset.word = replayWord;
     els.replayWord.textContent = 'Hear "' + replayWord + '"';
 

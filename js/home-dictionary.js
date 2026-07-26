@@ -128,11 +128,15 @@
     var seen = {};
     std.forEach(function (key) {
       var entry = window.pfDictionaryLookup ? window.pfDictionaryLookup(key) : null;
-      if (entry && !seen[entry.word]) { seen[entry.word] = true; bank.push(entry); }
+      if (!entry) return;
+      var dedupeKey = entry.word.toLowerCase();
+      if (!seen[dedupeKey]) { seen[dedupeKey] = true; bank.push(entry); }
     });
     custom.forEach(function (cw) {
       var entry = normalizeCustomWord(cw);
-      if (entry && !seen[entry.word]) { seen[entry.word] = true; bank.push(entry); }
+      if (!entry) return;
+      var dedupeKey = entry.word.toLowerCase();
+      if (!seen[dedupeKey]) { seen[dedupeKey] = true; bank.push(entry); }
     });
     return bank.length ? bank : defaultBank();
   }
@@ -150,14 +154,18 @@
       themeEl.textContent = theme ? 'This week: ' + theme : '';
     }
 
-    /* If the open word left the bank (or nothing is open), open the first word. */
+    /* Re-load the open word so its entry content tracks the new bank
+       (same word key can carry a different definition per class); if it
+       left the bank (or nothing is open), open the first word. */
     var stillHere = false;
     if (current) {
       for (var i = 0; i < words.length; i += 1) {
         if (words[i].word === current.word) { stillHere = true; break; }
       }
     }
-    if (!stillHere && words.length && els.jarGrid) loadWord(words[0].word);
+    if (!els.jarGrid || !words.length) return;
+    if (stillHere) loadWord(current.word);
+    else loadWord(words[0].word);
   }
 
   /* ─── Dock child (pf-kids.js drives whose jar this is) ───── */
