@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
-   PedaForge Home — Phonics Studio demo
-   Sound chips speak their phoneme ("sh… as in ship"), the blending
+   PedaForge Home - Phonics Studio demo
+   Sound chips speak their phoneme ("sh... as in ship"), the blending
    strip taps tiles for individual sounds then blends sh-i-p with
    accelerating audio and a springy tile slide-together, and reader
    Play buttons narrate title + first line with real TTS.
@@ -10,8 +10,8 @@
   'use strict';
 
   var PHONEME_SPEECH = {
-    '/sh/': { sound: 'shh', cue: 'sh… as in ship' },
-    '/ch/': { sound: 'chh', cue: 'ch… as in chip' }
+    '/sh/': { sound: 'shh', cue: 'sh... as in ship' },
+    '/ch/': { sound: 'chh', cue: 'ch... as in chip' }
   };
 
   var READER_LINES = {
@@ -94,7 +94,7 @@
         bounce(tile);
         window.pfSpeech.speak(BLEND_TILES[i].sound, { rate: 0.72 });
       });
-      if (!tts) tile.title = 'Audio unavailable — sounds shown visually';
+      if (!tts) tile.title = 'Audio unavailable - sounds shown visually';
     });
 
     btn.addEventListener('click', function () {
@@ -160,7 +160,7 @@
         var line = READER_LINES[title] || '';
         btn.disabled = true;
         var label = btn.querySelector('.ps-play-label');
-        if (label) label.textContent = 'Reading…';
+        if (label) label.textContent = 'Reading...';
         window.pfSpeech.speak(title + '. ' + line, {
           rate: 0.85,
           onend: function () {

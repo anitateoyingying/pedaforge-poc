@@ -1,4 +1,4 @@
-/* pfMd — tiny, escape-first markdown renderer for AI output.
+/* pfMd - tiny, escape-first markdown renderer for AI output.
    Supports: **bold**, *italic*, `code`, # headings (rendered as h4/h5),
    - / * / 1. lists, paragraphs. Everything is HTML-escaped BEFORE any
    markup is applied, so AI/user text can never inject HTML. */
@@ -19,6 +19,11 @@
   }
 
   function render(text) {
+    // Normalize AI punctuation quirks: em/en dashes, middle dots, ellipses.
+    text = String(text == null ? '' : text)
+      .replace(/\s*[—–]\s*/g, ' - ')
+      .replace(/\s*·\s*/g, ' - ')
+      .replace(/…/g, '...');
     var lines = escapeHtml(text).split(/\r?\n/);
     var html = [], para = [], list = null; // list: {type:'ul'|'ol', items:[]}
 
@@ -61,7 +66,7 @@
     return html.join('');
   }
 
-  /* renderInto(el, text) — safe render + adds .pf-md styling class */
+  /* renderInto(el, text) - safe render + adds .pf-md styling class */
   window.pfMd = {
     render: render,
     renderInto: function (el, text) {

@@ -56,7 +56,7 @@
   <header class="page-header">
     <div class="container">
       <h1>My Classes</h1>
-      <p>Create your classes and add children with their learning profiles. Every module — lesson planning, portfolios, reading, benchmarks — attaches to the children you add here.</p>
+      <p>Create your classes and add children with their learning profiles. Every module - lesson planning, portfolios, reading, benchmarks - attaches to the children you add here.</p>
     </div>
   </header>
 
@@ -72,11 +72,11 @@
       <button class="btn btn-primary btn-sm" id="ncBtn">Create Class</button>
     </div>
 
-    <div class="cls-grid" id="clsGrid"><span class="empty-note">Loading…</span></div>
+    <div class="cls-grid" id="clsGrid"><span class="empty-note">Loading...</span></div>
   </main>
 
   <footer class="footer"><div class="container"><div class="footer-bottom">
-    <span>PedaForge &middot; Busy Bees network</span>
+    <span>PedaForge - Busy Bees network</span>
     <div class="footer-badges"><span class="footer-badge">PDPA Compliant</span><span class="footer-badge">SG Data Residency</span></div>
   </div></div></footer>
 
@@ -118,19 +118,19 @@
       var card = document.createElement('div');
       card.className = 'cls-card';
       var h = document.createElement('h3');
-      h.innerHTML = esc(cls.name) + ' <span class="tag">' + esc(cls.age_group.toUpperCase()) + (cls.centre ? ' · ' + esc(cls.centre) : '') + '</span>';
+      h.innerHTML = esc(cls.name) + ' <span class="tag">' + esc(cls.age_group.toUpperCase()) + (cls.centre ? ' - ' + esc(cls.centre) : '') + '</span>';
       card.appendChild(h);
       var list = document.createElement('div');
       list.className = 'kid-list';
       var kids = cls.children || [];
-      if (!kids.length) list.innerHTML = '<span class="empty-note">No children yet — add your first below.</span>';
+      if (!kids.length) list.innerHTML = '<span class="empty-note">No children yet - add your first below.</span>';
       kids.sort(function (a, b) { return a.name.localeCompare(b.name); }).forEach(function (k) { list.appendChild(kidRow(k)); });
       card.appendChild(list);
 
       var add = document.createElement('div');
       add.className = 'add-kid';
       var nameIn = document.createElement('input');
-      nameIn.placeholder = 'Child’s name (or initials for privacy)';
+      nameIn.placeholder = 'Child\'s name (or initials for privacy)';
       var picks = document.createElement('div');
       picks.className = 'tag-picks';
       var chosen = [];
@@ -149,7 +149,7 @@
       btn.addEventListener('click', function () {
         var n = nameIn.value.trim();
         if (!n) { nameIn.focus(); return; }
-        var done = window.pfApi.spinner(btn, 'Adding…');
+        var done = window.pfApi.spinner(btn, 'Adding...');
         window.pfApi.addChild(cls.id, n, chosen).then(function () { done(); load(); },
           function (e) { done(); if (window.pfToast) pfToast('Failed: ' + e.message); });
       });
@@ -162,7 +162,7 @@
       window.pfApi.myClasses().then(function (classes) {
         grid.innerHTML = '';
         if (!classes.length) {
-          grid.innerHTML = '<span class="empty-note">No classes yet. Create your first class above — e.g. “K1 Sunshine”.</span>';
+          grid.innerHTML = '<span class="empty-note">No classes yet. Create your first class above - e.g. "K1 Sunshine".</span>';
           return;
         }
         classes.forEach(function (c) { grid.appendChild(classCard(c)); });
@@ -172,7 +172,7 @@
     document.getElementById('ncBtn').addEventListener('click', function () {
       var name = document.getElementById('ncName').value.trim();
       if (!name) { document.getElementById('ncName').focus(); return; }
-      var done = window.pfApi.spinner(this, 'Creating…');
+      var done = window.pfApi.spinner(this, 'Creating...');
       window.pfApi.createClass(name, document.getElementById('ncAge').value, document.getElementById('ncCentre').value.trim())
         .then(function () { done(); document.getElementById('ncName').value = ''; load(); },
           function (e) { done(); if (window.pfToast) pfToast('Failed: ' + e.message); });

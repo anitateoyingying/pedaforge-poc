@@ -1,4 +1,4 @@
-/* PedaForge Lesson Planner — real classes/children from DB, AI-generated
+/* PedaForge Lesson Planner - real classes/children from DB, AI-generated
    differentiated plans via pfApi.ai('lesson_plan'), persisted to lessons. */
 (function () {
   'use strict';
@@ -55,7 +55,7 @@
       var body = el('div', null);
       body.style.flex = '1';
       body.appendChild(el('span', 'profile-name', k.name));
-      var tags = (k.profile_tags || []).join(' · ');
+      var tags = (k.profile_tags || []).join(' - ');
       body.appendChild(el('div', 'planner-child-tags', tags || 'No profile tags'));
       chip.appendChild(body);
       var badge = el('span', 'count', 'In');
@@ -107,7 +107,7 @@
     out.innerHTML = '';
 
     var badge = el('div', null);
-    badge.appendChild(el('span', 'pf-ai-badge', '✦ AI-generated · editable'));
+    badge.appendChild(el('span', 'pf-ai-badge', 'AI-generated - editable'));
     badge.style.marginBottom = '12px';
     out.appendChild(badge);
 
@@ -186,7 +186,7 @@
     currentTheme = theme;
     currentFrameworks = frameworks;
     var btn = $('plannerGenerate');
-    var done = window.pfApi.spinner(btn, 'Thinking…');
+    var done = window.pfApi.spinner(btn, 'Thinking...');
     window.pfApi.ai('lesson_plan', {
       theme: theme,
       age_group: cls.age_group,
@@ -206,7 +206,7 @@
     var cls = currentClass();
     if (!currentPlan || !cls) { window.pfToast('Generate a plan first.'); return; }
     var btn = $('plannerSave');
-    var done = window.pfApi.spinner(btn, 'Saving…');
+    var done = window.pfApi.spinner(btn, 'Saving...');
     window.pfDb.from('lessons').insert({
       owner: window.pfUser.id,
       class_id: cls.id,
@@ -216,7 +216,7 @@
     }).select().single()
       .then(function (r) {
         if (r.error) throw r.error;
-        window.pfToast('Saved — capture how it went in Portfolios');
+        window.pfToast('Saved - capture how it went in Portfolios');
         $('plannerSaveWrap').classList.add('hidden');
         return loadLessons();
       })
@@ -238,7 +238,7 @@
   function renderLessonEmpty() {
     var host = $('plannerLessons');
     host.innerHTML = '';
-    host.appendChild(el('p', 'profile-meta', 'No saved lessons yet — generate a plan above and save it to build your library.'));
+    host.appendChild(el('p', 'profile-meta', 'No saved lessons yet - generate a plan above and save it to build your library.'));
   }
 
   function loadLessons() {
@@ -257,8 +257,8 @@
           var row = el('div', 'planner-lesson-row');
           var info = el('div', 'lesson-info');
           info.appendChild(el('h5', null, l.theme || 'Untitled lesson'));
-          var meta = (l.classes && l.classes.name ? l.classes.name + ' · ' : '') +
-            ((l.frameworks || []).join(', ') || 'No frameworks') + ' · ' +
+          var meta = (l.classes && l.classes.name ? l.classes.name + ' - ' : '') +
+            ((l.frameworks || []).join(', ') || 'No frameworks') + ' - ' +
             window.pfApi.ago(l.created_at);
           info.appendChild(el('p', 'profile-meta', meta));
           info.setAttribute('role', 'button');

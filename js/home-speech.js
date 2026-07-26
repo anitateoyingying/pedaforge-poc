@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   PedaForge Home — shared speech module (classic script, no deps)
+   PedaForge Home - shared speech module (classic script, no deps)
    window.pfSpeech = { detect, speak, stop, listen, whenVoices,
                        hasVoiceFor, simBadge }
    - TTS voice picked async via onvoiceschanged with fallback chain
@@ -42,7 +42,7 @@
   if (synth) {
     loadVoices();
     try { synth.onvoiceschanged = loadVoices; } catch (err) { /* older engines */ }
-    // Some engines never fire onvoiceschanged — poll briefly, then give up
+    // Some engines never fire onvoiceschanged - poll briefly, then give up
     // gracefully (speak() still works with the default voice).
     setTimeout(loadVoices, 300);
     setTimeout(function () {
@@ -205,7 +205,7 @@
   }
 
   /**
-   * simBadge(el, label) — injects a visible "Simulated" pill so the
+   * simBadge(el, label) - injects a visible "Simulated" pill so the
    * grant panel is never misled by scripted content. Styled inline
    * (via element.style, not HTML strings) so it works on every page.
    */

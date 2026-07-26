@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   PedaForge Home — Talking Dictionary demo
+   PedaForge Home - Talking Dictionary demo
    Jar chips load words into the search field with a typed-in caret
    animation; the word card re-renders from the curated data set
    (js/home-dictionary-data.js). Speaker & syllables use real TTS
@@ -72,8 +72,8 @@
   function hydrateFromCloud() {
     if (!(window.pfDb && window.pfUser)) return;
     if (pickedChild) {
-      /* Child jar: hydrate strictly from that child's rows;
-         fall back to the educator's own rows when none exist yet. */
+      /* Child jar: hydrate strictly from that child\'s rows;
+         fall back to the educator\'s own rows when none exist yet. */
       window.pfDb.from('dictionary_progress').select('word,status')
         .eq('child_id', pickedChild.id)
         .then(function (r) {
@@ -124,13 +124,13 @@
         } else {
           profileLink.hidden = true;
         }
-        if (title) title.textContent = pickedChild ? pickedChild.name + '’s Words Jar' : 'Whose Words Jar is this?';
+        if (title) title.textContent = pickedChild ? pickedChild.name + '\'s Words Jar' : 'Whose Words Jar is this?';
         if (jarSub) {
           jarSub.textContent = pickedChild
             ? 'Every word ' + pickedChild.name + ' explores drops into their jar. Hear a word and spell it to move it from New to Learning to Known.'
             : 'Every word explored drops into the jar. Hear a word and spell it to move it from New to Learning to Known. Tap any word to open it.';
         }
-        if (pickedChild) progress = {}; /* fresh jar view, filled from the child's cloud rows */
+        if (pickedChild) progress = {}; /* fresh jar view, filled from the child\'s cloud rows */
         else progress = loadProgress();
         renderJar();
         hydrateFromCloud();
@@ -203,7 +203,7 @@
     entry.syllables.forEach(function (syll, i) {
       if (i > 0) {
         var dot = document.createElement('span');
-        dot.textContent = '·';
+        dot.textContent = '-';
         dot.style.color = 'var(--text-muted)';
         els.syllables.appendChild(dot);
       }
@@ -211,7 +211,7 @@
       btn.type = 'button';
       btn.className = 'syll-part syll-btn';
       btn.textContent = syll;
-      btn.title = tts ? 'Tap to hear this part' : 'Audio unavailable — syllables shown visually';
+      btn.title = tts ? 'Tap to hear this part' : 'Audio unavailable - syllables shown visually';
       els.syllables.appendChild(btn);
     });
   }
@@ -257,14 +257,14 @@
       tile.type = 'button';
       tile.className = 'letter-tile';
       tile.textContent = letter;
-      tile.setAttribute('aria-label', 'Letter ' + letter + ' — tap to place');
+      tile.setAttribute('aria-label', 'Letter ' + letter + ' - tap to place');
       els.tiles.appendChild(tile);
     });
     letters.forEach(function () {
       var slot = document.createElement('button');
       slot.type = 'button';
       slot.className = 'spell-slot';
-      slot.setAttribute('aria-label', 'Empty letter box — tap a placed letter to return it');
+      slot.setAttribute('aria-label', 'Empty letter box - tap a placed letter to return it');
       els.slots.appendChild(slot);
     });
   }
@@ -293,8 +293,8 @@
     els.example.textContent = entry.example;
     els.speakerBtn.setAttribute('aria-label', 'Say the word ' + entry.word + ' aloud');
     els.caption.textContent = tts
-      ? 'Tap the speaker to hear “' + entry.word + '” spoken aloud · real browser TTS'
-      : 'Audio unavailable — syllables shown visually';
+      ? 'Tap the speaker to hear "' + entry.word + '" spoken aloud - real browser TTS'
+      : 'Audio unavailable - syllables shown visually';
 
     renderSyllables(entry);
     renderStarters(entry);
@@ -378,7 +378,7 @@
   var PRAISE = [
     'Wonderful! You built the whole word!',
     'Yes! Every letter in its place!',
-    'Super spelling — you did it!'
+    'Super spelling - you did it!'
   ];
 
   function checkSpelling() {
@@ -388,7 +388,7 @@
     for (var i = 0; i < slots.length; i += 1) attempt += slots[i].textContent.trim();
     els.feedback.classList.remove('is-error');
     if (attempt.length < current.word.length) {
-      els.feedback.textContent = 'Almost there — ' + (current.word.length - attempt.length) + ' more letter' + (current.word.length - attempt.length === 1 ? '' : 's') + ' to go!';
+      els.feedback.textContent = 'Almost there - ' + (current.word.length - attempt.length) + ' more letter' + (current.word.length - attempt.length === 1 ? '' : 's') + ' to go!';
       return;
     }
     if (attempt === current.word) {
@@ -431,7 +431,7 @@
     if (!els.searchText || !els.jarGrid) return;
 
     if (!tts) {
-      els.speakerBtn.title = 'Audio unavailable — syllables shown visually';
+      els.speakerBtn.title = 'Audio unavailable - syllables shown visually';
       els.speakerBtn.style.opacity = '0.55';
     }
 
@@ -458,7 +458,7 @@
     els.starters.addEventListener('click', function (event) {
       var pill = event.target.closest('.starter-pill');
       if (!pill || !tts) return;
-      speakWithWave(pill.textContent.replace(/…$/, ''), { rate: 0.9 });
+      speakWithWave(pill.textContent.replace(/...$/, ''), { rate: 0.9 });
     });
 
     els.zhChip.addEventListener('click', function () {

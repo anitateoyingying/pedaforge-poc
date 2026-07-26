@@ -1,4 +1,4 @@
-/* PedaForge Lesson Observation — live note capture with AI QTT tagging,
+/* PedaForge Lesson Observation - live note capture with AI QTT tagging,
    AI report synthesis, and persistence to the observations table. */
 (function () {
   'use strict';
@@ -27,13 +27,13 @@
     head.appendChild(el('span', 'note-time', timeLabel(n.at)));
     card.appendChild(head);
     var raw = el('div', 'note-raw');
-    raw.textContent = '“' + n.note + '”';
+    raw.textContent = '"' + n.note + '"';
     card.appendChild(raw);
     var line = el('div', 'note-tagline');
-    line.appendChild(el('span', 'ai-stamp', '✦ Auto-tagged'));
+    line.appendChild(el('span', 'ai-stamp', 'Auto-tagged'));
     var st = (n.state === 'met') ? 'met' : 'emerging';
     var tag = el('span', 'qtt-tag ' + st);
-    tag.textContent = 'QTT: ' + (n.indicator || 'General') + ' · ' + (st === 'met' ? 'Met' : 'Emerging');
+    tag.textContent = 'QTT: ' + (n.indicator || 'General') + ' - ' + (st === 'met' ? 'Met' : 'Emerging');
     line.appendChild(tag);
     card.appendChild(line);
     if (n.rationale) {
@@ -49,7 +49,7 @@
     var feed = $('obsNoteFeed');
     feed.innerHTML = '';
     if (!notes.length) {
-      var empty = el('div', null, 'No notes yet. Type what you see in the classroom and press "Tag with AI" — each note is matched to an ECDA QTT indicator.');
+      var empty = el('div', null, 'No notes yet. Type what you see in the classroom and press "Tag with AI" - each note is matched to an ECDA QTT indicator.');
       empty.style.cssText = 'font-size:0.85rem;color:var(--text-muted);font-style:italic;padding:8px 2px;';
       feed.appendChild(empty);
     } else {
@@ -65,7 +65,7 @@
     var text = input.value.trim();
     if (!text) { window.pfToast('Type a note first.'); return; }
     var btn = $('obsTagBtn');
-    var done = window.pfApi.spinner(btn, 'Tagging…');
+    var done = window.pfApi.spinner(btn, 'Tagging...');
     window.pfApi.ai('tag_observation', { note: text })
       .then(function (r) {
         notes = notes.concat([{
@@ -85,10 +85,10 @@
   /* ── Report ──────────────────────────────────────────── */
   function generateReport() {
     var educator = $('obsEducator').value.trim();
-    if (!educator) { window.pfToast('Enter the educator’s name first.'); return; }
+    if (!educator) { window.pfToast('Enter the educator\'s name first.'); return; }
     if (notes.length < 2) { window.pfToast('Capture at least 2 tagged notes first.'); return; }
     var btn = $('obsGenerate');
-    var done = window.pfApi.spinner(btn, 'Synthesising…');
+    var done = window.pfApi.spinner(btn, 'Synthesising...');
     window.pfApi.ai('observation_report', { educator: educator, notes: notes })
       .then(function (r) {
         report = {
@@ -115,7 +115,7 @@
       s.textContent = '.pf-xlink{display:inline-block;margin-top:10px;font-size:0.82rem;font-weight:600;color:var(--text-muted);text-decoration:none;}.pf-xlink:hover{color:var(--accent-proposal,var(--primary));text-decoration:underline;}';
       document.head.appendChild(s);
     }
-    var a = el('a', 'pf-xlink', 'Saved — discuss this observation with the AI Coach →');
+    var a = el('a', 'pf-xlink', 'Saved - discuss this observation with the AI Coach →');
     a.id = 'obsCoachLink';
     a.href = 'coach.html';
     var card = $('obsReportCard');
@@ -125,10 +125,10 @@
   function saveObservation() {
     var educator = $('obsEducator').value.trim();
     var className = $('obsClass').value.trim();
-    if (!educator) { window.pfToast('Enter the educator’s name first.'); return; }
+    if (!educator) { window.pfToast('Enter the educator\'s name first.'); return; }
     if (!report) { window.pfToast('Generate the report before saving.'); return; }
     var btn = $('obsSave');
-    var done = window.pfApi.spinner(btn, 'Saving…');
+    var done = window.pfApi.spinner(btn, 'Saving...');
     var rec = {
       observer: userId,
       educator_name: educator,
@@ -144,7 +144,7 @@
     db.from('observations').insert(rec).then(function (r) {
       done();
       if (r.error) { window.pfToast('Save failed: ' + r.error.message); return; }
-      window.pfToast('Observation saved — discuss it with the AI Coach');
+      window.pfToast('Observation saved - discuss it with the AI Coach');
       showCoachLink();
       notes = [];
       report = null;
@@ -165,7 +165,7 @@
       window.pfMd.renderInto(body, text);
       box.appendChild(body);
     } else {
-      box.appendChild(el('p', null, '—'));
+      box.appendChild(el('p', null, '-'));
     }
     return box;
   }
@@ -175,13 +175,13 @@
     card.style.cursor = 'pointer';
     var head = el('div', 'note-head');
     var who = el('span', 'note-source');
-    who.textContent = o.educator_name + (o.class_name ? ' · ' + o.class_name : '');
+    who.textContent = o.educator_name + (o.class_name ? ' - ' + o.class_name : '');
     head.appendChild(who);
     head.appendChild(el('span', 'note-time', window.pfApi.ago(o.created_at)));
     card.appendChild(head);
     var meta = el('div', null,
       ((o.evidence && o.evidence.length) || 0) + ' notes' +
-      (o.profiles && o.profiles.full_name ? ' · observed by ' + o.profiles.full_name : ''));
+      (o.profiles && o.profiles.full_name ? ' - observed by ' + o.profiles.full_name : ''));
     meta.style.cssText = 'font-size:0.78rem;color:var(--text-muted);';
     card.appendChild(meta);
     var detail = el('div');
@@ -210,7 +210,7 @@
         }
         var rows = r.data || [];
         if (!rows.length) {
-          host.appendChild(el('span', 'app-obs-empty', 'No observations recorded yet — capture your first one above.'));
+          host.appendChild(el('span', 'app-obs-empty', 'No observations recorded yet - capture your first one above.'));
           return;
         }
         rows.forEach(function (o) { host.appendChild(pastRow(o)); });

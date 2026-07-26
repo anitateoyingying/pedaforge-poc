@@ -1,4 +1,4 @@
-/* PedaForge data layer — classes, children, AI invocation, shared UI helpers.
+/* PedaForge data layer - classes, children, AI invocation, shared UI helpers.
    Loads after pf-auth.js on every app page. */
 (function () {
   'use strict';
@@ -96,7 +96,7 @@
       classes = data;
       classSel.innerHTML = '';
       if (!classes.length) {
-        host.innerHTML = '<span class="pf-picker-empty">No classes yet — <a href="classes.html">create your class</a> to begin.</span>';
+        host.innerHTML = '<span class="pf-picker-empty">No classes yet - <a href="classes.html">create your class</a> to begin.</span>';
         if (opts.onPick) opts.onPick(null, null);
         return { classes: classes };
       }
@@ -131,7 +131,7 @@
     var orig = btn.textContent;
     btn.disabled = true;
     btn.dataset.orig = orig;
-    btn.textContent = busyText || 'Working…';
+    btn.textContent = busyText || 'Working...';
     return function done() { btn.disabled = false; btn.textContent = btn.dataset.orig; };
   }
   function ago(iso) {

@@ -1,4 +1,4 @@
-/* PedaForge PD Dashboard — real aggregates from Supabase.
+/* PedaForge PD Dashboard - real aggregates from Supabase.
    Educators see their own activity; directors see the whole centre (RLS). */
 (function () {
   'use strict';
@@ -42,7 +42,7 @@
     });
     var total = sessions.length;
     if (!total) {
-      host.appendChild(el('p', 'dash-empty', 'No coaching sessions yet — start one in the AI Coach and it will appear here.'));
+      host.appendChild(el('p', 'dash-empty', 'No coaching sessions yet - start one in the AI Coach and it will appear here.'));
       return;
     }
     Object.keys(MODE_NAMES).forEach(function (mode) {
@@ -51,7 +51,7 @@
       var row = el('div', 'bar-row');
       var label = el('div', 'bar-label');
       label.appendChild(el('span', 'bar-name', MODE_NAMES[mode]));
-      label.appendChild(el('span', 'bar-pct', c + ' · ' + pct + '%'));
+      label.appendChild(el('span', 'bar-pct', c + ' - ' + pct + '%'));
       row.appendChild(label);
       var track = el('div', 'bar-track');
       var fill = el('div', 'bar-fill');
@@ -69,7 +69,7 @@
     tbody.innerHTML = '';
     if (!observations.length) {
       var tr = el('tr');
-      var td = el('td', 'dash-empty', 'No observations recorded yet — capture one in Lesson Observation.');
+      var td = el('td', 'dash-empty', 'No observations recorded yet - capture one in Lesson Observation.');
       td.colSpan = 4;
       tr.appendChild(td);
       tbody.appendChild(tr);
@@ -94,7 +94,7 @@
         var name = el('td');
         name.appendChild(el('strong', null, row.name));
         tr.appendChild(name);
-        tr.appendChild(el('td', null, row.latest.class_name || '—'));
+        tr.appendChild(el('td', null, row.latest.class_name || '-'));
         tr.appendChild(el('td', null, String(row.count)));
         var last = el('td');
         var badge = el('span', 'status-badge on-track', window.pfApi.ago(row.latest.created_at));
@@ -124,7 +124,7 @@
       var what = el('td');
       what.appendChild(el('strong', null, it.label));
       tr.appendChild(what);
-      tr.appendChild(el('td', null, it.who || '—'));
+      tr.appendChild(el('td', null, it.who || '-'));
       tr.appendChild(el('td', null, window.pfApi.ago(it.at)));
       tbody.appendChild(tr);
     });
@@ -138,8 +138,8 @@
     var scopeNote = $('dashScopeNote');
     if (scopeNote) {
       scopeNote.textContent = isDirector
-        ? 'Director view — data across every educator in your centre.'
-        : 'Personal view — your own observations, coaching and activity.';
+        ? 'Director view - data across every educator in your centre.'
+        : 'Personal view - your own observations, coaching and activity.';
     }
 
     var obsQ = db.from('observations')
@@ -190,12 +190,12 @@
       renderModeBars(coach);
       renderEducatorTable(obs);
 
-      /* Recent activity — merge 3 sources, newest 10 */
+      /* Recent activity - merge 3 sources, newest 10 */
       var items = [];
       obs.slice(0, 10).forEach(function (o) {
         items.push({
           type: 'Observation', badgeCls: 'on-track',
-          label: (o.educator_name || 'Educator') + (o.class_name ? ' · ' + o.class_name : ''),
+          label: (o.educator_name || 'Educator') + (o.class_name ? ' - ' + o.class_name : ''),
           who: whoName(o.profiles), at: o.created_at
         });
       });
@@ -209,7 +209,7 @@
       layouts.slice(0, 10).forEach(function (l) {
         items.push({
           type: 'Layout', badgeCls: 'needs-support',
-          label: (l.name ? l.name.split(' · ')[0] : 'Layout') + ' · ' + (l.status || 'draft').replace(/_/g, ' '),
+          label: (l.name ? l.name.split(/ [-\u00b7] /)[0] : 'Layout') + ' - ' + (l.status || 'draft').replace(/_/g, ' '),
           who: whoName(l.profiles), at: l.updated_at
         });
       });

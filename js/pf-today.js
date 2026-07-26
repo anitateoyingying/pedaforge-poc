@@ -1,4 +1,4 @@
-/* PedaForge "Today" page — the teaching day as one thread.
+/* PedaForge "Today" page - the teaching day as one thread.
    Everything rendered here comes from the database. */
 (function () {
   'use strict';
@@ -30,7 +30,7 @@
     $('todayDate').textContent = new Date().toLocaleDateString('en-SG', { weekday: 'long', day: 'numeric', month: 'long' });
     $('greet').textContent = greeting() + ', ' + first;
     if (isDirector) {
-      $('greetSub').textContent = 'Your centre at a glance — educators, approvals, and the week’s activity.';
+      $('greetSub').textContent = 'Your centre at a glance - educators, approvals, and the week\'s activity.';
       $('streamHint').textContent = 'live across your network';
     }
 
@@ -77,15 +77,15 @@
       strip.innerHTML = '';
       var classes = d.classes;
       if (!classes.length) {
-        strip.innerHTML = '<span class="t-empty">No class yet — <a href="classes.html">create your class</a> or re-run setup to paste your class list.</span>';
+        strip.innerHTML = '<span class="t-empty">No class yet - <a href="classes.html">create your class</a> or re-run setup to paste your class list.</span>';
         $('classHint').textContent = '';
         return;
       }
       var cls = classes[0];
-      $('classHint').textContent = cls.name + ' · ' + String(cls.age_group || '').toUpperCase() + (classes.length > 1 ? ' · +' + (classes.length - 1) + ' more' : '');
+      $('classHint').textContent = cls.name + ' - ' + String(cls.age_group || '').toUpperCase() + (classes.length > 1 ? ' - +' + (classes.length - 1) + ' more' : '');
       var kids = (cls.children || []).slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
       if (!kids.length) {
-        strip.innerHTML = '<span class="t-empty">No children in ' + cls.name + ' yet — <a href="classes.html">add your class list</a>.</span>';
+        strip.innerHTML = '<span class="t-empty">No children in ' + cls.name + ' yet - <a href="classes.html">add your class list</a>.</span>';
         return;
       }
       kids.forEach(function (k, i) {
@@ -97,7 +97,7 @@
         var label = el('span', null, k.name);
         a.appendChild(label);
         if (k.profile_tags && k.profile_tags.length) {
-          var small = el('small', null, ' · ' + k.profile_tags[0]);
+          var small = el('small', null, ' - ' + k.profile_tags[0]);
           a.appendChild(small);
         }
         strip.appendChild(a);
@@ -123,7 +123,7 @@
       if (changes && !isDirector) { $('bdgRoom').textContent = changes; $('bdgRoom').classList.add('on'); }
     }
 
-    /* ── What's Next: rule-driven suggestions from real state ── */
+    /* ── What\'s Next: rule-driven suggestions from real state ── */
     function renderNext(d) {
       var host = $('nextSteps');
       host.innerHTML = '';
@@ -132,18 +132,18 @@
 
       if (!d.classes.length) {
         steps.push(['#e8063c', 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
-          '<b>Set up your class.</b> Paste your class list once — every module builds on it.', 'classes.html']);
+          '<b>Set up your class.</b> Paste your class list once - every module builds on it.', 'classes.html']);
       } else if (!kids.length) {
         steps.push(['#e8063c', 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
           '<b>Add your children</b> to ' + window.pfApi.esc(d.classes[0].name) + ' so plans and portfolios attach to real profiles.', 'classes.html']);
       }
       if (d.classes.length && kids.length && !d.lessons.length) {
         steps.push(['#e8063c', 'M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z',
-          '<b>Generate your first lesson plan.</b> The AI differentiates for each child’s profile.', 'planner.html']);
+          '<b>Generate your first lesson plan.</b> The AI differentiates for each child\'s profile.', 'planner.html']);
       }
       if (kids.length && !d.pobs.length) {
         steps.push(['#FF9E18', 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
-          '<b>Capture one observation</b> — the AI drafts a parent-ready learning story from your note.', 'portfolio.html']);
+          '<b>Capture one observation</b> - the AI drafts a parent-ready learning story from your note.', 'portfolio.html']);
       }
       if (kids.length && !d.reading.length) {
         steps.push(['#0E8FA8', 'M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z',
@@ -156,7 +156,7 @@
       var changes = d.layouts.filter(function (l) { return l.status === 'changes_requested'; });
       if (changes.length) {
         steps.unshift(['#dc2626', 'M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01',
-          '<b>A layout needs changes.</b> Your Director requested revisions on “' + window.pfApi.esc(changes[0].name.split(' · ')[0]) + '”.', 'sproutspace-layout.html']);
+          '<b>A layout needs changes.</b> Your Director requested revisions on "' + window.pfApi.esc(changes[0].name.split(/ [-\u00b7] /)[0]) + '".', 'sproutspace-layout.html']);
       }
       if (isDirector) {
         var pending = d.layouts.filter(function (l) { return l.status === 'submitted'; });
@@ -165,11 +165,11 @@
             '<b>' + pending.length + ' layout' + (pending.length > 1 ? 's' : '') + ' awaiting approval.</b> Review and sign off.', 'sproutspace-control.html']);
         }
         steps.push(['#773E8B', 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z',
-          '<b>Run a lesson observation</b> — notes are tagged to QTT indicators as you type.', 'observation.html']);
+          '<b>Run a lesson observation</b> - notes are tagged to QTT indicators as you type.', 'observation.html']);
       }
       if (!steps.length) {
         steps.push(['#773E8B', 'M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z',
-          '<b>You’re all caught up.</b> Ask your AI coach to reflect on the week — it knows QTT inside out.', 'coach.html']);
+          '<b>You\'re all caught up.</b> Ask your AI coach to reflect on the week - it knows QTT inside out.', 'coach.html']);
       }
 
       steps.slice(0, 4).forEach(function (s) {
@@ -190,18 +190,18 @@
       var host = $('stream');
       host.innerHTML = '';
       var items = [];
-      d.lessons.forEach(function (x) { items.push({ t: x.created_at, c: '#e8063c', href: 'planner.html', html: '<b>Lesson planned</b> — ' + window.pfApi.esc(x.theme) + (x.classes ? ' for ' + window.pfApi.esc(x.classes.name) : '') }); });
-      d.pobs.forEach(function (x) { items.push({ t: x.created_at, c: '#FF9E18', href: x.child_id ? 'child.html?id=' + x.child_id : 'portfolio.html', html: '<b>Observation</b> — ' + window.pfApi.esc(x.children ? x.children.name : 'a child') + ': “' + window.pfApi.esc(String(x.raw_note || '').slice(0, 60)) + '…”' }); });
-      d.reading.forEach(function (x) { items.push({ t: x.created_at, c: '#0E8FA8', href: 'home-reading-coach.html', html: '<b>Reading session</b>' + (x.children ? ' — ' + window.pfApi.esc(x.children.name) : '') + ' · ' + (x.wcpm != null ? x.wcpm + ' WCPM' : 'completed') }); });
-      d.coach.forEach(function (x) { items.push({ t: x.updated_at, c: '#773E8B', href: 'coach.html', html: '<b>Coaching chat</b> — ' + window.pfApi.esc(x.mode) + ' mode · ' + ((x.messages || []).length) + ' messages' }); });
-      d.obs.forEach(function (x) { items.push({ t: x.created_at, c: '#773E8B', href: 'observation.html', html: '<b>Lesson observation</b> — ' + window.pfApi.esc(x.educator_name) }); });
-      d.samples.forEach(function (x) { items.push({ t: x.created_at, c: '#FF9E18', href: 'work-sample.html', html: '<b>Work sample analysed</b>' + (x.children ? ' — ' + window.pfApi.esc(x.children.name) : '') }); });
-      d.benchmarks.forEach(function (x) { items.push({ t: x.created_at, c: '#0E8FA8', href: 'home-benchmark.html', html: '<b>Benchmark saved</b>' + (x.children ? ' — ' + window.pfApi.esc(x.children.name) : '') + ' · ' + window.pfApi.esc(x.term || '') }); });
-      d.layouts.forEach(function (x) { items.push({ t: x.updated_at, c: '#1c9c6b', href: 'sproutspace-layout.html', html: '<b>Layout ' + window.pfApi.esc((x.status || 'saved').replace('_', ' ')) + '</b> — ' + window.pfApi.esc(x.name.split(' · ')[0]) + ' · ' + x.score + '%' }); });
+      d.lessons.forEach(function (x) { items.push({ t: x.created_at, c: '#e8063c', href: 'planner.html', html: '<b>Lesson planned</b> - ' + window.pfApi.esc(x.theme) + (x.classes ? ' for ' + window.pfApi.esc(x.classes.name) : '') }); });
+      d.pobs.forEach(function (x) { items.push({ t: x.created_at, c: '#FF9E18', href: x.child_id ? 'child.html?id=' + x.child_id : 'portfolio.html', html: '<b>Observation</b> - ' + window.pfApi.esc(x.children ? x.children.name : 'a child') + ': "' + window.pfApi.esc(String(x.raw_note || '').slice(0, 60)) + '..."' }); });
+      d.reading.forEach(function (x) { items.push({ t: x.created_at, c: '#0E8FA8', href: 'home-reading-coach.html', html: '<b>Reading session</b>' + (x.children ? ' - ' + window.pfApi.esc(x.children.name) : '') + ' - ' + (x.wcpm != null ? x.wcpm + ' WCPM' : 'completed') }); });
+      d.coach.forEach(function (x) { items.push({ t: x.updated_at, c: '#773E8B', href: 'coach.html', html: '<b>Coaching chat</b> - ' + window.pfApi.esc(x.mode) + ' mode - ' + ((x.messages || []).length) + ' messages' }); });
+      d.obs.forEach(function (x) { items.push({ t: x.created_at, c: '#773E8B', href: 'observation.html', html: '<b>Lesson observation</b> - ' + window.pfApi.esc(x.educator_name) }); });
+      d.samples.forEach(function (x) { items.push({ t: x.created_at, c: '#FF9E18', href: 'work-sample.html', html: '<b>Work sample analysed</b>' + (x.children ? ' - ' + window.pfApi.esc(x.children.name) : '') }); });
+      d.benchmarks.forEach(function (x) { items.push({ t: x.created_at, c: '#0E8FA8', href: 'home-benchmark.html', html: '<b>Benchmark saved</b>' + (x.children ? ' - ' + window.pfApi.esc(x.children.name) : '') + ' - ' + window.pfApi.esc(x.term || '') }); });
+      d.layouts.forEach(function (x) { items.push({ t: x.updated_at, c: '#1c9c6b', href: 'sproutspace-layout.html', html: '<b>Layout ' + window.pfApi.esc((x.status || 'saved').replace('_', ' ')) + '</b> - ' + window.pfApi.esc(x.name.split(/ [-\u00b7] /)[0]) + ' - ' + x.score + '%' }); });
 
       items.sort(function (a, b) { return new Date(b.t) - new Date(a.t); });
       if (!items.length) {
-        host.innerHTML = '<span class="t-empty">Nothing yet — your week fills in here as you plan, capture, and coach.</span>';
+        host.innerHTML = '<span class="t-empty">Nothing yet - your week fills in here as you plan, capture, and coach.</span>';
         return;
       }
       items.slice(0, 12).forEach(function (it) {

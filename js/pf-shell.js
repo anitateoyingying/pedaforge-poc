@@ -1,4 +1,4 @@
-/* PedaForge app shell — transforms every page into the sidebar layout.
+/* PedaForge app shell - transforms every page into the sidebar layout.
    Load AFTER pf-auth.js. Builds sidebar + topbar, wraps existing page
    content into .pf-main-wrap, wires mobile drawer + sign-out. */
 (function () {

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   PedaForge SproutSpace — Resource Inventory (live data)
+   PedaForge SproutSpace - Resource Inventory (live data)
    All items are read from / written to Supabase `inventory_items`
    (visible to every authenticated user). Check-in / check-out and
    condition changes are journalled to `inventory_events`.
@@ -39,7 +39,7 @@
       .order('created_at', { ascending: false })
       .then(function (r) {
         if (!r.error) { items = r.data || []; renderGrid(); return; }
-        /* Fallback: embedded join unavailable — load without holder names */
+        /* Fallback: embedded join unavailable - load without holder names */
         return db().from('inventory_items')
           .select('id,owner,name,category,age_groups,qr_code,condition,status,checked_out_by,created_at')
           .order('created_at', { ascending: false })
@@ -73,7 +73,7 @@
       var name = els.nameInput.value.trim();
       if (!name) { toast('Give the resource a name first.'); els.nameInput.focus(); return; }
       var ages = Object.keys(selectedAges).filter(function (k) { return selectedAges[k]; });
-      var done = api().spinner(els.addBtn, 'Adding…');
+      var done = api().spinner(els.addBtn, 'Adding...');
       db().from('inventory_items').insert({
         owner: uid(),
         name: name,
@@ -83,7 +83,7 @@
       }).select().single().then(function (r) {
         done();
         if (r.error) { toast('Could not add item: ' + r.error.message); return; }
-        toast('“' + name + '” added to the shared inventory');
+        toast('"' + name + '" added to the shared inventory');
         els.nameInput.value = '';
         selectedAges = {};
         els.ageChips.querySelectorAll('button[data-age]').forEach(function (c) { c.classList.remove('inv-agechip-on'); });
@@ -184,8 +184,8 @@
 
     var meta = document.createElement('p');
     meta.className = 'inv-meta';
-    var ages = (item.age_groups || []).map(function (a) { return AGE_LABEL[a] || a.toUpperCase(); }).join(' · ');
-    meta.textContent = (CATEGORY_LABEL[item.category] || item.category) + (ages ? ' · ' + ages : '');
+    var ages = (item.age_groups || []).map(function (a) { return AGE_LABEL[a] || a.toUpperCase(); }).join(' - ');
+    meta.textContent = (CATEGORY_LABEL[item.category] || item.category) + (ages ? ' - ' + ages : '');
     card.appendChild(meta);
 
     if (item.status === 'out') {
@@ -234,7 +234,7 @@
     var visible = items.filter(passesFilters);
     if (!items.length) {
       els.empty.hidden = false;
-      els.empty.textContent = 'No resources in the shared inventory yet — add the first item above and it becomes visible to every educator in the centre.';
+      els.empty.textContent = 'No resources in the shared inventory yet - add the first item above and it becomes visible to every educator in the centre.';
       return;
     }
     if (!visible.length) {
@@ -249,7 +249,7 @@
   /* ─── Actions ────────────────────────────────────────────── */
   function toggleStatus(item, btn) {
     var goingOut = item.status === 'in';
-    var done = api().spinner(btn, goingOut ? 'Checking out…' : 'Checking in…');
+    var done = api().spinner(btn, goingOut ? 'Checking out...' : 'Checking in...');
     db().from('inventory_items')
       .update({ status: goingOut ? 'out' : 'in', checked_out_by: goingOut ? uid() : null })
       .eq('id', item.id)
@@ -258,7 +258,7 @@
         logEvent(item.id, goingOut ? 'check_out' : 'check_in', goingOut ? 'Checked out' : 'Returned')
           .then(function () {
             done();
-            toast(goingOut ? 'Checked out — it’s yours' : 'Checked back in');
+            toast(goingOut ? 'Checked out - it\'s yours' : 'Checked back in');
             fetchItems();
           });
       })
@@ -268,7 +268,7 @@
   function cycleCondition(item, btn) {
     var idx = CONDITION_ORDER.indexOf(item.condition);
     var next = CONDITION_ORDER[(idx + 1) % CONDITION_ORDER.length];
-    var done = api().spinner(btn, 'Saving…');
+    var done = api().spinner(btn, 'Saving...');
     db().from('inventory_items')
       .update({ condition: next })
       .eq('id', item.id)
@@ -289,7 +289,7 @@
   function toggleHistory(item, box, btn) {
     if (!box.hidden) { box.hidden = true; return; }
     box.hidden = false;
-    box.textContent = 'Loading history…';
+    box.textContent = 'Loading history...';
     db().from('inventory_events')
       .select('action,detail,created_at,profiles:actor(full_name)')
       .eq('item_id', item.id)
@@ -300,7 +300,7 @@
         if (r.error) { box.textContent = 'Could not load history.'; return; }
         var rows = r.data || [];
         if (!rows.length) {
-          box.textContent = 'No activity yet — this item hasn’t moved since it was added.';
+          box.textContent = 'No activity yet - this item hasn\'t moved since it was added.';
           return;
         }
         rows.forEach(function (ev) {
@@ -311,7 +311,7 @@
           var strong = document.createElement('strong');
           strong.textContent = who;
           line.appendChild(strong);
-          line.appendChild(document.createTextNode(' · ' + what + (ev.detail ? ' (' + ev.detail + ')' : '') + ' · ' + api().ago(ev.created_at)));
+          line.appendChild(document.createTextNode(' - ' + what + (ev.detail ? ' (' + ev.detail + ')' : '') + ' - ' + api().ago(ev.created_at)));
           box.appendChild(line);
         });
       });

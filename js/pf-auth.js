@@ -1,7 +1,7 @@
 /* PedaForge auth + data layer (Supabase, ap-southeast-1).
    Every page loads this after the supabase-js CDN script.
    Security model: page markup is public; all DATA is protected
-   server-side by Postgres RLS — the anon key can only do what
+   server-side by Postgres RLS - the anon key can only do what
    policies allow for the signed-in user. */
 (function () {
   'use strict';

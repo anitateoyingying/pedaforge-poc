@@ -1,6 +1,6 @@
 /* SproutSpace Interactive Layout Planner
    Drag-and-drop classroom canvas with a live safety-rule engine.
-   Static POC — all rules run client-side; no backend. */
+   Static POC - all rules run client-side; no backend. */
 (function () {
   'use strict';
 
@@ -39,15 +39,15 @@
   };
 
   var RULE_META = {
-    exit:      { sev: 'danger', cite: 'SCDF Fire Code — 1 m egress clearance' },
-    unreach:   { sev: 'warn',   cite: 'SCDF — unobstructed evacuation routes' },
-    blocked:   { sev: 'danger', cite: 'SCDF — exit must remain accessible' },
-    egress2:   { sev: 'warn',   cite: 'SCDF — two independent evacuation paths' },
-    sightline: { sev: 'danger', cite: 'ECDA licensing — continuous visual supervision' },
-    shelfage:  { sev: 'warn',   cite: 'ECDA SOP — storage height by age band' },
-    wetdry:    { sev: 'warn',   cite: 'ECDA environment guidelines — wet/dry separation' },
-    socket:    { sev: 'danger', cite: 'SS 550 — electrical clearance from water points' },
-    density:   { sev: 'warn',   cite: 'ECDA licensing — per-child activity space' }
+    exit:      { sev: 'danger', cite: 'SCDF Fire Code - 1 m egress clearance' },
+    unreach:   { sev: 'warn',   cite: 'SCDF - unobstructed evacuation routes' },
+    blocked:   { sev: 'danger', cite: 'SCDF - exit must remain accessible' },
+    egress2:   { sev: 'warn',   cite: 'SCDF - two independent evacuation paths' },
+    sightline: { sev: 'danger', cite: 'ECDA licensing - continuous visual supervision' },
+    shelfage:  { sev: 'warn',   cite: 'ECDA SOP - storage height by age band' },
+    wetdry:    { sev: 'warn',   cite: 'ECDA environment guidelines - wet/dry separation' },
+    socket:    { sev: 'danger', cite: 'SS 550 - electrical clearance from water points' },
+    density:   { sev: 'warn',   cite: 'ECDA licensing - per-child activity space' }
   };
 
   /* ── State (immutable items array; render() is the only writer) ── */
@@ -73,7 +73,7 @@
   function centre(r) { return { x: r.x + r.w / 2, y: r.y + r.h / 2 }; }
   function touchesWall(r) { return r.x <= 0 || r.y <= 0 || r.x + r.w >= COLS || r.y + r.h >= ROWS; }
 
-  /* Liang–Barsky: does segment p0→p1 pass through rect r? */
+  /* Liang-Barsky: does segment p0→p1 pass through rect r? */
   function segHitsRect(p0, p1, r) {
     var t0 = 0, t1 = 1, dx = p1.x - p0.x, dy = p1.y - p0.y;
     var p = [-dx, dx, -dy, dy];
@@ -128,7 +128,7 @@
     var solids = items.filter(function (i) { return TYPES[i.type].solid; });
     function add(rule, msg, ids) { vs.push({ rule: rule, sev: RULE_META[rule].sev, msg: msg, cite: RULE_META[rule].cite, itemIds: ids || [] }); }
 
-    /* 1 · Exit clearance (1 m) */
+    /* 1 - Exit clearance (1 m) */
     doors.forEach(function (door) {
       var zone = expand(door, 2);
       solids.forEach(function (it) {
@@ -147,17 +147,17 @@
       var run1 = bfs(grid, seeds, null);
       var startFound = Object.keys(run1.dist).length > 0;
 
-      /* 2 · Walkways / reachability */
+      /* 2 - Walkways / reachability */
       if (!startFound) {
-        add('blocked', 'The exit is completely walled in — no clear floor beside the door.', [door.id]);
+        add('blocked', 'The exit is completely walled in - no clear floor beside the door.', [door.id]);
       } else {
         var freeTotal = 0, reached = 0;
         for (var yy = 0; yy < ROWS; yy++) for (var xx = 0; xx < COLS; xx++) {
           if (!grid[yy][xx]) { freeTotal++; if (run1.dist[xx + ',' + yy] !== undefined) reached++; }
         }
-        if (freeTotal - reached > 2) add('unreach', (freeTotal - reached) + ' floor cells are cut off from the exit — walkway below 1 m.', []);
+        if (freeTotal - reached > 2) add('unreach', (freeTotal - reached) + ' floor cells are cut off from the exit - walkway below 1 m.', []);
 
-        /* 3 · Second egress: far wall reachable twice via disjoint paths */
+        /* 3 - Second egress: far wall reachable twice via disjoint paths */
         var farWall = [];
         for (var fx = 0; fx < COLS; fx++) farWall.push({ x: fx, y: 0 }); // door sits on the bottom wall in presets
         var goal = null;
@@ -177,7 +177,7 @@
       }
     }
 
-    /* 4 · Sightline from the circle rug */
+    /* 4 - Sightline from the circle rug */
     var rug = items.filter(function (i) { return i.type === 'rug'; })[0];
     var origin = rug ? centre(rug) : { x: COLS / 2, y: ROWS / 2 };
     var zones = items.filter(function (i) { return (i.type === 'reading' || i.type === 'table') && i !== rug; });
@@ -191,25 +191,25 @@
       });
     });
 
-    /* 5 · Storage height by age band */
+    /* 5 - Storage height by age band */
     items.forEach(function (it) {
       var t = TYPES[it.type];
       if (t.hM > rules.shelfMax && t.solid && !touchesWall(it)) {
-        add('shelfage', TYPES[it.type].name + ' (' + t.hM.toFixed(1) + ' m) exceeds the ' + rules.shelfMax.toFixed(1) + ' m mid-room limit for ' + rules.label + ' — move it to a wall.', [it.id]);
+        add('shelfage', TYPES[it.type].name + ' (' + t.hM.toFixed(1) + ' m) exceeds the ' + rules.shelfMax.toFixed(1) + ' m mid-room limit for ' + rules.label + ' - move it to a wall.', [it.id]);
       }
     });
 
-    /* 6 · Wet/dry separation */
+    /* 6 - Wet/dry separation */
     items.filter(function (i) { return TYPES[i.type].water; }).forEach(function (sink) {
       var zone = expand(sink, 3);
       items.forEach(function (it) {
         if ((it.type === 'rug' || it.type === 'reading') && overlaps(zone, it)) {
-          add('wetdry', TYPES[it.type].name + ' sits within 1.5 m of water play — keep quiet/dry zones separated.', [it.id, sink.id]);
+          add('wetdry', TYPES[it.type].name + ' sits within 1.5 m of water play - keep quiet/dry zones separated.', [it.id, sink.id]);
         }
       });
     });
 
-    /* 7 · Sockets near water */
+    /* 7 - Sockets near water */
     items.filter(function (i) { return i.type === 'socket'; }).forEach(function (soc) {
       var zone = expand(soc, 2);
       items.forEach(function (it) {
@@ -219,12 +219,12 @@
       });
     });
 
-    /* 8 · Furniture density cap */
+    /* 8 - Furniture density cap */
     var area = 0;
     items.forEach(function (it) { if (TYPES[it.type].solid) area += it.w * it.h; });
     var pct = area / (COLS * ROWS);
     if (pct > rules.density) {
-      add('density', 'Furniture covers ' + Math.round(pct * 100) + '% of the floor — above the ' + Math.round(rules.density * 100) + '% cap for ' + rules.label + '.', []);
+      add('density', 'Furniture covers ' + Math.round(pct * 100) + '% of the floor - above the ' + Math.round(rules.density * 100) + '% cap for ' + rules.label + '.', []);
     }
 
     var score = 100;
@@ -275,7 +275,7 @@
     applySelection();
   }
 
-  /* In-place selection sync — never rebuilds nodes, so an active
+  /* In-place selection sync - never rebuilds nodes, so an active
      pointer capture on a dragged element is preserved. */
   function applySelection() {
     canvas.querySelectorAll('.furn').forEach(function (el) {
@@ -615,14 +615,14 @@
   var classSel = null;
 
   /* Optional class tag: if the educator has classes, offer a select whose
-     name is prefixed into the layout name ("K1 Sunshine · ..."). */
+     name is prefixed into the layout name ("K1 Sunshine - ..."). */
   function fetchClasses() {
     if (!(window.pfApi && window.pfUser && classSel)) return;
     window.pfApi.myClasses().then(function (classes) {
       if (!classes.length) { classSel.hidden = true; return; }
       classSel.innerHTML = '';
       var o0 = document.createElement('option');
-      o0.value = ''; o0.textContent = 'Tag a class (optional)…';
+      o0.value = ''; o0.textContent = 'Tag a class (optional)...';
       classSel.appendChild(o0);
       classes.forEach(function (c) {
         var o = document.createElement('option');
@@ -633,18 +633,18 @@
     }).catch(function () { classSel.hidden = true; });
   }
   function classPrefix() {
-    return (classSel && !classSel.hidden && classSel.value) ? classSel.value + ' · ' : '';
+    return (classSel && !classSel.hidden && classSel.value) ? classSel.value + ' - ' : '';
   }
 
   function refreshSavedList() {
     savedSel.innerHTML = '';
     var opt0 = document.createElement('option');
-    opt0.value = ''; opt0.textContent = savedRows.length ? 'My saved layouts…' : 'No saved layouts yet';
+    opt0.value = ''; opt0.textContent = savedRows.length ? 'My saved layouts...' : 'No saved layouts yet';
     savedSel.appendChild(opt0);
     savedRows.forEach(function (s, i) {
       var o = document.createElement('option');
       o.value = String(i);
-      o.textContent = s.name + (s.status && s.status !== 'draft' ? ' · ' + s.status : '');
+      o.textContent = s.name + (s.status && s.status !== 'draft' ? ' - ' + s.status : '');
       savedSel.appendChild(o);
     });
   }
@@ -665,7 +665,7 @@
       });
   }
   function saveLayout() {
-    var name = classPrefix() + AGE_RULES[state.age].label + ' · ' + lastEval.score + '% · ' + new Date().toLocaleDateString('en-SG');
+    var name = classPrefix() + AGE_RULES[state.age].label + ' - ' + lastEval.score + '% - ' + new Date().toLocaleDateString('en-SG');
     var rec = { name: name, age: state.age, items: state.items, score: lastEval.score };
     if (window.pfDb && window.pfUser) {
       window.pfDb.from('layouts').insert({
@@ -697,7 +697,7 @@
   function submitLayout() {
     if (lastEval.score !== 100) return;
     if (!(window.pfDb && window.pfUser)) { flashButton(submitBtn, '✓ Submitted to Director'); return; }
-    var name = classPrefix() + AGE_RULES[state.age].label + ' · submitted ' + new Date().toLocaleDateString('en-SG');
+    var name = classPrefix() + AGE_RULES[state.age].label + ' - submitted ' + new Date().toLocaleDateString('en-SG');
     var payload = {
       owner: window.pfUser.id, name: name, age_group: state.age,
       items: state.items, score: lastEval.score,

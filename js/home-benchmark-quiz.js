@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════
-   PedaForge Home — Termly Benchmark (live tool)
+   PedaForge Home - Termly Benchmark (live tool)
    Child picker (required) → five strand band selectors
    (Emerging / Developing / Secure) + term + notes → insert into
    `benchmarks`. History renders previous terms as a compact
    strand-band table. The optional 3-question mini-quiz can suggest
-   a Phonics band, but only the educator's selection is saved.
+   a Phonics band, but only the educator\'s selection is saved.
    Requires pf-auth.js + pf-api.js (window.pfDb, window.pfApi).
    ═══════════════════════════════════════════════════════════════ */
 (function () {
@@ -81,7 +81,7 @@
     var remaining = STRANDS.filter(function (s) { return !selection[s.key]; });
     els.formHint.textContent = remaining.length
       ? remaining.length + ' strand' + (remaining.length === 1 ? '' : 's') + ' left to rate'
-      : 'All five strands rated — ready to save';
+      : 'All five strands rated - ready to save';
   }
 
   /* ─── Save ───────────────────────────────────────────────── */
@@ -89,12 +89,12 @@
     if (!pickedChild) { toast('Pick a child first.'); return; }
     var missing = STRANDS.filter(function (s) { return !selection[s.key]; });
     if (missing.length) {
-      toast('Rate every strand first — missing: ' + missing.map(function (s) { return s.label; }).join(', '));
+      toast('Rate every strand first - missing: ' + missing.map(function (s) { return s.label; }).join(', '));
       return;
     }
     var strands = {};
     STRANDS.forEach(function (s) { strands[s.key] = selection[s.key]; });
-    var done = window.pfApi.spinner(els.saveBtn, 'Saving…');
+    var done = window.pfApi.spinner(els.saveBtn, 'Saving...');
     window.pfDb.from('benchmarks').insert({
       owner: window.pfUser.id,
       child_id: pickedChild.id,
@@ -104,7 +104,7 @@
     }).then(function (r) {
       done();
       if (r.error) { toast('Could not save benchmark: ' + r.error.message); return; }
-      toast('Benchmark saved for ' + pickedChild.name + ' · ' + els.term.value);
+      toast('Benchmark saved for ' + pickedChild.name + ' - ' + els.term.value);
       selection = {};
       els.notes.value = '';
       syncStrandUI();
@@ -134,12 +134,12 @@
         var rows = r.data || [];
         card.hidden = false;
         if (!rows.length) {
-          els.historySub.textContent = 'No benchmarks for ' + pickedChild.name + ' yet — the first one you save starts the story.';
+          els.historySub.textContent = 'No benchmarks for ' + pickedChild.name + ' yet - the first one you save starts the story.';
           els.historyHead.textContent = '';
           els.historyBody.textContent = '';
           return;
         }
-        els.historySub.textContent = rows.length + ' benchmark' + (rows.length === 1 ? '' : 's') + ' for ' + pickedChild.name + ' — bands per strand, oldest to newest.';
+        els.historySub.textContent = rows.length + ' benchmark' + (rows.length === 1 ? '' : 's') + ' for ' + pickedChild.name + ' - bands per strand, oldest to newest.';
 
         /* Header: Strand | term | term | ... */
         els.historyHead.textContent = '';
@@ -173,7 +173,7 @@
               tag.textContent = BAND_LABEL[band];
               td.appendChild(tag);
             } else {
-              td.textContent = '—';
+              td.textContent = '-';
             }
             tr.appendChild(td);
           });
@@ -206,7 +206,7 @@
       onPick: function (child) {
         pickedChild = child ? { id: child.id, name: child.name } : null;
         var title = el('bmChildName');
-        if (title) title.textContent = pickedChild ? pickedChild.name + '’s Termly Benchmark' : 'Choose a child to benchmark';
+        if (title) title.textContent = pickedChild ? pickedChild.name + '\'s Termly Benchmark' : 'Choose a child to benchmark';
         if (pickedChild) {
           profileLink.href = 'child.html?id=' + encodeURIComponent(pickedChild.id);
           profileLink.hidden = false;
@@ -226,20 +226,20 @@
   /* ═══ Optional 3-question mini-quiz (band suggester) ═══════ */
   var QUESTIONS = [
     {
-      prompt: 'Tap the word that says “ship”',
-      hint: 'Listen with your eyes — which one starts with the /sh/ sound?',
+      prompt: 'Tap the word that says "ship"',
+      hint: 'Listen with your eyes - which one starts with the /sh/ sound?',
       options: ['chip', 'ship', 'shop'],
       answer: 1
     },
     {
-      prompt: 'Which picture word rhymes with “cat”?',
+      prompt: 'Which picture word rhymes with "cat"?',
       hint: 'Rhyming words share the same ending sound.',
       options: ['🎩 hat', '🐟 fish', '🌞 sun'],
       answer: 0
     },
     {
-      prompt: 'Sam’s boat tipped in the pond. What happens next?',
-      hint: 'There is no wrong guess — pick the ending you like best.',
+      prompt: 'Sam\'s boat tipped in the pond. What happens next?',
+      hint: 'There is no wrong guess - pick the ending you like best.',
       options: ['Sam fixes the boat', 'The boat flies away', 'Sam eats lunch'],
       answer: 0
     }
@@ -290,7 +290,7 @@
     });
 
     els.feedback.textContent = isRight
-      ? ['Yes! Great ears!', 'You got it — wonderful!', 'Lovely thinking!'][quiz.qIndex % 3]
+      ? ['Yes! Great ears!', 'You got it - wonderful!', 'Lovely thinking!'][quiz.qIndex % 3]
       : 'Good try! The one with the glow is the one we were listening for.';
 
     setRing((quiz.qIndex + 1) / QUESTIONS.length);
@@ -315,20 +315,20 @@
 
     var headline;
     if (quiz.correct === QUESTIONS.length) {
-      headline = 'Three out of three — amazing listening and thinking!';
+      headline = 'Three out of three - amazing listening and thinking!';
     } else if (quiz.correct >= 2) {
-      headline = 'You got ' + quiz.correct + ' of ' + QUESTIONS.length + ' — strong, confident work!';
+      headline = 'You got ' + quiz.correct + ' of ' + QUESTIONS.length + ' - strong, confident work!';
     } else {
-      headline = 'Every question got a brave try — that is how readers grow!';
+      headline = 'Every question got a brave try - that is how readers grow!';
     }
     els.summaryHead.textContent = headline;
 
     var band = suggestedBand();
-    els.summaryBody.textContent = 'Based on this quick check-in the Phonics strand looks around “' + BAND_LABEL[band] + '”. It is only a suggestion — the benchmark saves whatever the educator selects above.';
+    els.summaryBody.textContent = 'Based on this quick check-in the Phonics strand looks around "' + BAND_LABEL[band] + '". It is only a suggestion - the benchmark saves whatever the educator selects above.';
 
     if (pickedChild) {
       els.applyBtn.hidden = false;
-      els.applyBtn.textContent = 'Use “' + BAND_LABEL[band] + '” for Phonics';
+      els.applyBtn.textContent = 'Use "' + BAND_LABEL[band] + '" for Phonics';
       els.applyBtn.dataset.band = band;
     } else {
       els.applyBtn.hidden = true;
@@ -339,7 +339,7 @@
     var band = els.applyBtn.dataset.band;
     if (!band) return;
     pickBand('phonics', band);
-    toast('Phonics set to ' + BAND_LABEL[band] + ' — review and save when ready');
+    toast('Phonics set to ' + BAND_LABEL[band] + ' - review and save when ready');
   }
 
   function restartQuiz() {

@@ -1,4 +1,4 @@
-/* PedaForge AI Coach — real coaching chat backed by pfApi.ai('coach')
+/* PedaForge AI Coach - real coaching chat backed by pfApi.ai('coach')
    and persisted to coach_sessions. No canned replies. */
 (function () {
   'use strict';
@@ -16,7 +16,7 @@
     scenario: 'Scenario Analysis'
   };
   var MODE_WELCOMES = {
-    reflective: 'Reflective Practice mode. Describe a moment from your teaching today — a child who was deeply engaged, or one who struggled — and we will unpack it together.',
+    reflective: 'Reflective Practice mode. Describe a moment from your teaching today - a child who was deeply engaged, or one who struggled - and we will unpack it together.',
     qtt: 'QTT Deep Dive mode. Pick a Quality Teaching Tool domain you want to strengthen (e.g. Learning Environment, Teacher-Child Interaction) and tell me where you are now.',
     socratic: 'Socratic Inquiry mode. Share a routine or practice you have "always done this way" and I will help you examine the assumptions behind it.',
     scenario: 'Scenario Analysis mode. Describe a lesson or initiative you are planning, and we will stress-test it before you deliver it.'
@@ -38,7 +38,7 @@
     var wrap = el('div', 'chat-message ' + role);
     wrap.appendChild(el('div', 'avatar', role === 'assistant' ? 'PF' : 'You'));
     var b = el('div', 'chat-bubble');
-    // AI replies arrive as markdown — render it (escape-first, XSS-safe).
+    // AI replies arrive as markdown - render it (escape-first, XSS-safe).
     if (role === 'assistant' && window.pfMd) window.pfMd.renderInto(b, text);
     else b.textContent = text;
     wrap.appendChild(b);
@@ -113,7 +113,7 @@
     var text = els.input.value.trim();
     if (!text || state.busy) return;
     state.busy = true;
-    var done = window.pfApi.spinner(els.send, '…');
+    var done = window.pfApi.spinner(els.send, '...');
     var history = state.messages.slice(-8);
 
     els.body.appendChild(bubble('user', text));
@@ -126,7 +126,7 @@
     window.pfApi.ai('coach', { message: text, mode: state.mode, history: history })
       .then(function (reply) {
         t.remove();
-        var replyText = String(reply || '').trim() || 'Sorry — I could not form a reply. Try rephrasing.';
+        var replyText = String(reply || '').trim() || 'Sorry - I could not form a reply. Try rephrasing.';
         els.body.appendChild(bubble('assistant', replyText));
         state.messages = state.messages.concat([{ role: 'assistant', text: replyText }]);
         scrollBottom();
@@ -147,7 +147,7 @@
   function firstUserLine(messages) {
     var m = (messages || []).filter(function (x) { return x.role === 'user'; })[0];
     if (!m) return 'No messages yet';
-    return m.text.length > 64 ? m.text.slice(0, 64) + '…' : m.text;
+    return m.text.length > 64 ? m.text.slice(0, 64) + '...' : m.text;
   }
 
   function loadSessions() {
@@ -165,7 +165,7 @@
         }
         var rows = r.data || [];
         if (!rows.length) {
-          host.appendChild(el('span', 'coach-empty', 'No sessions yet — your conversations are saved here automatically.'));
+          host.appendChild(el('span', 'coach-empty', 'No sessions yet - your conversations are saved here automatically.'));
           return;
         }
         rows.forEach(function (row) {
@@ -201,10 +201,10 @@
         if (!row || !row.report) return;
         var rep = row.report || {};
         var ctx = 'For context, here is my latest lesson observation report for ' +
-          (row.educator_name || 'an educator') + '. Strengths: ' + (rep.strengths || '—') +
-          ' Growth areas: ' + (rep.growth || '—') + ' Follow-up plan: ' + (rep.followup || '—');
+          (row.educator_name || 'an educator') + '. Strengths: ' + (rep.strengths || '-') +
+          ' Growth areas: ' + (rep.growth || '-') + ' Follow-up plan: ' + (rep.followup || '-');
         state.messages.push({ role: 'user', text: ctx });
-        els.body.appendChild(contextChip('Observation report for ' + (row.educator_name || 'educator') + ' loaded as context — ask the coach about it.'));
+        els.body.appendChild(contextChip('Observation report for ' + (row.educator_name || 'educator') + ' loaded as context - ask the coach about it.'));
         scrollBottom();
       });
   }
@@ -233,7 +233,7 @@
           // saved session's mode always matches its transcript. The previous
           // conversation is already persisted and stays in the sidebar.
           newSession();
-          window.pfToast('Started a new ' + MODE_NAMES[mode] + ' session — your previous conversation is saved in Recent Sessions.');
+          window.pfToast('Started a new ' + MODE_NAMES[mode] + ' session - your previous conversation is saved in Recent Sessions.');
         } else if (!state.messages.length) {
           renderWelcome();
         }

@@ -1,5 +1,5 @@
 /* ============================================================
-   PedaForge Demo – Shared JavaScript
+   PedaForge Demo - Shared JavaScript
    Static demo site interactivity (no backend)
    ============================================================ */
 
@@ -156,7 +156,7 @@ const COACHING_CONVERSATIONS = {
     },
     {
       role: 'assistant',
-      text: 'That sounds like a significant moment. Before we explore strategies, tell me: what was your immediate reaction when Leo threw the blocks? <span class="qtt-tag">QTT: Teacher–Child Interaction</span>'
+      text: 'That sounds like a significant moment. Before we explore strategies, tell me: what was your immediate reaction when Leo threw the blocks? <span class="qtt-tag">QTT: Teacher-Child Interaction</span>'
     },
     {
       role: 'user',
@@ -171,7 +171,7 @@ const COACHING_CONVERSATIONS = {
   qtt: [
     {
       role: 'assistant',
-      text: "Let's focus on a specific QTT domain today. Which area would you like to explore: Learning Environment, Teacher–Child Interaction, or Curriculum & Pedagogy?"
+      text: "Let's focus on a specific QTT domain today. Which area would you like to explore: Learning Environment, Teacher-Child Interaction, or Curriculum & Pedagogy?"
     },
     {
       role: 'user',
@@ -597,7 +597,7 @@ function initPortfolioDemo() {
 /* ─── 8. Dashboard Demo ───────────────────────────────────── */
 
 function initDashboardDemo() {
-  // QTT bars rendered via inline styles — no JS needed
+  // QTT bars rendered via inline styles - no JS needed
 
   // Animate stat counters
   const statValues = document.querySelectorAll('.dash-stat .stat-value');

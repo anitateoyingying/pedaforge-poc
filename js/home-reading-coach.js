@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   PedaForge Home — AI Reading Coach (flagship demo)
+   PedaForge Home - AI Reading Coach (flagship demo)
    Big mic → 3-2-1 countdown → live SpeechRecognition (or scripted
    Simulated Demo Mode) lights up word chips as the child reads.
    Greedy 2-word-lookahead aligner marks ok / miscue per word, then
@@ -12,10 +12,10 @@
   'use strict';
 
   var PHONEME_NOTES = {
-    ship: { readAs: 'sip', note: '‘sh’ digraph → /s/ · phoneme score 38' },
-    pond: { readAs: 'pon', note: 'Final /d/ omitted · phoneme score 46' }
+    ship: { readAs: 'sip', note: '"sh" digraph read as /s/ - phoneme score 38' },
+    pond: { readAs: 'pon', note: 'Final /d/ omitted - phoneme score 46' }
   };
-  var GENERIC_NOTE = 'Sound slipped — worth one gentle echo together';
+  var GENERIC_NOTE = 'Sound slipped - worth one gentle echo together';
 
   /* Scripted child read: same 2 miscues (pond → "pon", ship → "sip") */
   var SIM_TOKENS = [
@@ -74,7 +74,7 @@
       } else if (idx + 2 < passage.length && t === passage[idx + 2]) {
         out[idx] = 'miscue'; out[idx + 1] = 'miscue'; out[idx + 2] = 'ok'; idx += 3;
       }
-      /* otherwise: insertion / mispronounced attempt — ignore token */
+      /* otherwise: insertion / mispronounced attempt - ignore token */
     }
     return { statuses: out, nextIdx: idx };
   }
@@ -123,10 +123,10 @@
         ? 'A scripted sample read drives the very same pipeline.'
         : 'Take your time - there are no wrong tries here.';
     } else if (phase === 'counting') {
-      els.micLabel.textContent = 'Get ready…';
-      els.micHint.textContent = 'Deep breath… reading starts in a moment.';
+      els.micLabel.textContent = 'Get ready...';
+      els.micHint.textContent = 'Deep breath... reading starts in a moment.';
     } else if (phase === 'listening') {
-      els.micLabel.textContent = isSim ? 'Playing… tap to stop' : 'I’m listening… tap to stop';
+      els.micLabel.textContent = isSim ? 'Playing... tap to stop' : 'I\'m listening... tap to stop';
       els.micHint.textContent = isSim
         ? 'Watch the words light up as the sample child reads.'
         : 'Read your story out loud, nice and clear.';
@@ -184,7 +184,7 @@
       },
       onerror: function (code) {
         if (code === 'not-allowed' || code === 'audio-capture' || code === 'service-not-allowed') {
-          fallBackToSim('Mic unavailable — playing a sample reading instead.');
+          fallBackToSim('Mic unavailable - playing a sample reading instead.');
         }
       },
       onend: function (manual) {
@@ -200,7 +200,7 @@
       }
     });
     if (!state.listener) {
-      fallBackToSim('Speech recognition unavailable — playing a sample reading.');
+      fallBackToSim('Speech recognition unavailable - playing a sample reading.');
       return;
     }
     resetSilenceTimer();
@@ -210,7 +210,7 @@
     stopEverything();
     setMode('sim');
     els.micHint.textContent = hint;
-    beginRun(); /* keep the demo moving — never dead-end */
+    beginRun(); /* keep the demo moving - never dead-end */
   }
 
   /* ─── Simulated pipeline (identical aligner) ─────────────── */
@@ -307,7 +307,7 @@
         if (window.pfToast) pfToast('Could not save session: ' + r.error.message);
         return;
       }
-      if (window.pfToast) pfToast('Reading session saved — WCPM ' + wcpm);
+      if (window.pfToast) pfToast('Reading session saved - WCPM ' + wcpm);
       loadRecentSessions();
     });
   }
@@ -328,11 +328,11 @@
       var rows = r.data || [];
       if (!rows.length) {
         sub.textContent = pickedChild
-          ? 'No saved reads for ' + pickedChild.name + ' yet — press the big circle to start the first one!'
-          : 'No saved reads yet — press the big circle to start the first one!';
+          ? 'No saved reads for ' + pickedChild.name + ' yet - press the big circle to start the first one!'
+          : 'No saved reads yet - press the big circle to start the first one!';
         return;
       }
-      sub.textContent = (pickedChild ? pickedChild.name + '’s' : 'Your') + ' latest reads, newest first.';
+      sub.textContent = (pickedChild ? pickedChild.name + '\'s' : 'Your') + ' latest reads, newest first.';
       rows.forEach(function (s) {
         var row = document.createElement('div');
         row.style.cssText = 'display:flex;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border);font-size:0.86rem;';
@@ -378,7 +378,7 @@
       allowNone: true,
       onPick: function (child) {
         pickedChild = child ? { id: child.id, name: child.name } : null;
-        if (title) title.textContent = pickedChild ? pickedChild.name + '’s reading time' : 'Reading time';
+        if (title) title.textContent = pickedChild ? pickedChild.name + '\'s reading time' : 'Reading time';
         if (els.mascotTitle && !state.hasResult) els.mascotTitle.textContent = 'Hello, ' + childName() + '!';
         if (pickedChild) {
           profileLink.href = 'child.html?id=' + encodeURIComponent(pickedChild.id);
@@ -408,8 +408,8 @@
     var title;
     var body;
     if (attempted === 0) {
-      title = 'I didn’t quite hear you, ' + childName() + '!';
-      body = 'Let’s try again together — press the big circle and read nice and loud.';
+      title = 'I didn\'t quite hear you, ' + childName() + '!';
+      body = 'Let\'s try again together - press the big circle and read nice and loud.';
     } else if (accuracy >= 95) {
       title = 'Superstar reading, ' + childName() + '!';
       body = 'You read ' + ok + ' of ' + total + ' words beautifully!';
@@ -421,7 +421,7 @@
       body = 'Every read makes your reading muscles stronger. You got ' + ok + ' words this time.';
     }
     if (miscues.length > 0) {
-      body += ' Let’s try ‘' + miscues[0] + '’ once more — tap the speaker, listen, then say it with me.';
+      body += ' Let\'s try "' + miscues[0] + '" once more - tap the speaker, listen, then say it with me.';
     }
     els.mascotTitle.textContent = title;
     els.mascotText.textContent = body;
@@ -429,7 +429,7 @@
     /* Replay word = first miscue (or ship) */
     var replayWord = miscues.length > 0 ? miscues[0] : 'ship';
     els.replayBtn.dataset.word = replayWord;
-    els.replayWord.textContent = 'Hear ‘' + replayWord + '’';
+    els.replayWord.textContent = 'Hear "' + replayWord + '"';
 
     /* Teacher meters */
     animateStat(els.accVal, accuracy, '%');
@@ -443,7 +443,7 @@
     els.fluVal.style.color = '';
     els.fluFill.style.width = Math.min(Math.round((wcpm / 120) * 100), 100) + '%';
     els.fluFill.className = 'rc-meter-fill ' + fluClass;
-    els.fluSrc.textContent = fluLabelText + ' · computed from this read';
+    els.fluSrc.textContent = fluLabelText + ' - computed from this read';
 
     els.proFill.style.width = '76%';
 
@@ -463,7 +463,7 @@
       mark.className = 'rc-error-mark';
       mark.textContent = '✓';
       var div = document.createElement('div');
-      div.textContent = 'No miscues in this read — clean, confident decoding.';
+      div.textContent = 'No miscues in this read - clean, confident decoding.';
       li.appendChild(mark);
       li.appendChild(div);
       els.errors.appendChild(li);
@@ -482,7 +482,7 @@
       w.textContent = word;
       var type = document.createElement('span');
       type.className = 'rc-error-type';
-      type.textContent = info ? ' - read as “' + info.readAs + '”' : ' - skipped or unclear';
+      type.textContent = info ? ' - read as "' + info.readAs + '"' : ' - skipped or unclear';
       var note = document.createElement('div');
       note.className = 'rc-error-type';
       note.style.marginTop = '2px';

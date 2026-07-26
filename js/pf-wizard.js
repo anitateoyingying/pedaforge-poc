@@ -1,4 +1,4 @@
-/* PedaForge onboarding wizard — first-run setup.
+/* PedaForge onboarding wizard - first-run setup.
    Shows when profile.onboarded is false. Steps:
    educator: role → create class → add children (paste list or one-by-one) → done
    director: role → done (points at network views).
@@ -117,7 +117,7 @@
     var box = el('div', 'pfw');
     box.setAttribute('role', 'dialog');
     box.setAttribute('aria-modal', 'true');
-    box.setAttribute('aria-label', 'Welcome to PedaForge — set up your studio');
+    box.setAttribute('aria-label', 'Welcome to PedaForge - set up your studio');
     scrim.appendChild(box);
     document.body.appendChild(scrim);
     requestAnimationFrame(function () { scrim.classList.add('on'); });
@@ -131,7 +131,7 @@
     function foot(nextLabel, onNext, opts) {
       opts = opts || {};
       var f = el('div', 'pfw-foot');
-      var skip = el('button', 'pfw-skip', opts.skipLabel || 'Skip setup — I’ll explore first');
+      var skip = el('button', 'pfw-skip', opts.skipLabel || 'Skip setup - I\'ll explore first');
       skip.addEventListener('click', function () { finish(scrim); });
       var spacer = el('span', 'pfw-spacer');
       var next = el('button', 'btn btn-primary', nextLabel);
@@ -152,7 +152,7 @@
       box.appendChild(dots(1));
       box.appendChild(el('h2', null, 'Welcome to PedaForge'));
       var name = (ctx.profile && ctx.profile.full_name || '').split(' ')[0];
-      box.appendChild(el('p', 'lead', (name ? name + ', l' : 'L') + 'et’s set up your studio in under two minutes. First — how will you use PedaForge?'));
+      box.appendChild(el('p', 'lead', (name ? name + ', l' : 'L') + 'et\'s set up your studio in under two minutes. First - how will you use PedaForge?'));
       var roles = el('div', 'pfw-roles');
       var defs = [
         { key: 'educator', ico: '🍎', b: 'I teach a class', s: 'Plan lessons, build portfolios, run reading sessions, and design my classroom.' },
@@ -174,7 +174,7 @@
         roles.appendChild(b);
       });
       box.appendChild(roles);
-      box.appendChild(el('p', 'pfw-hint', 'Directors are verified by HQ — choosing "centre lead" here requests the role; your account works as an educator meanwhile.'));
+      box.appendChild(el('p', 'pfw-hint', 'Directors are verified by HQ - choosing "centre lead" here requests the role; your account works as an educator meanwhile.'));
       box.appendChild(foot('Continue', function () {
         if (state.role === 'director') stepDirectorDone();
         else step2();
@@ -183,8 +183,8 @@
 
     /* ── Step 2: create class (dynamic) ── */
     var AGES = [
-      { key: 'ic', em: '🍼', name: 'Infant Care', range: '2–18 mths' },
-      { key: 'pg', em: '🧸', name: 'Playgroup', range: '18–30 mths' },
+      { key: 'ic', em: '🍼', name: 'Infant Care', range: '2-18 mths' },
+      { key: 'pg', em: '🧸', name: 'Playgroup', range: '18-30 mths' },
       { key: 'n1', em: '🎈', name: 'Nursery 1', range: '3 yrs' },
       { key: 'n2', em: '🖍️', name: 'Nursery 2', range: '4 yrs' },
       { key: 'k1', em: '📚', name: 'Kindergarten 1', range: '5 yrs' },
@@ -204,7 +204,7 @@
       box.innerHTML = '';
       box.appendChild(dots(2));
       box.appendChild(el('h2', null, 'Create your first class'));
-      box.appendChild(el('p', 'lead', 'Everything in PedaForge — lesson plans, portfolios, reading progress — hangs off your class and its children.'));
+      box.appendChild(el('p', 'lead', 'Everything in PedaForge - lesson plans, portfolios, reading progress - hangs off your class and its children.'));
 
       var age = 'k1', session = 'full', ideaIdx = 0;
 
@@ -281,7 +281,7 @@
       var card = el('div', 'pfw-classcard');
       card.setAttribute('aria-hidden', 'true');
       card.appendChild(el('span', 'cc-label', 'Your class'));
-      var ccName = el('div', 'cc-name', '—');
+      var ccName = el('div', 'cc-name', '-');
       var ccMeta = el('div', 'cc-meta');
       card.appendChild(ccName); card.appendChild(ccMeta);
 
@@ -292,10 +292,10 @@
       };
       function preview() {
         var a = AGES.filter(function (x) { return x.key === age; })[0];
-        ccName.textContent = nameIn.value.trim() || 'Name your class…';
+        ccName.textContent = nameIn.value.trim() || 'Name your class...';
         ccName.style.opacity = nameIn.value.trim() ? '1' : '0.55';
         ccMeta.innerHTML = '';
-        ccMeta.appendChild(el('span', 'cc-pill', a.em + ' ' + a.name + ' · ' + a.range));
+        ccMeta.appendChild(el('span', 'cc-pill', a.em + ' ' + a.name + ' - ' + a.range));
         ccMeta.appendChild(el('span', 'cc-pill', SESSIONS.filter(function (s) { return s[0] === session; })[0][1]));
         if (centreIn.value.trim()) ccMeta.appendChild(el('span', 'cc-pill', centreIn.value.trim()));
         card.style.background = GRADIENTS[age];
@@ -309,7 +309,7 @@
       box.appendChild(foot('Create class', function (btn) {
         var n = nameIn.value.trim();
         if (!n) { nameIn.focus(); nameIn.style.borderColor = 'var(--danger, #dc2626)'; return; }
-        var done = window.pfApi.spinner(btn, 'Creating…');
+        var done = window.pfApi.spinner(btn, 'Creating...');
         window.pfDb.from('classes').insert({
           owner: window.pfUser.id, name: n, age_group: age,
           centre: centreIn.value.trim() || null, session: session
@@ -328,7 +328,7 @@
       box.innerHTML = '';
       box.appendChild(dots(3));
       box.appendChild(el('h2', null, 'Add your class list'));
-      box.appendChild(el('p', 'lead', 'Paste your class list — one child per line. Add learning-profile tags after a comma if you like; you can refine them anytime.'));
+      box.appendChild(el('p', 'lead', 'Paste your class list - one child per line. Add learning-profile tags after a comma if you like; you can refine them anytime.'));
       var f = el('div', 'pfw-field');
       f.appendChild(el('label', null, 'Children in ' + state.className));
       var ta = el('textarea');
@@ -354,7 +354,7 @@
       box.appendChild(foot('Add children', function (btn) {
         var kids = parseRoster(ta.value);
         if (!kids.length) { ta.focus(); return; }
-        var busy = window.pfApi.spinner(btn, 'Adding ' + kids.length + '…');
+        var busy = window.pfApi.spinner(btn, 'Adding ' + kids.length + '...');
         var chain = Promise.resolve();
         kids.forEach(function (k) {
           chain = chain.then(function () { return window.pfApi.addChild(state.classId, k.name, k.tags); });
@@ -372,10 +372,10 @@
     function step4() {
       box.innerHTML = '';
       box.appendChild(dots(4));
-      box.appendChild(el('h2', null, 'Your studio is ready 🎉'));
-      box.appendChild(el('p', 'lead', state.className + (state.added ? ' with ' + state.added + ' children' : '') + ' is set up. Here’s a good first lap:'));
+      box.appendChild(el('h2', null, 'Your studio is ready'));
+      box.appendChild(el('p', 'lead', state.className + (state.added ? ' with ' + state.added + ' children' : '') + ' is set up. Here\'s a good first lap:'));
       var ul = el('ul', 'pfw-done-list');
-      [['1', 'Generate your first AI lesson plan — it differentiates for each child’s profile.', 'planner.html'],
+      [['1', 'Generate your first AI lesson plan - it differentiates for each child\'s profile.', 'planner.html'],
        ['2', 'Capture one observation and let the AI draft the portfolio narrative.', 'portfolio.html'],
        ['3', 'Design your classroom layout with live safety checks.', 'sproutspace-layout.html']].forEach(function (s) {
         var li = el('li');
@@ -406,7 +406,7 @@
       box.innerHTML = '';
       box.appendChild(dots(4));
       box.appendChild(el('h2', null, 'Welcome, centre leader'));
-      box.appendChild(el('p', 'lead', 'Your role request is noted — HQ verifies director access (your account works fully as an educator meanwhile). The leadership tools live here:'));
+      box.appendChild(el('p', 'lead', 'Your role request is noted - HQ verifies director access (your account works fully as an educator meanwhile). The leadership tools live here:'));
       var ul = el('ul', 'pfw-done-list');
       [['1', 'Run a lesson observation with live AI QTT tagging.', 'observation.html'],
        ['2', 'Review submitted classroom layouts from your educators.', 'sproutspace-control.html'],

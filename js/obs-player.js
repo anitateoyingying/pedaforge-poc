@@ -1,4 +1,4 @@
-/* AI Lesson Observation — "Live Session Replay"
+/* AI Lesson Observation - "Live Session Replay"
    A 90-second scripted playback: transcript lines land, AI-tagged QTT
    evidence pops in, and a draft report assembles. All data is canned;
    render() is a pure function of the clock so scrubbing is deterministic. */
@@ -18,37 +18,37 @@
   };
 
   var EVENTS = [
-    { t: 2,  type: 'line', who: 'scene',   text: 'Free play begins — block corner, water table and reading nook are open.' },
-    { t: 6,  type: 'line', who: 'teacher', text: 'Morning everyone — choose your corner. Gentle hands, walking feet.' },
-    { t: 10, type: 'line', who: 'scene',   text: 'Leo’s block tower collapses. He frowns and pushes the blocks away.' },
-    { t: 14, type: 'line', who: 'teacher', text: 'You’re cross because the tower fell. That’s okay — I’m here.' },
-    { t: 18, type: 'evidence', id: 'ev1', domain: 'tci', state: 'met', src: 'Voice note · 09:42',
-      indicator: 'QTT 2.3 · Teacher-Child Interaction',
+    { t: 2,  type: 'line', who: 'scene',   text: 'Free play begins - block corner, water table and reading nook are open.' },
+    { t: 6,  type: 'line', who: 'teacher', text: 'Morning everyone - choose your corner. Gentle hands, walking feet.' },
+    { t: 10, type: 'line', who: 'scene',   text: 'Leo\'s block tower collapses. He frowns and pushes the blocks away.' },
+    { t: 14, type: 'line', who: 'teacher', text: 'You\'re cross because the tower fell. That\'s okay - I\'m here.' },
+    { t: 18, type: 'evidence', id: 'ev1', domain: 'tci', state: 'met', src: 'Voice note - 09:42',
+      indicator: 'QTT 2.3 - Teacher-Child Interaction',
       note: 'Named the emotion at eye level before offering a solution.', weight: 45 },
     { t: 22, type: 'line', who: 'child',   text: 'It keeps falling down!' },
     { t: 26, type: 'line', who: 'teacher', text: 'What if we tried a wider base? Show me your idea.' },
-    { t: 30, type: 'evidence', id: 'ev2', domain: 'tci', state: 'met', src: 'Voice note · 09:44',
-      indicator: 'QTT 2.4 · Responsive Scaffolding',
+    { t: 30, type: 'evidence', id: 'ev2', domain: 'tci', state: 'met', src: 'Voice note - 09:44',
+      indicator: 'QTT 2.4 - Responsive Scaffolding',
       note: 'Handed agency back to the child instead of rebuilding it for him.', weight: 40 },
     { t: 35, type: 'line', who: 'scene',   text: 'Water table. Amira lines up cups along the edge.' },
     { t: 39, type: 'line', who: 'teacher', text: 'What do you think will happen if we add more cups?' },
     { t: 43, type: 'line', who: 'child',   text: 'The water will share!' },
-    { t: 47, type: 'line', who: 'teacher', text: 'The water will share — so will each cup have more, or less?' },
-    { t: 51, type: 'evidence', id: 'ev3', domain: 'sst', state: 'met', src: 'Typed note · 09:55',
-      indicator: 'QTT 3.1 · Sustained Shared Thinking',
-      note: 'True open question, then extended the child’s reasoning rather than correcting it.', weight: 70 },
+    { t: 47, type: 'line', who: 'teacher', text: 'The water will share - so will each cup have more, or less?' },
+    { t: 51, type: 'evidence', id: 'ev3', domain: 'sst', state: 'met', src: 'Typed note - 09:55',
+      indicator: 'QTT 3.1 - Sustained Shared Thinking',
+      note: 'True open question, then extended the child\'s reasoning rather than correcting it.', weight: 70 },
     { t: 57, type: 'line', who: 'scene',   text: 'Pack-away time. Several children look unsure where the blocks go.' },
-    { t: 61, type: 'line', who: 'teacher', text: 'Everyone — blocks back on the shelf, please.' },
-    { t: 65, type: 'line', who: 'scene',   text: 'A few children drift off; the instruction isn’t followed up.' },
-    { t: 68, type: 'evidence', id: 'ev4', domain: 'env', state: 'emerging', src: 'Voice note · 10:08',
-      indicator: 'QTT 5.2 · Routines & Transitions',
+    { t: 61, type: 'line', who: 'teacher', text: 'Everyone - blocks back on the shelf, please.' },
+    { t: 65, type: 'line', who: 'scene',   text: 'A few children drift off; the instruction isn\'t followed up.' },
+    { t: 68, type: 'evidence', id: 'ev4', domain: 'env', state: 'emerging', src: 'Voice note - 10:08',
+      indicator: 'QTT 5.2 - Routines & Transitions',
       note: 'Single whole-group instruction; transition would benefit from a visual routine.', weight: 55 },
     { t: 76, type: 'report', section: 'strengths', title: 'Strengths', evidenceIds: ['ev1', 'ev2', 'ev3'],
-      text: 'Emotional scaffolding is now consistently evidenced (09:42, 09:44) — Sarah names feelings at eye level before problem-solving. The water-table exchange (09:55) is a genuine step forward on her Sustained Shared Thinking IDP goal: a true open question, extended rather than corrected.' },
+      text: 'Emotional scaffolding is now consistently evidenced (09:42, 09:44) - Sarah names feelings at eye level before problem-solving. The water-table exchange (09:55) is a genuine step forward on her Sustained Shared Thinking IDP goal: a true open question, extended rather than corrected.' },
     { t: 80, type: 'report', section: 'growth', title: 'Growth Point', evidenceIds: ['ev4'],
-      text: 'Transition management (10:08): the pack-away instruction was given once to the whole group and a few children disengaged. A small routine-and-environment adjustment — not an interaction concern.' },
+      text: 'Transition management (10:08): the pack-away instruction was given once to the whole group and a few children disengaged. A small routine-and-environment adjustment - not an interaction concern.' },
     { t: 84, type: 'report', section: 'followup', title: 'Follow-Up Plan', evidenceIds: [],
-      text: 'Mark the SST goal as met with today’s evidence attached. Co-plan one visual pack-away routine and revisit in a 10-minute walkthrough in two weeks. Carry this summary into the half-yearly appraisal.' }
+      text: 'Mark the SST goal as met with today\'s evidence attached. Co-plan one visual pack-away routine and revisit in a 10-minute walkthrough in two weeks. Carry this summary into the half-yearly appraisal.' }
   ];
 
   var SYNTH_START = 71, SYNTH_END = 76;
@@ -72,7 +72,7 @@
     return n;
   }
 
-  /* ── DOM builders (all content canned — no user input) ── */
+  /* ── DOM builders (all content canned - no user input) ── */
   function buildLine(ev, animate) {
     var wrap = document.createElement('div');
     if (ev.who === 'scene') {
@@ -103,7 +103,7 @@
     src.textContent = ev.src;
     var stamp = document.createElement('span');
     stamp.className = 'ai-stamp';
-    stamp.textContent = '✦ Auto-tagged';
+    stamp.textContent = 'Auto-tagged';
     head.appendChild(src); head.appendChild(stamp);
     var raw = document.createElement('div');
     raw.className = 'note-raw';
@@ -112,7 +112,7 @@
     tagline.className = 'note-tagline';
     var tag = document.createElement('span');
     tag.className = 'qtt-tag ' + ev.state;
-    tag.textContent = ev.indicator + ' · ' + (ev.state === 'met' ? 'Met' : 'Emerging');
+    tag.textContent = ev.indicator + ' - ' + (ev.state === 'met' ? 'Met' : 'Emerging');
     tagline.appendChild(tag);
     card.appendChild(head); card.appendChild(raw); card.appendChild(tagline);
     return card;

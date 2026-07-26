@@ -1,4 +1,4 @@
-/* PedaForge Learning Needs Analysis — real AI goal generation via
+/* PedaForge Learning Needs Analysis - real AI goal generation via
    pfApi.ai('lna'). Render-only (no LNA table); results copyable to IDP. */
 (function () {
   'use strict';
@@ -34,14 +34,14 @@
     host.innerHTML = '';
 
     var label = el('div', null);
-    var badge = el('span', 'pf-ai-badge', '✦ AI-generated · editable');
+    var badge = el('span', 'pf-ai-badge', 'AI-generated - editable');
     label.appendChild(badge);
     label.style.marginBottom = '12px';
     host.appendChild(label);
 
     var goals = (r && r.goals) || [];
     if (!goals.length) {
-      host.appendChild(el('p', 'lna-empty', 'The AI returned no goals — try adding more detail to your self-assessment.'));
+      host.appendChild(el('p', 'lna-empty', 'The AI returned no goals - try adding more detail to your self-assessment.'));
     }
     goals.slice(0, 3).forEach(function (g, i) { host.appendChild(goalCard(g, i)); });
 
@@ -70,7 +70,7 @@
 
   function resultAsText() {
     if (!lastResult) return '';
-    var lines = ['Learning Needs Analysis — AI-identified goals', ''];
+    var lines = ['Learning Needs Analysis - AI-identified goals', ''];
     (lastResult.goals || []).forEach(function (g, i) {
       lines.push((i + 1) + '. ' + (g.goal || ''));
       if (g.qtt_domain) lines.push('   QTT domain: ' + g.qtt_domain);
@@ -88,10 +88,10 @@
     if (!text) { window.pfToast('Nothing to copy yet.'); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text)
-        .then(function () { window.pfToast('Goals copied — paste into your IDP.'); })
-        .catch(function () { window.pfToast('Copy failed — select and copy manually.'); });
+        .then(function () { window.pfToast('Goals copied - paste into your IDP.'); })
+        .catch(function () { window.pfToast('Copy failed - select and copy manually.'); });
     } else {
-      window.pfToast('Clipboard unavailable — select and copy manually.');
+      window.pfToast('Clipboard unavailable - select and copy manually.');
     }
   }
 
@@ -101,7 +101,7 @@
     var selfAssessment = $('lnaSelf').value.trim();
 
     if (isNaN(experience) || experience < 0 || experience > 60) {
-      window.pfToast('Enter your years of experience (0–60).');
+      window.pfToast('Enter your years of experience (0-60).');
       return;
     }
     if (selfAssessment.length < 15) {
@@ -110,7 +110,7 @@
     }
 
     var btn = $('lnaAnalyse');
-    var done = window.pfApi.spinner(btn, 'Analysing…');
+    var done = window.pfApi.spinner(btn, 'Analysing...');
     window.pfApi.ai('lna', {
       designation: designation,
       experience: experience,

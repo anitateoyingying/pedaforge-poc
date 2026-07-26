@@ -1,11 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════
-   PedaForge Home — Draw, Write & Reflect
+   PedaForge Home - Draw, Write & Reflect
    Pointer-events canvas drawing (brush / eraser / star stamp,
    colour swatches), immutable stroke-array undo, feeling faces.
-   "I'm done" uploads the canvas to storage, inserts an `artworks`
+   "I\'m done" uploads the canvas to storage, inserts an `artworks`
    row for the picked child, and asks the AI for a warm reflection
    (falling back to friendly canned prompts on AI error). The
-   gallery rail shows the child's last 6 artworks via signed URLs.
+   gallery rail shows the child\'s last 6 artworks via signed URLs.
    Requires pf-auth.js + pf-api.js.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
@@ -143,7 +143,7 @@
 
   function undo() {
     if (strokes.length === 0) return;
-    strokes = strokes.slice(0, -1); /* new array — no mutation */
+    strokes = strokes.slice(0, -1); /* new array - no mutation */
     redraw();
     updateUndo();
   }
@@ -191,7 +191,7 @@
     });
   }
 
-  /* ─── "I'm done": save artwork + real AI reflection ──────── */
+  /* ─── "I\'m done": save artwork + real AI reflection ──────── */
   function makeBubble() {
     els.reflectChat.hidden = false;
     els.reflectChat.textContent = '';
@@ -213,7 +213,7 @@
     badge.style.marginTop = '8px';
     var badgeSpan = document.createElement('span');
     badgeSpan.className = 'pf-ai-badge';
-    badgeSpan.textContent = '✦ AI-generated · editable';
+    badgeSpan.textContent = 'AI-generated - editable';
     badge.appendChild(badgeSpan);
     els.reflectChat.appendChild(badge);
     return bubble;
@@ -241,7 +241,7 @@
               resolve(null);
               return;
             }
-            if (window.pfToast) pfToast('Picture saved to ' + (pickedChild ? pickedChild.name + '’s' : 'your') + ' gallery');
+            if (window.pfToast) pfToast('Picture saved to ' + (pickedChild ? pickedChild.name + '\'s' : 'your') + ' gallery');
             loadGallery();
             resolve(true);
           })
@@ -256,11 +256,11 @@
   function showReflection() {
     if (reflecting) return;
     if (strokes.length === 0) {
-      if (window.pfToast) pfToast('Draw something first — then press I’m done!');
+      if (window.pfToast) pfToast('Draw something first - then press I\'m done!');
       return;
     }
     reflecting = true;
-    var done = window.pfApi ? window.pfApi.spinner(els.doneBtn, 'Saving…') : function () {};
+    var done = window.pfApi ? window.pfApi.spinner(els.doneBtn, 'Saving...') : function () {};
     var bubble = makeBubble();
 
     var fallback = REFLECTION_PROMPTS[promptIndex % REFLECTION_PROMPTS.length];
@@ -275,12 +275,12 @@
 
     aiPromise
       .catch(function (e) {
-        if (window.pfToast) pfToast('AI reflection unavailable — using a friendly prompt instead');
+        if (window.pfToast) pfToast('AI reflection unavailable - using a friendly prompt instead');
         return fallback;
       })
       .then(function (text) {
         var reflection = (typeof text === 'string' && text.trim()) ? text.trim() : fallback;
-        bubble.textContent = reflection; /* textContent — safe for AI output */
+        bubble.textContent = reflection; /* textContent - safe for AI output */
         return saveArtwork(reflection);
       })
       .then(function () {
@@ -306,12 +306,12 @@
       if (!rows.length) {
         if (hint) {
           hint.textContent = pickedChild
-            ? 'No pictures for ' + pickedChild.name + ' yet — press “I’m done!” to save the first one.'
-            : 'Finished pictures land here — press “I’m done!” to save the first one.';
+            ? 'No pictures for ' + pickedChild.name + ' yet - press "I\'m done!" to save the first one.'
+            : 'Finished pictures land here - press "I\'m done!" to save the first one.';
         }
         return;
       }
-      if (hint) hint.textContent = (pickedChild ? pickedChild.name + '’s' : 'Your') + ' latest little stories.';
+      if (hint) hint.textContent = (pickedChild ? pickedChild.name + '\'s' : 'Your') + ' latest little stories.';
       rows.forEach(function (art) {
         var card = document.createElement('div');
         card.className = 'dr-story';
@@ -330,7 +330,7 @@
         body.className = 'dr-story-body';
         var title = document.createElement('div');
         title.className = 'dr-story-title';
-        title.textContent = art.reflection ? art.reflection.slice(0, 48) + (art.reflection.length > 48 ? '…' : '') : 'A little story';
+        title.textContent = art.reflection ? art.reflection.slice(0, 48) + (art.reflection.length > 48 ? '...' : '') : 'A little story';
         var date = document.createElement('div');
         date.className = 'dr-story-date';
         date.textContent = window.pfApi.ago(art.created_at);

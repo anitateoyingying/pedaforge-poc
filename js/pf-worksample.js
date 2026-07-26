@@ -1,4 +1,4 @@
-/* PedaForge Work Samples — real image upload to the artefacts bucket,
+/* PedaForge Work Samples - real image upload to the artefacts bucket,
    AI analysis via pfApi.ai('analyze_sample'), rows in work_samples. */
 (function () {
   'use strict';
@@ -24,7 +24,7 @@
   function setFile(file) {
     if (!file) return;
     if (!/^image\//.test(file.type)) { window.pfToast('Please choose an image (JPG or PNG).'); return; }
-    if (file.size > MAX_BYTES) { window.pfToast('Image is larger than 10 MB — please resize it.'); return; }
+    if (file.size > MAX_BYTES) { window.pfToast('Image is larger than 10 MB - please resize it.'); return; }
     pickedFile = file;
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     previewUrl = URL.createObjectURL(file);
@@ -103,7 +103,7 @@
     if (!domains.length) { window.pfToast('Add at least one learning domain.'); return; }
 
     var btn = $('wsAnalyse');
-    var done = window.pfApi.spinner(btn, 'Analysing…');
+    var done = window.pfApi.spinner(btn, 'Analysing...');
     window.pfApi.ai('analyze_sample', {
       context: context,
       domains: domains,
@@ -113,11 +113,11 @@
     })
       .then(function (r) {
         analysis = r || {};
-        $('wsResultMeta').textContent = (currentChild ? currentChild.name + ' · ' : '') + domains.join(', ');
+        $('wsResultMeta').textContent = (currentChild ? currentChild.name + ' - ' : '') + domains.join(', ');
         var ms = $('wsMilestones');
         ms.innerHTML = '';
         var list = analysis.milestones || [];
-        if (!list.length) ms.appendChild(el('p', 'profile-meta', 'No specific milestones identified — add more context and retry.'));
+        if (!list.length) ms.appendChild(el('p', 'profile-meta', 'No specific milestones identified - add more context and retry.'));
         list.forEach(function (m) {
           var row = el('div', 'ws-milestone-item');
           row.appendChild(el('span', 'ws-milestone-icon', '✓'));
@@ -153,10 +153,10 @@
     if (!analysis) { window.pfToast('Analyse the sample first.'); return; }
     var context = $('wsContext').value.trim();
     var narrative = $('wsNarrative').value.trim();
-    if (!narrative) { window.pfToast('The narrative is empty — edit or regenerate it.'); return; }
+    if (!narrative) { window.pfToast('The narrative is empty - edit or regenerate it.'); return; }
 
     var btn = $('wsSave');
-    var done = window.pfApi.spinner(btn, 'Saving…');
+    var done = window.pfApi.spinner(btn, 'Saving...');
     var uploadP = pickedFile
       ? window.pfApi.uploadArtefact(pickedFile, 'worksample')
       : Promise.resolve(null);
@@ -180,7 +180,7 @@
       .then(function (r) {
         if (r.error) throw r.error;
         window.pfToast(currentChild
-          ? 'Work sample saved — it now appears on ' + currentChild.name + '’s profile.'
+          ? 'Work sample saved - it now appears on ' + currentChild.name + '\'s profile.'
           : 'Work sample saved.');
         analysis = null;
         $('wsContext').value = '';
@@ -214,7 +214,7 @@
         host.innerHTML = '';
         var rows = r.data || [];
         if (!rows.length) {
-          var empty = el('div', 'ws-empty', 'No work samples yet — analyse and save your first one above.');
+          var empty = el('div', 'ws-empty', 'No work samples yet - analyse and save your first one above.');
           empty.style.gridColumn = '1 / -1';
           host.appendChild(empty);
           return;
@@ -237,9 +237,9 @@
           var body = el('div', 'ws-gallery-body');
           body.appendChild(el('h5', null, (s.children && s.children.name) || 'General sample'));
           var snippet = (s.context || '').slice(0, 90);
-          if ((s.context || '').length > 90) snippet += '…';
+          if ((s.context || '').length > 90) snippet += '...';
           body.appendChild(el('p', null, snippet || 'No context recorded.'));
-          body.appendChild(el('p', null, ((s.domains || []).join(', ') || 'No domains') + ' · ' + window.pfApi.ago(s.created_at)));
+          body.appendChild(el('p', null, ((s.domains || []).join(', ') || 'No domains') + ' - ' + window.pfApi.ago(s.created_at)));
           card.appendChild(body);
           host.appendChild(card);
         });
@@ -278,12 +278,12 @@
       $('wsChildName').textContent = child.name;
       var bits = [];
       if (cls) bits.push(cls.name + ' (' + String(cls.age_group || '').toUpperCase() + ')');
-      if (child.profile_tags && child.profile_tags.length) bits.push(child.profile_tags.join(' · '));
-      $('wsChildMeta').textContent = bits.join(' · ');
+      if (child.profile_tags && child.profile_tags.length) bits.push(child.profile_tags.join(' - '));
+      $('wsChildMeta').textContent = bits.join(' - ');
     } else {
       $('wsChildName').textContent = 'Work Samples';
       $('wsChildMeta').textContent = cls
-        ? 'General sample (no child linked) — or pick a child above.'
+        ? 'General sample (no child linked) - or pick a child above.'
         : 'Create a class in My Classes to link samples to children.';
     }
   }

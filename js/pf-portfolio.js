@@ -1,4 +1,4 @@
-/* PedaForge Portfolio — per-child observation timeline backed by
+/* PedaForge Portfolio - per-child observation timeline backed by
    portfolio_observations, AI narrative drafting via pfApi.ai('narrative'). */
 (function () {
   'use strict';
@@ -44,8 +44,8 @@
       (o.domains || []).forEach(function (d) { counts[d] = (counts[d] || 0) + 1; });
     });
     $('pfoCoverageMeta').textContent = total
-      ? 'Share of this child’s ' + total + ' observation' + (total === 1 ? '' : 's') + ' touching each domain.'
-      : 'No observations yet — coverage fills in as you record them.';
+      ? 'Share of this child\'s ' + total + ' observation' + (total === 1 ? '' : 's') + ' touching each domain.'
+      : 'No observations yet - coverage fills in as you record them.';
 
     DOMAINS.forEach(function (d) {
       var n = counts[d] || 0;
@@ -68,7 +68,7 @@
       fg.setAttribute('stroke-dasharray', String(RING)); fg.setAttribute('stroke-dashoffset', offset);
       svg.appendChild(bg); svg.appendChild(fg);
       roundel.appendChild(svg);
-      roundel.appendChild(el('span', 'roundel-value', total ? n + '/' + total : '–'));
+      roundel.appendChild(el('span', 'roundel-value', total ? n + '/' + total : '-'));
       cell.appendChild(roundel);
       cell.appendChild(el('span', 'domain-name', d));
       grid.appendChild(cell);
@@ -82,7 +82,7 @@
     if (!rows.length) {
       var empty = el('div', 'pfo-empty');
       empty.appendChild(el('h4', null, 'No observations yet'));
-      empty.appendChild(el('p', null, 'Record what you noticed in the "New Observation" form above — the AI turns your quick note into a portfolio-ready narrative.'));
+      empty.appendChild(el('p', null, 'Record what you noticed in the "New Observation" form above - the AI turns your quick note into a portfolio-ready narrative.'));
       host.appendChild(empty);
       return;
     }
@@ -98,7 +98,7 @@
       if (o.ai_narrative) {
         var box = el('div', 'narrative-box');
         var lab = el('p', 'narrative-label');
-        lab.appendChild(el('span', 'pf-ai-badge', '✦ AI-drafted · educator-approved'));
+        lab.appendChild(el('span', 'pf-ai-badge', 'AI-drafted - educator-approved'));
         box.appendChild(lab);
         var narr = el('div', 'narrative-text');
         window.pfMd.renderInto(narr, o.ai_narrative);
@@ -133,7 +133,7 @@
     if (!domains.length) { window.pfToast('Tick at least one learning domain.'); return; }
 
     var btn = $('pfoDraft');
-    var done = window.pfApi.spinner(btn, 'Thinking…');
+    var done = window.pfApi.spinner(btn, 'Thinking...');
     window.pfApi.ai('narrative', {
       child: { name: currentChild.name, profile_tags: currentChild.profile_tags || [] },
       note: note,
@@ -169,7 +169,7 @@
     if (!note || !narrative) { window.pfToast('Both the raw note and the narrative are needed.'); return; }
 
     var btn = $('pfoSave');
-    var done = window.pfApi.spinner(btn, 'Saving…');
+    var done = window.pfApi.spinner(btn, 'Saving...');
     window.pfDb.from('portfolio_observations').insert({
       owner: window.pfUser.id,
       child_id: currentChild.id,
@@ -180,7 +180,7 @@
     }).select().single()
       .then(function (r) {
         if (r.error) throw r.error;
-        window.pfToast('Saved to ' + currentChild.name + '’s portfolio.');
+        window.pfToast('Saved to ' + currentChild.name + '\'s portfolio.');
         $('pfoNote').value = '';
         $('pfoNarrative').value = '';
         $('pfoDraftBox').classList.add('hidden');
@@ -224,15 +224,15 @@
       $('pfoBody').classList.add('hidden');
       $('pfoChildName').textContent = 'Portfolio';
       $('pfoChildMeta').textContent = cls
-        ? 'This class has no children yet — add them in My Classes.'
+        ? 'This class has no children yet - add them in My Classes.'
         : 'Create a class and add children to start building portfolios.';
       return;
     }
     $('pfoChildName').textContent = child.name;
     var bits = [];
     if (cls) bits.push(cls.name + ' (' + String(cls.age_group || '').toUpperCase() + ')');
-    if (child.profile_tags && child.profile_tags.length) bits.push(child.profile_tags.join(' · '));
-    $('pfoChildMeta').textContent = bits.join(' · ') || 'Living portfolio';
+    if (child.profile_tags && child.profile_tags.length) bits.push(child.profile_tags.join(' - '));
+    $('pfoChildMeta').textContent = bits.join(' - ') || 'Living portfolio';
     $('pfoBody').classList.remove('hidden');
     loadObservations();
   }

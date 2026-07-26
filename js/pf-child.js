@@ -1,4 +1,4 @@
-/* Child profile hub — aggregates every module's records for one child. */
+/* Child profile hub - aggregates every module's records for one child. */
 (function () {
   'use strict';
 
@@ -36,7 +36,7 @@
       document.title = kid.name + ' - PedaForge';
       $('chFace').textContent = kid.name.split(/\s+/).map(function (w) { return w.charAt(0); }).slice(0, 2).join('').toUpperCase();
       $('chName').textContent = kid.name;
-      $('chMeta').textContent = (kid.classes ? kid.classes.name + ' · ' + String(kid.classes.age_group || '').toUpperCase() : '') + (kid.notes ? ' · ' + kid.notes : '');
+      $('chMeta').textContent = (kid.classes ? kid.classes.name + ' - ' + String(kid.classes.age_group || '').toUpperCase() : '') + (kid.notes ? ' - ' + kid.notes : '');
       var tags = $('chTags');
       (kid.profile_tags || []).forEach(function (t) { tags.appendChild(el('span', null, t)); });
     }
@@ -50,7 +50,7 @@
           host.innerHTML = '';
           var rows = r.data || [];
           if (!rows.length) {
-            host.innerHTML = '<span class="ch-empty">No observations yet — <a href="portfolio.html">capture the first moment</a> and let the AI draft the story.</span>';
+            host.innerHTML = '<span class="ch-empty">No observations yet - <a href="portfolio.html">capture the first moment</a> and let the AI draft the story.</span>';
             return;
           }
           rows.forEach(function (o) {
@@ -58,7 +58,7 @@
             var story = el('div');
             story.textContent = o.ai_narrative || o.raw_note;
             d.appendChild(story);
-            d.appendChild(el('span', 'when', window.pfApi.ago(o.created_at) + ((o.domains && o.domains.length) ? ' · ' + o.domains.join(', ') : '')));
+            d.appendChild(el('span', 'when', window.pfApi.ago(o.created_at) + ((o.domains && o.domains.length) ? ' - ' + o.domains.join(', ') : '')));
             host.appendChild(d);
           });
         });
@@ -71,7 +71,7 @@
           var spark = $('chSpark'), list = $('chReading');
           spark.innerHTML = ''; list.innerHTML = '';
           if (!rows.length) {
-            list.innerHTML = '<span class="ch-empty">No sessions for this child yet — <a href="home-reading-coach.html">pick them in the Reading Coach</a> and press the mic.</span>';
+            list.innerHTML = '<span class="ch-empty">No sessions for this child yet - <a href="home-reading-coach.html">pick them in the Reading Coach</a> and press the mic.</span>';
             return;
           }
           var max = Math.max.apply(null, rows.map(function (s) { return s.wcpm || 0; }).concat([1]));
@@ -84,7 +84,7 @@
           });
           var last = rows[rows.length - 1];
           var d = el('div', 'ch-row');
-          d.appendChild(el('span', null, 'Latest: ' + (last.wcpm != null ? last.wcpm + ' WCPM' : 'session') + (last.accuracy != null ? ' · ' + last.accuracy + '% accuracy' : '') + (last.mode === 'simulated' ? ' · simulated' : '')));
+          d.appendChild(el('span', null, 'Latest: ' + (last.wcpm != null ? last.wcpm + ' WCPM' : 'session') + (last.accuracy != null ? ' - ' + last.accuracy + '% accuracy' : '') + (last.mode === 'simulated' ? ' - simulated' : '')));
           d.appendChild(el('span', 'when', window.pfApi.ago(last.created_at)));
           list.appendChild(d);
         });
@@ -97,7 +97,7 @@
           host.innerHTML = '';
           var rows = r.data || [];
           if (!rows.length) {
-            host.innerHTML = '<span class="ch-empty">No benchmark yet — <a href="home-benchmark.html">run a 5-strand check-in</a>.</span>';
+            host.innerHTML = '<span class="ch-empty">No benchmark yet - <a href="home-benchmark.html">run a 5-strand check-in</a>.</span>';
             return;
           }
           var table = el('table', 'band-table');
@@ -111,9 +111,9 @@
             var tr = el('tr');
             tr.appendChild(el('td', null, b.term || ''));
             strands.forEach(function (s) {
-              var band = (b.strands || {})[s] || '—';
+              var band = (b.strands || {})[s] || '-';
               var td = el('td');
-              var pill = el('span', 'band-pill band-' + band, band === '—' ? '—' : band.charAt(0).toUpperCase() + band.slice(1, 3));
+              var pill = el('span', 'band-pill band-' + band, band === '-' ? '-' : band.charAt(0).toUpperCase() + band.slice(1, 3));
               pill.title = band;
               td.appendChild(pill);
               tr.appendChild(td);
@@ -131,7 +131,7 @@
           host.innerHTML = '';
           var rows = (r.data || []).filter(function (w) { return w.status !== 'new'; });
           if (!rows.length) {
-            host.innerHTML = '<span class="ch-empty">No words practised yet — <a href="home-dictionary.html">open the Talking Dictionary</a> with this child picked.</span>';
+            host.innerHTML = '<span class="ch-empty">No words practised yet - <a href="home-dictionary.html">open the Talking Dictionary</a> with this child picked.</span>';
             return;
           }
           rows.forEach(function (w) { host.appendChild(el('span', w.status, w.word)); });
@@ -144,7 +144,7 @@
           var rows = r.data || [];
           var strip = $('chArt'), empty = $('chArtEmpty');
           if (!rows.length) {
-            empty.innerHTML = '<span class="ch-empty">No drawings saved — <a href="home-draw-reflect.html">open Draw &amp; Reflect</a> with this child picked.</span>';
+            empty.innerHTML = '<span class="ch-empty">No drawings saved - <a href="home-draw-reflect.html">open Draw &amp; Reflect</a> with this child picked.</span>';
             return;
           }
           rows.forEach(function (a) {
@@ -152,7 +152,7 @@
               if (!url) return;
               var img = document.createElement('img');
               img.src = url;
-              img.alt = 'Drawing' + (a.feeling ? ' — feeling ' + a.feeling : '');
+              img.alt = 'Drawing' + (a.feeling ? ' - feeling ' + a.feeling : '');
               img.loading = 'lazy';
               strip.appendChild(img);
             });
@@ -167,7 +167,7 @@
           host.innerHTML = '';
           var rows = r.data || [];
           if (!rows.length) {
-            host.innerHTML = '<span class="ch-empty">No work samples yet — <a href="work-sample.html">upload one</a> for AI milestone analysis.</span>';
+            host.innerHTML = '<span class="ch-empty">No work samples yet - <a href="work-sample.html">upload one</a> for AI milestone analysis.</span>';
             return;
           }
           rows.forEach(function (s) {
@@ -176,8 +176,8 @@
             var analysis = s.ai_analysis || {};
             txt.textContent = analysis.narrative || s.context || 'Work sample';
             d.appendChild(txt);
-            var mi = (analysis.milestones || []).slice(0, 2).join(' · ');
-            d.appendChild(el('span', 'when', window.pfApi.ago(s.created_at) + (mi ? ' · ' + mi : '')));
+            var mi = (analysis.milestones || []).slice(0, 2).join(' - ');
+            d.appendChild(el('span', 'when', window.pfApi.ago(s.created_at) + (mi ? ' - ' + mi : '')));
             host.appendChild(d);
           });
         });
