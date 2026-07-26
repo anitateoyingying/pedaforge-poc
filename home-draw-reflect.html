@@ -4,740 +4,302 @@
 <script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PedaForge Home Draw, Write &amp; Reflect: a gentle SEL writing portal where children draw, narrate and reflect on their feelings - building social-emotional growth, reflective practice and a growth mindset, with a grown-up view for parents and teachers.">
-  <title>Draw, Write &amp; Reflect - SEL Writing Portal | PedaForge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <meta name="robots" content="noindex">
+  <title>Paint Corner - PedaForge Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/app-shell.css">
+  <link rel="stylesheet" href="css/kids.css">
   <style>
-    /* ─── Clay / neumorphic studio palette (Home accent = teal #0E8FA8) ─── */
-    .dr-clay-bg { background: #eef3f4; }
-
-    .dr-studio {
-      display: grid;
-      grid-template-columns: 1fr 320px;
-      gap: 28px;
-      align-items: start;
+    /* ── Easel ─────────────────────────────────────────────── */
+    .k-easel { margin: 8px 0 22px; padding: 22px 24px 18px; }
+    .k-easel-grid { display: flex; gap: 18px; align-items: stretch; }
+    .k-tools { display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+    .k-tool {
+      width: 70px; min-height: 66px; border-radius: 22px; cursor: pointer;
+      background: #fff; border: 3px solid rgba(63, 74, 61, 0.1);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+      font-family: var(--k-font); color: var(--k-ink);
+      transition: transform 0.2s cubic-bezier(0.34, 1.7, 0.64, 1), border-color 0.2s ease, background 0.2s ease;
     }
-    @media (max-width: 940px) {
-      .dr-studio { grid-template-columns: 1fr; }
+    .k-tool svg { width: 28px; height: 28px; color: var(--k-teal); }
+    .k-tool b { font-size: 0.68rem; font-weight: 700; }
+    .k-tool:hover:not(:disabled) { transform: scale(1.07) rotate(-2deg); }
+    .k-tool.on { border-color: var(--k-teal); background: #eef9fb; transform: scale(1.05); }
+    .k-tool:disabled { opacity: 0.45; cursor: default; }
+    .k-frame {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      background: #fff; border-radius: 18px; padding: 10px;
+      border: 3px solid rgba(63, 74, 61, 0.08);
+      box-shadow: inset 0 2px 10px rgba(63, 74, 61, 0.07);
     }
-
-    /* ─── Creation studio card ─── */
-    .dr-creation {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
+    .k-canvas {
+      display: block; width: 100%; max-width: 680px; height: auto;
+      touch-action: none; cursor: crosshair; border-radius: 12px;
     }
-
-    .dr-canvas-card {
-      background: #eef3f4;
-      border-radius: 28px;
-      padding: 22px;
-      box-shadow: 10px 10px 26px rgba(13,79,94,0.16), -10px -10px 26px rgba(255,255,255,0.9);
-      display: flex;
-      gap: 20px;
-    }
-    @media (max-width: 560px) {
-      .dr-canvas-card { flex-direction: column; }
-    }
-
-    /* Chunky pastel tool palette */
-    .dr-tools {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      flex-shrink: 0;
-    }
-    @media (max-width: 560px) {
-      .dr-tools { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-    }
-
-    .dr-tool {
-      width: 58px;
-      height: 58px;
-      border-radius: 20px;
-      border: none;
-      background: #eef3f4;
-      color: #0E8FA8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 6px 6px 14px rgba(13,79,94,0.18), -6px -6px 14px rgba(255,255,255,0.95);
-      transition: all 0.18s ease;
-    }
-    .dr-tool:hover { transform: translateY(-2px); color: #0a6f82; }
-    .dr-tool.active {
-      box-shadow: inset 5px 5px 12px rgba(13,79,94,0.2), inset -5px -5px 12px rgba(255,255,255,0.9);
-      color: #0a6f82;
-    }
-    .dr-tool-label {
-      font-size: 0.62rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-top: 3px;
-      color: var(--text-light);
-    }
-    .dr-tool-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .dr-colours {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      align-items: center;
-      margin-top: 4px;
-      padding-top: 14px;
-      border-top: 2px solid rgba(13,79,94,0.08);
-    }
-    @media (max-width: 560px) {
-      .dr-colours { flex-direction: row; border-top: none; padding-top: 0; }
-    }
-    .dr-swatch {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      box-shadow: 4px 4px 9px rgba(13,79,94,0.16), -4px -4px 9px rgba(255,255,255,0.9);
-      transition: transform 0.15s ease;
-    }
-    .dr-swatch:hover { transform: scale(1.1); }
-    .dr-swatch.active { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #0E8FA8; }
-
-    /* Framed drawing area */
-    .dr-canvas-frame {
-      flex: 1;
-      border-radius: 20px;
-      background: #ffffff;
-      box-shadow: inset 6px 6px 16px rgba(13,79,94,0.12), inset -6px -6px 16px rgba(255,255,255,0.9);
-      min-height: 320px;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .draw-canvas {
-      display: block;
-      width: 100%;
-      max-width: 460px;
-      height: auto;
-      touch-action: none;
-      cursor: crosshair;
-      border-radius: 16px;
-    }
-    .dr-canvas-actions {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
-    .dr-action-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: none;
-      border-radius: 100px;
-      padding: 11px 20px;
-      font-family: var(--font);
-      font-size: 0.88rem;
-      font-weight: 700;
-      cursor: pointer;
-      color: #0a6f82;
-      background: #eef3f4;
-      box-shadow: 5px 5px 12px rgba(13,79,94,0.16), -5px -5px 12px rgba(255,255,255,0.95);
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
-    }
-    .dr-action-btn:hover:not(:disabled) { transform: translateY(-2px); }
-    .dr-action-btn:disabled { opacity: 0.45; cursor: default; }
-    .dr-action-btn.primary {
-      color: #fff;
-      background: #0E8FA8;
-      box-shadow: 6px 6px 14px rgba(14,143,168,0.32);
-    }
-    .dr-reflect-chat {
-      margin-top: 18px;
+    /* Wooden tray of paint blobs */
+    .k-tray {
+      margin-top: 16px; padding: 14px 18px 16px;
+      background: linear-gradient(180deg, #cf9f68, #b98a5a);
       border-radius: 18px;
-      padding: 16px;
-      background: rgba(14,143,168,0.06);
+      box-shadow: inset 0 -5px 0 rgba(122, 91, 58, 0.45), 0 4px 10px rgba(63, 74, 61, 0.12);
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
     }
-    .dr-reflect-chat[hidden] { display: none; }
-    .dr-reflect-chat .chat-message.assistant .chat-bubble {
-      background: #fff;
-      border: 1px solid rgba(14,143,168,0.18);
-      color: var(--text);
+    .k-paint {
+      width: 48px; height: 48px; border: none; cursor: pointer; padding: 0;
+      border-radius: 46% 54% 55% 45% / 52% 44% 56% 48%;
+      box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.16), 0 3px 6px rgba(63, 74, 61, 0.3);
+      transition: transform 0.22s cubic-bezier(0.34, 1.7, 0.64, 1), box-shadow 0.2s ease;
     }
-    .dr-reflect-chat .chat-message.assistant .avatar {
-      background: linear-gradient(135deg, #0E8FA8, #2BAEC7);
-      color: #fff;
-      font-size: 0.8rem;
-      font-weight: 700;
+    .k-paint:hover { transform: scale(1.14) rotate(-5deg); }
+    .k-paint.on {
+      transform: scale(1.22);
+      box-shadow: 0 0 0 4px #fff, 0 0 0 7px rgba(63, 74, 61, 0.28), inset 0 -6px 0 rgba(0, 0, 0, 0.16);
     }
-    .dr-reflect-chat .typing-indicator span { background: #0E8FA8; }
+
+    /* ── Feelings ──────────────────────────────────────────── */
+    .k-feel-panel { margin: 0 0 22px; }
+    .k-feel-panel .k-sub { font-family: var(--k-hand); font-size: 1.15rem; }
+    .k-feels { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0 4px; }
+    .k-feel {
+      flex: 1; min-width: 130px; cursor: pointer;
+      background: #fff; border: 3px solid rgba(63, 74, 61, 0.1); border-radius: 26px;
+      padding: 18px 12px 16px;
+      display: flex; flex-direction: column; align-items: center; gap: 9px;
+      font-family: var(--k-font);
+      transition: transform 0.2s cubic-bezier(0.34, 1.7, 0.64, 1), border-color 0.2s ease, background 0.2s ease;
+    }
+    .k-feel:hover { transform: scale(1.05) rotate(-1deg); }
+    .k-feel b { font-size: 1.08rem; font-weight: 700; color: var(--k-ink); }
+    .k-feel-face {
+      width: 72px; height: 72px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .k-feel-face svg { width: 46px; height: 46px; }
+    .k-feel-face.happy { background: #e7f6e9; color: #3c8c46; }
+    .k-feel-face.okay { background: #e8f5f8; color: #2f8fa3; }
+    .k-feel-face.tricky { background: #fff3d9; color: #c07f1f; }
+    .k-feel.on { transform: scale(1.05); }
+    .k-feel.on[data-feeling="happy"] { border-color: var(--k-hill-deep); background: #f2faf1; }
+    .k-feel.on[data-feeling="okay"] { border-color: var(--k-teal); background: #eef9fb; }
+    .k-feel.on[data-feeling="tricky"] { border-color: var(--k-yellow); background: #fff9e9; }
+
+    .k-mic-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 18px; }
+    #drMicBtn.listening { background: var(--k-red); box-shadow: 0 5px 0 rgba(63, 74, 61, 0.18), 0 12px 22px rgba(255, 125, 107, 0.35); }
+    .k-said { font-family: var(--k-hand); font-size: 1.12rem; color: var(--k-ink-soft); min-width: 0; }
+
+    /* ── Big done button ───────────────────────────────────── */
+    .k-done-row { text-align: center; margin: 4px 0 26px; }
+    .k-done-row .k-btn.big { font-size: 1.4rem; padding: 22px 54px; }
+
+    /* ── Painted speech bubble from the brush buddy ────────── */
+    .k-reflect { display: flex; gap: 16px; align-items: flex-start; margin: 0 0 26px; }
+    .k-buddy {
+      width: 66px; height: 66px; flex-shrink: 0; margin-top: 8px;
+      border-radius: 46% 54% 55% 45% / 52% 44% 56% 48%;
+      background: linear-gradient(135deg, var(--k-red), var(--k-pink));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; box-shadow: var(--k-shadow-press);
+    }
+    .k-buddy svg { width: 32px; height: 32px; }
+    .k-bubble {
+      position: relative; flex: 1;
+      background: var(--k-paper); border-radius: 24px;
+      box-shadow: var(--k-shadow); padding: 18px 24px;
+      font-family: var(--k-hand); font-size: 1.35rem; line-height: 1.5; color: var(--k-ink);
+    }
+    .k-bubble::before {
+      content: ''; position: absolute; left: -9px; top: 28px;
+      width: 20px; height: 20px; background: var(--k-paper);
+      transform: rotate(45deg); border-radius: 4px;
+    }
+    .k-bubble-tools { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+    .k-hear {
+      width: 46px; height: 46px; border: none; cursor: pointer; border-radius: 50%;
+      background: var(--k-teal); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 0 rgba(63, 74, 61, 0.18);
+      transition: transform 0.2s cubic-bezier(0.34, 1.7, 0.64, 1);
+    }
+    .k-hear:hover { transform: scale(1.1); }
+    .k-hear svg { width: 22px; height: 22px; }
+    .k-ai-tag {
+      font-family: var(--k-font); font-size: 0.66rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px; color: var(--k-ink-soft);
+    }
+    .k-dots { display: inline-flex; gap: 7px; padding: 6px 0; }
+    .k-dots span {
+      width: 11px; height: 11px; border-radius: 50%; background: var(--k-teal);
+      animation: k-dot 1s ease-in-out infinite;
+    }
+    .k-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .k-dots span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes k-dot {
+      0%, 100% { transform: translateY(0); opacity: 0.5; }
+      50% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ── My pictures: polaroid wall ────────────────────────── */
+    .k-gallery-panel { margin: 0 0 24px; }
+    .k-polaroids {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 20px; padding-top: 12px;
+    }
+    .k-polaroid {
+      background: #fff; padding: 10px 10px 12px; border-radius: 6px;
+      box-shadow: 0 5px 16px rgba(63, 74, 61, 0.2);
+      transform: rotate(-2.2deg);
+      transition: transform 0.25s cubic-bezier(0.34, 1.7, 0.64, 1);
+    }
+    .k-polaroid:nth-child(even) { transform: rotate(1.8deg); }
+    .k-polaroid:hover { transform: rotate(0deg) scale(1.05); }
+    .k-polaroid img {
+      display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+      border-radius: 3px; background: #f4f1e6;
+    }
+    .k-polaroid b {
+      display: block; margin-top: 8px;
+      font-family: var(--k-hand); font-weight: 700; font-size: 1rem;
+      color: var(--k-ink); line-height: 1.25;
+    }
+    .k-pol-meta { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 5px; }
+    .k-pol-date { font-size: 0.66rem; color: var(--k-ink-soft); }
+    .k-pol-feel {
+      font-size: 0.64rem; font-weight: 700; border-radius: 100px; padding: 2px 9px;
+    }
+    .k-pol-feel.happy { background: #e7f6e9; color: #3c8c46; }
+    .k-pol-feel.okay { background: #e8f5f8; color: #2f8fa3; }
+    .k-pol-feel.tricky { background: #fff3d9; color: #c07f1f; }
+
+    /* ── Educator panel (demoted) ──────────────────────────── */
+    .k-edu-note { padding: 18px 22px; background: rgba(255, 253, 245, 0.72); box-shadow: none; }
+    .k-edu-note b.k-edu-label {
+      display: block; font-size: 0.78rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--k-ink-soft); margin-bottom: 5px;
+    }
+    .k-edu-note p { font-size: 0.82rem; color: var(--k-ink-soft); line-height: 1.6; margin: 0; }
+
+    @media (max-width: 700px) {
+      .k-easel-grid { flex-direction: column; }
+      .k-tools { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+      .k-reflect { flex-direction: column; }
+      .k-bubble::before { left: 24px; top: -9px; }
+    }
     @media (prefers-reduced-motion: reduce) {
-      .dr-action-btn:hover:not(:disabled) { transform: none; }
-    }
-
-    /* ─── Reflection card ─── */
-    .dr-reflect-card {
-      background: #eef3f4;
-      border-radius: 28px;
-      padding: 28px;
-      box-shadow: 10px 10px 26px rgba(13,79,94,0.14), -10px -10px 26px rgba(255,255,255,0.9);
-    }
-    .dr-reflect-card h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      color: var(--secondary);
-      margin-bottom: 6px;
-    }
-    .dr-reflect-sub {
-      font-size: 0.92rem;
-      color: var(--text-light);
-      margin-bottom: 22px;
-    }
-
-    .dr-feelings {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .dr-feeling {
-      flex: 1;
-      min-width: 120px;
-      border: none;
-      border-radius: 22px;
-      background: #eef3f4;
-      padding: 20px 14px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 7px 7px 16px rgba(13,79,94,0.14), -7px -7px 16px rgba(255,255,255,0.95);
-      transition: all 0.18s ease;
-    }
-    .dr-feeling:hover { transform: translateY(-3px); }
-    .dr-feeling.active {
-      box-shadow: inset 5px 5px 12px rgba(13,79,94,0.16), inset -5px -5px 12px rgba(255,255,255,0.9);
-    }
-    .dr-feeling-face {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .dr-feeling-face.happy { background: rgba(16,185,129,0.14); color: #0f9d6e; }
-    .dr-feeling-face.okay  { background: rgba(14,143,168,0.14); color: #0E8FA8; }
-    .dr-feeling-face.tricky{ background: rgba(255,158,24,0.16); color: #e08a17; }
-    .dr-feeling-label {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--secondary);
-    }
-    .dr-feeling.active .dr-feeling-label { color: #0a6f82; }
-
-    .dr-mic-row {
-      margin-top: 22px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-    .dr-mic-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      border: none;
-      border-radius: 30px;
-      padding: 14px 24px;
-      background: #0E8FA8;
-      color: #fff;
-      font-family: var(--font);
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 6px 6px 14px rgba(14,143,168,0.32);
-      transition: all 0.18s ease;
-    }
-    .dr-mic-btn:hover { background: #0a6f82; transform: translateY(-2px); }
-    .dr-mic-hint {
-      font-size: 0.84rem;
-      color: var(--text-muted);
-    }
-
-    /* ─── My Stories right rail ─── */
-    .dr-rail {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      position: sticky;
-      top: 90px;
-    }
-    /* shell removed the fixed navbar the 90px offset was for */
-    body.pf-shell .dr-rail { top: 24px; }
-    /* sections were 100px full-page bands; tighten inside the shell.
-       Bands with backgrounds become rounded cards, keeping inner padding. */
-    body.pf-shell .pf-main-wrap > section { padding: 32px 0; }
-    body.pf-shell .pf-main-wrap > section > .container { max-width: none; }
-    body.pf-shell .pf-main-wrap > section[style*="background"],
-    body.pf-shell .pf-main-wrap > section.dr-clay-bg { border-radius: 20px; padding: 32px 4px; margin-top: 8px; }
-    .dr-rail-head {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .dr-rail-head h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      color: var(--secondary);
-      margin: 0;
-    }
-    .dr-rail-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      background: rgba(14,143,168,0.1);
-      color: #0E8FA8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .dr-story {
-      background: var(--bg-card);
-      border-radius: 18px;
-      padding: 12px;
-      box-shadow: var(--shadow);
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      transition: transform 0.16s ease;
-    }
-    .dr-story:hover { transform: translateY(-2px); }
-    .dr-story-thumb {
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #0E8FA8;
-    }
-    .dr-story-body { flex: 1; min-width: 0; }
-    .dr-story-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 3px;
-    }
-    .dr-story-date {
-      font-size: 0.74rem;
-      color: var(--text-muted);
-    }
-    .dr-feel-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 6px;
-      padding: 3px 9px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
-    .dr-feel-tag.happy { background: rgba(16,185,129,0.12); color: #0f9d6e; }
-    .dr-feel-tag.okay  { background: rgba(14,143,168,0.12); color: #0E8FA8; }
-    .dr-feel-tag.tricky{ background: rgba(255,158,24,0.14); color: #d97f10; }
-
-    /* ─── Grown-up view ─── */
-    .dr-grownup {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 24px;
-    }
-    @media (max-width: 820px) {
-      .dr-grownup { grid-template-columns: 1fr; }
-    }
-    .dr-trend-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 24px;
-      background: rgba(16,185,129,0.12);
-      color: #0f9d6e;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-    .dr-sticker-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
-    .dr-sticker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: none;
-      border-radius: 24px;
-      padding: 10px 16px;
-      background: var(--bg);
-      color: var(--secondary);
-      font-family: var(--font);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      transition: all 0.16s ease;
-    }
-    .dr-sticker:hover { transform: translateY(-2px); color: #0E8FA8; }
-    .dr-sticker-emoji {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: rgba(14,143,168,0.12);
-      color: #0E8FA8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      .k-tool, .k-paint, .k-feel, .k-polaroid, .k-hear { transition: none; }
+      .k-dots span { animation: none; }
     }
   </style>
 </head>
-<body class="hub-home">
-<div class="bg-blobs" aria-hidden="true">
-  <div class="bg-blob bg-blob-1"></div>
-  <div class="bg-blob bg-blob-2"></div>
-  <div class="bg-blob bg-blob-3"></div>
-  <div class="bg-blob bg-blob-4"></div>
-  <div class="bg-blob bg-blob-5"></div>
-  <div class="bg-blob bg-blob-6"></div>
-</div>
-
-  <!-- ─── Navigation (umbrella) ─────────────────────────────── -->
-  <nav class="navbar" role="navigation" aria-label="Main navigation">
-    <div class="container">
-      <a href="index.html" class="navbar-brand"><div class="logo">PF</div> PedaForge</a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Dashboard</a></li>
-        <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
-          <a href="classes.html">My Classes</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
-        <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
-          <a href="coach.html">AI Coach</a><a href="observation.html">Lesson Observation</a><a href="lna.html">Learning Needs</a><a href="dashboard.html">PD Dashboard</a></div></li>
-        <li><span class="nav-dropdown-trigger">Spaces</span><div class="nav-dropdown">
-          <a href="sproutspace-layout.html">Layout Planner</a><a href="sproutspace-inventory.html">Resource Inventory</a><a href="sproutspace-control.html">HQ Control</a></div></li>
-        <li><span class="nav-dropdown-trigger">Home Literacy</span><div class="nav-dropdown">
-          <a href="home-phonics-studio.html">Phonics Studio</a><a href="home-benchmark.html">Termly Benchmark</a><a href="home-reading-coach.html">Reading Coach</a><a href="home-draw-reflect.html">Draw &amp; Reflect</a><a href="home-dictionary.html">Talking Dictionary</a></div></li>
-      </ul>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
+<body>
+  <div class="k-wrap">
+    <div class="k-hero">
+      <h1>Paint Corner</h1>
+      <p id="drKidLine">Paint a picture, then tell its story!</p>
     </div>
-  </nav>
 
-  <!-- ─── Page Header ───────────────────────────────────────── -->
-  <header class="page-header">
-    <div class="container">
-      <div class="breadcrumb">
-        <a href="index.html">Home</a>
-        <span>&#8250;</span>
-        <a href="index.html">Home</a>
-        <span>&#8250;</span>
-        <span class="current">Draw &amp; Reflect</span>
+    <!-- The easel -->
+    <div class="k-panel k-easel">
+      <div class="k-easel-grid">
+        <div class="k-tools" role="toolbar" aria-label="Painting tools">
+          <button type="button" class="k-tool on" data-tool="brush" aria-label="Brush">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.06 11.9l8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z"/></svg>
+            <b>Brush</b>
+          </button>
+          <button type="button" class="k-tool" data-tool="stamp" aria-label="Star stamp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.3L12 14.8l-4.8 2.5.9-5.3-3.9-3.8 5.4-.8z"/></svg>
+            <b>Stars</b>
+          </button>
+          <button type="button" class="k-tool" data-tool="eraser" aria-label="Eraser">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20H7L3 16a2 2 0 0 1 0-2.8l9.2-9.2a2 2 0 0 1 2.8 0l5 5a2 2 0 0 1 0 2.8L11 20"/><line x1="18" y1="13" x2="9" y2="13"/></svg>
+            <b>Eraser</b>
+          </button>
+          <button type="button" class="k-tool" id="drUndoBtn" disabled aria-label="Undo the last stroke">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+            <b>Oops</b>
+          </button>
+        </div>
+        <div class="k-frame">
+          <canvas class="k-canvas" id="drCanvas" width="640" height="480" aria-label="Painting canvas - use your finger, mouse or pen to paint"></canvas>
+        </div>
       </div>
-      <h1>Draw, Write &amp; Reflect</h1>
-      <p>A gentle social-emotional writing portal where children draw their day, narrate the story behind it, and name how it felt - building reflective practice and a growth mindset, one little story at a time.</p>
-      <div style="margin-top:18px;">
-        <span class="hub-pill">PedaForge Home - Module 4 of 5</span>
-      </div>
-      <!-- ─── Hub local sub-nav ─────────────────────────────── -->
-      <div class="hub-subnav">
-        <a href="index.html">Overview</a>
-        <a href="home-phonics-studio.html">Phonics Studio</a>
-        <a href="home-benchmark.html">Termly Benchmark</a>
-        <a href="home-reading-coach.html">Reading Coach</a>
-        <a href="home-draw-reflect.html" class="active">Draw &amp; Reflect</a>
-        <a href="home-dictionary.html">Talking Dictionary</a>
+      <!-- Paint blobs on a wooden tray -->
+      <div class="k-tray" role="toolbar" aria-label="Paint colours">
+        <button type="button" class="k-paint on" data-colour="#ff7d6b" style="background:#ff7d6b;" aria-label="Red paint"></button>
+        <button type="button" class="k-paint" data-colour="#ffcf5c" style="background:#ffcf5c;" aria-label="Yellow paint"></button>
+        <button type="button" class="k-paint" data-colour="#5fae62" style="background:#5fae62;" aria-label="Green paint"></button>
+        <button type="button" class="k-paint" data-colour="#4fb8c9" style="background:#4fb8c9;" aria-label="Teal paint"></button>
+        <button type="button" class="k-paint" data-colour="#6ea8e8" style="background:#6ea8e8;" aria-label="Blue paint"></button>
+        <button type="button" class="k-paint" data-colour="#b48fd9" style="background:#b48fd9;" aria-label="Purple paint"></button>
+        <button type="button" class="k-paint" data-colour="#ff9eb5" style="background:#ff9eb5;" aria-label="Pink paint"></button>
+        <button type="button" class="k-paint" data-colour="#7a5b3a" style="background:#7a5b3a;" aria-label="Brown paint"></button>
+        <button type="button" class="k-paint" data-colour="#3f4a3d" style="background:#3f4a3d;" aria-label="Ink paint"></button>
       </div>
     </div>
-  </header>
 
-  <!-- ─── Intro / Positioning ───────────────────────────────── -->
-  <section style="background:var(--bg-card);">
-    <div class="container">
-      <div class="two-col-grid" style="align-items:center;">
-        <div>
-          <span class="section-label">The Demo</span>
-          <h2 style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--secondary);line-height:1.2;margin-bottom:16px;">A Quiet, Safe Place to Make and Feel</h2>
-          <p style="font-size:1.05rem;color:var(--text-light);line-height:1.75;margin-bottom:16px;">Draw, Write &amp; Reflect turns the everyday habit of drawing into a daily moment of social-emotional learning. A child opens the studio, makes a picture about something that happened, and is then gently invited to reflect - "How did it go?" - choosing a friendly feeling face and, if they wish, telling the story out loud.</p>
-          <p style="font-size:1.05rem;color:var(--text-light);line-height:1.75;">No reading is required to take part, so even our youngest learners can express themselves. Every little story is saved, and grown-ups - parents at home and teachers at the centre - get a calm, encouraging view of the child's emotional week, with a warm way to respond.</p>
-        </div>
-        <div class="panel-card">
-          <div class="narrative-box">
-            <div class="narrative-label">What this module nurtures</div>
-            <div class="narrative-text">Social-emotional development, the language of feelings, reflective thinking and an early growth mindset - the belief that effort and trying again is what makes us grow.</div>
-          </div>
-          <ul class="icon-list mt-3">
-            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Draw-first, read-later - no literacy barrier to taking part.</li>
-            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Voice reflection lets children narrate before they can write.</li>
-            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Growth-mindset language is built into every grown-up response.</li>
-          </ul>
-          <div class="feature-tags mt-3">
-            <span class="tag tag-sprout">SEL</span>
-            <span class="tag tag-ai">Voice Reflection</span>
-            <span class="tag tag-framework">Growth Mindset</span>
-          </div>
-        </div>
+    <!-- Feelings -->
+    <div class="k-panel k-feel-panel">
+      <h2 class="k-title">How did it feel?</h2>
+      <p class="k-sub">Tap the face that matches. Every feeling is welcome!</p>
+      <div class="k-feels">
+        <button type="button" class="k-feel on" data-feeling="happy" aria-pressed="true">
+          <span class="k-feel-face happy">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </span>
+          <b>Happy</b>
+        </button>
+        <button type="button" class="k-feel" data-feeling="okay" aria-pressed="false">
+          <span class="k-feel-face okay">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </span>
+          <b>Okay</b>
+        </button>
+        <button type="button" class="k-feel" data-feeling="tricky" aria-pressed="false">
+          <span class="k-feel-face tricky">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </span>
+          <b>Tricky</b>
+        </button>
+      </div>
+      <div class="k-mic-row" id="drMicRow">
+        <button type="button" class="k-btn teal" id="drMicBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <span id="drMicLabel">Tell me about it</span>
+        </button>
+        <span class="k-said" id="drSaid"></span>
       </div>
     </div>
-  </section>
 
-  <!-- ─── The Creation Studio (clay-neumorphic) ─────────────── -->
-  <section class="dr-clay-bg">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Creation Studio</span>
-        <h2>Make a Little Story</h2>
-        <p>A soft, tactile studio designed for small hands - chunky tools, friendly colours, and plenty of white space. Below the canvas, a warm reflection moment helps a child name how the work felt.</p>
-      </div>
-
-      <!-- Who is drawing? (live child picker) -->
-      <div class="panel-card" style="margin-bottom:24px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;">
-        <div style="flex:1;min-width:220px;">
-          <h3 style="font-size:1rem;color:var(--secondary);margin:0 0 2px;" id="drPickerTitle">Who is drawing today?</h3>
-          <p class="profile-meta" style="margin:0;">Pick a child so their finished picture is saved to their own gallery.</p>
-        </div>
-        <div id="drPickerHost"></div>
-      </div>
-
-      <div class="dr-studio">
-
-        <!-- Left: creation studio -->
-        <div class="dr-creation">
-
-          <!-- Canvas + tool palette -->
-          <div class="dr-canvas-card">
-
-            <!-- Chunky pastel tool palette -->
-            <div class="dr-tools">
-              <div class="dr-tool-wrap">
-                <button class="dr-tool active" data-tool="brush" aria-label="Brush tool">
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.06 11.9l8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z"/></svg>
-                </button>
-                <span class="dr-tool-label">Brush</span>
-              </div>
-              <div class="dr-tool-wrap">
-                <button class="dr-tool" data-tool="stamp" aria-label="Star stamp tool">
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.3L12 14.8l-4.8 2.5.9-5.3-3.9-3.8 5.4-.8z"/></svg>
-                </button>
-                <span class="dr-tool-label">Stamp</span>
-              </div>
-              <div class="dr-tool-wrap">
-                <button class="dr-tool" data-tool="eraser" aria-label="Eraser tool">
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7L3 16a2 2 0 0 1 0-2.8l9.2-9.2a2 2 0 0 1 2.8 0l5 5a2 2 0 0 1 0 2.8L11 20"/><line x1="18" y1="13" x2="9" y2="13"/></svg>
-                </button>
-                <span class="dr-tool-label">Eraser</span>
-              </div>
-
-              <!-- Colour swatches -->
-              <div class="dr-colours">
-                <button class="dr-swatch active" data-colour="#0E8FA8" style="background:#0E8FA8;" aria-label="Teal"></button>
-                <button class="dr-swatch" data-colour="#F4A93A" style="background:#F4A93A;" aria-label="Sunny yellow"></button>
-                <button class="dr-swatch" data-colour="#E8638C" style="background:#E8638C;" aria-label="Pink"></button>
-                <button class="dr-swatch" data-colour="#5BC08A" style="background:#5BC08A;" aria-label="Green"></button>
-                <button class="dr-swatch" data-colour="#7E6BD6" style="background:#7E6BD6;" aria-label="Purple"></button>
-              </div>
-            </div>
-
-            <!-- Framed drawing area: a real canvas - draw here! -->
-            <div class="dr-canvas-frame">
-              <canvas class="draw-canvas" id="drCanvas" width="460" height="340" aria-label="Drawing canvas - use your finger, mouse or pen to draw"></canvas>
-            </div>
-          </div>
-
-          <!-- Canvas actions -->
-          <div class="dr-canvas-actions">
-            <button type="button" class="dr-action-btn" id="drUndoBtn" disabled>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
-              Undo
-            </button>
-            <button type="button" class="dr-action-btn primary" id="drDoneBtn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              I'm done!
-            </button>
-          </div>
-
-          <!-- Canned AI reflection appears here after "I'm done" -->
-          <div class="dr-reflect-chat" id="drReflectChat" hidden aria-live="polite"></div>
-
-          <!-- Reflection card -->
-          <div class="dr-reflect-card">
-            <h3>How did it go?</h3>
-            <p class="dr-reflect-sub">Tap the face that matches how making this felt. There are no wrong answers - every feeling is welcome.</p>
-
-            <div class="dr-feelings">
-              <button class="dr-feeling active" aria-pressed="true">
-                <span class="dr-feeling-face happy">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-                </span>
-                <span class="dr-feeling-label">Happy</span>
-              </button>
-              <button class="dr-feeling" aria-pressed="false">
-                <span class="dr-feeling-face okay">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-                </span>
-                <span class="dr-feeling-label">Okay</span>
-              </button>
-              <button class="dr-feeling" aria-pressed="false">
-                <span class="dr-feeling-face tricky">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-                </span>
-                <span class="dr-feeling-label">Tricky</span>
-              </button>
-            </div>
-
-            <div class="dr-mic-row">
-              <button class="dr-mic-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-                Tell me about it
-              </button>
-              <span class="dr-mic-hint">Press and talk - your words are saved with your picture.</span>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Right rail: My Stories gallery (live from artworks) -->
-        <aside class="dr-rail">
-          <div class="dr-rail-head">
-            <span class="dr-rail-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
-            <h3>My Stories</h3>
-          </div>
-          <p class="profile-meta" id="drGalleryHint" style="margin:0;">Finished pictures land here - press "I'm done!" to save the first one.</p>
-          <div id="drGallery" style="display:flex;flex-direction:column;gap:14px;"></div>
-        </aside>
-
-      </div>
+    <!-- Big done button -->
+    <div class="k-done-row">
+      <button type="button" class="k-btn big" id="drDoneBtn">I'm done!</button>
     </div>
-  </section>
 
-  <!-- ─── Grown-up View ─────────────────────────────────────── -->
-  <section style="background:var(--bg-card);">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Grown-up View</span>
-        <h2>A Calm, Encouraging Window for Parents &amp; Teachers</h2>
-        <p>The same gentle stories, read through an adult lens - a simple emotional trend, a growth-mindset note, and a warm way to respond. No grades, no comparisons - just understanding and encouragement.</p>
-      </div>
+    <!-- Brush buddy speech bubble -->
+    <div class="k-reflect" id="drReflectChat" hidden aria-live="polite"></div>
 
-      <div class="dr-grownup">
-
-        <!-- SEL trend + growth-mindset note -->
-        <div class="panel-card">
-          <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--secondary);margin-bottom:12px;">The Reflective Week</h3>
-          <p style="font-size:0.96rem;color:var(--text-light);line-height:1.7;margin-bottom:14px;">Every saved story carries the feeling the child chose - <strong>Happy</strong>, <strong>Okay</strong> or <strong>Tricky</strong> - so over a week the gallery becomes a gentle emotional record. Watching a child return to a "tricky" story and try again is one of the loveliest early signs of a growth mindset taking root.</p>
-
-          <div class="narrative-box">
-            <div class="narrative-label">Growth-mindset note</div>
-            <div class="narrative-text">When something keeps going wrong, help the child name it as "tricky" rather than "bad" - and try again. Naming a hard feeling and persisting is exactly the resilience we want to nurture. A simple way to extend this at home: ask "what part was tricky, and what helped?" rather than "did you finish?"</div>
-          </div>
-        </div>
-
-        <!-- Leave a sticker -->
-        <div class="panel-card">
-          <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--secondary);margin-bottom:8px;">Leave a Sticker</h3>
-          <p style="font-size:0.92rem;color:var(--text-light);line-height:1.7;margin-bottom:8px;">Send a warm, wordless cheer that lands on the child's story. Stickers are encouragement only - they celebrate effort and feeling, never the "quality" of the drawing.</p>
-
-          <div class="dr-sticker-row">
-            <button class="dr-sticker">
-              <span class="dr-sticker-emoji"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
-              I love it
-            </button>
-            <button class="dr-sticker">
-              <span class="dr-sticker-emoji"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/></svg></span>
-              Great effort
-            </button>
-            <button class="dr-sticker">
-              <span class="dr-sticker-emoji"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-              You tried again
-            </button>
-            <button class="dr-sticker">
-              <span class="dr-sticker-emoji"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></span>
-              Made me smile
-            </button>
-          </div>
-
-          <div class="recommendation-box mt-4">
-            <h4 style="color:#0a6f82;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Gentle by design</h4>
-            <p>Children see only kind, affirming responses - never scores. Teachers and parents share one calm view, and all reflections, voice notes and stickers stay inside the Singapore-hosted, PDPA-compliant home-school bridge.</p>
-          </div>
-        </div>
-
-      </div>
+    <!-- Polaroid gallery -->
+    <div class="k-panel k-gallery-panel">
+      <h2 class="k-title">My pictures</h2>
+      <p class="k-sub" id="drGalleryHint">Finished pictures hang here - press "I'm done!" to hang the first one.</p>
+      <div class="k-polaroids" id="drGallery"></div>
     </div>
-  </section>
 
-  <!-- ─── Closing CTA Band ──────────────────────────────────── -->
-  <section id="explore">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Keep Exploring</span>
-        <h2>More of the PedaForge Home Bridge</h2>
-        <p>Draw, Write &amp; Reflect is one of five modules in PedaForge Home. Step through the others, or return to the dashboard for the full picture.</p>
-      </div>
-
-      <div class="module-grid mb-4">
-        <div class="module-card">
-          <div class="module-num">3</div>
-          <h3>Reading Coach</h3>
-          <p>A patient AI buddy that listens as a child reads aloud, gently models tricky words, and celebrates progress at home.</p>
-          <div class="module-cta"><a href="home-reading-coach.html" class="btn btn-primary" style="background:#0E8FA8;border:none;">Open Reading Coach &rarr;</a></div>
-        </div>
-        <div class="module-card">
-          <div class="module-num">5</div>
-          <h3>Talking Dictionary</h3>
-          <p>Tap any word or picture to hear it spoken clearly, building vocabulary and confidence one curious tap at a time.</p>
-          <div class="module-cta"><a href="home-dictionary.html" class="btn btn-primary" style="background:#0E8FA8;border:none;">Open Talking Dictionary &rarr;</a></div>
-        </div>
-        <div class="module-card">
-          <div class="module-num">2</div>
-          <h3>Termly Benchmark</h3>
-          <p>A warm, low-stress check-in that shows each child's growth over the term and suggests gentle next steps for home.</p>
-          <div class="module-cta"><a href="home-benchmark.html" class="btn btn-primary" style="background:#0E8FA8;border:none;">Open Termly Benchmark &rarr;</a></div>
-        </div>
-      </div>
-
-      <div style="text-align:center;">
-        <a href="index.html" class="btn btn-secondary btn-lg">&larr; Back to Dashboard Overview</a>
-      </div>
+    <!-- Educator panel (demoted) -->
+    <div class="k-panel k-edu-note">
+      <b class="k-edu-label">For educators</b>
+      <p>Paint Corner is the Draw, Write and Reflect SEL module. Each saved picture carries the feeling the child chose (Happy, Okay or Tricky), the story they told out loud if they used the microphone, and a short AI reflection - a gentle emotional record over the week, never a grade. Voice recognition runs in the browser only; pictures and reflections are stored in the Singapore-hosted, PDPA-compliant workspace with row-level security.</p>
     </div>
-  </section>
+  </div>
 
-  <!-- ─── Footer ────────────────────────────────────────────── -->
   <footer class="footer"><div class="container"><div class="footer-bottom">
-    <span>PedaForge - Busy Bees network - functional proof of concept</span>
-    <div class="footer-badges"><span class="footer-badge">PDPA Compliant</span><span class="footer-badge">SG Data Residency</span><span class="footer-badge">Row-Level Security</span></div>
+    <span>PedaForge Home - part of the PedaForge teaching studio</span>
   </div></div></footer>
 
-  <button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/pf-auth.js"></script>
   <script src="js/pf-api.js"></script>
-  <script src="js/pf-markdown.js"></script>
-  <script src="js/pf-shell.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/pf-kids.js"></script>
   <script src="js/home-speech.js"></script>
   <script src="js/home-draw.js"></script>
 </body>

@@ -4,648 +4,331 @@
 <script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PedaForge Home Talking Dictionary: a child-safe word lab where children hear words spoken aloud with Azure Neural TTS, see syllable splits and kid-friendly definitions, practise spelling, and watch their word-recognition grow.">
-  <title>Talking Dictionary &amp; Word Recognition | PedaForge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="PedaForge Home Word Jar: tap a word to hear it spoken aloud, see its sounds and meaning, then spell it back to fill your jar.">
+  <title>Word Jar - PedaForge Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/app-shell.css">
+  <link rel="stylesheet" href="css/kids.css">
   <style>
-    /* ─── Home hub accent namespace (teal) ─────────────────────
-       Scoped to this page; mirrors the per-hub pattern in style.css. */
-    body.hub-home {
-      --accent-proposal: #0E8FA8;
-      --accent-proposal-soft: rgba(14,143,168,0.10);
-      --accent-proposal-line: rgba(14,143,168,0.24);
-    }
-
-    /* ─── Clay neumorphic word lab ─────────────────────────────
-       Soft pillows built from the existing --bg + shadow tokens. */
-    .wordlab {
-      background: linear-gradient(160deg, #f3eee6 0%, #faf6f0 60%, #f0f6f7 100%);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 10px 30px rgba(45,42,94,0.07);
-    }
-
-    .clay-card {
-      background: var(--bg);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow:
-        8px 8px 18px rgba(45,42,94,0.08),
-        -8px -8px 18px rgba(255,255,255,0.9);
-    }
-    .clay-card + .clay-card { margin-top: 22px; }
-
-    /* ─── Search row ───────────────────────────────────────── */
-    .word-search {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .word-search-field {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px 22px;
-      border-radius: 100px;
-      background: var(--bg);
-      box-shadow:
-        inset 5px 5px 12px rgba(45,42,94,0.09),
-        inset -5px -5px 12px rgba(255,255,255,0.95);
-    }
-    .word-search-field svg { color: var(--text-muted); flex-shrink: 0; }
-    .word-search-text {
-      font-family: var(--font);
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--secondary);
-      letter-spacing: 0.5px;
-    }
-    .word-search-caret {
-      width: 2px;
-      height: 1.4rem;
-      background: var(--accent-proposal);
-      border-radius: 2px;
-      display: inline-block;
-      animation: blinkCaret 1.1s step-end infinite;
-    }
-    @keyframes blinkCaret { 50% { opacity: 0; } }
-
-    /* ─── Speaker button (soft inset pillow) ───────────────── */
-    .speaker-btn {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      border: none;
-      flex-shrink: 0;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      background: linear-gradient(150deg, var(--accent-proposal) 0%, #0b7287 100%);
-      box-shadow:
-        6px 6px 14px rgba(14,143,168,0.32),
-        -5px -5px 12px rgba(255,255,255,0.85),
-        inset 2px 2px 4px rgba(255,255,255,0.28),
-        inset -2px -2px 5px rgba(0,0,0,0.12);
-      transition: transform var(--transition), box-shadow var(--transition);
-    }
-    .speaker-btn:hover { transform: translateY(-2px); }
-    .speaker-btn:active {
-      box-shadow:
-        inset 4px 4px 9px rgba(0,0,0,0.18),
-        inset -3px -3px 7px rgba(255,255,255,0.2);
-    }
-    .speaker-caption {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      margin-top: 12px;
-      font-size: 0.82rem;
-      color: var(--text-light);
-    }
-    .speaker-caption .sound-wave {
-      display: inline-flex;
-      align-items: flex-end;
-      gap: 3px;
-      height: 14px;
-    }
-    .speaker-caption .sound-wave span {
-      width: 3px;
-      border-radius: 2px;
-      background: var(--accent-proposal);
-      transform: scaleY(0.5);
-      transform-origin: bottom;
-    }
-    /* wave bars animate ONLY while speechSynthesis is speaking */
-    .speaker-caption .sound-wave.speaking span { animation: soundWave 1s ease-in-out infinite; }
-    .speaker-caption .sound-wave span:nth-child(1) { height: 6px;  animation-delay: 0s;    }
-    .speaker-caption .sound-wave span:nth-child(2) { height: 13px; animation-delay: 0.15s; }
-    .speaker-caption .sound-wave span:nth-child(3) { height: 9px;  animation-delay: 0.3s;  }
-    .speaker-caption .sound-wave span:nth-child(4) { height: 14px; animation-delay: 0.45s; }
-    @keyframes soundWave { 0%,100% { transform: scaleY(0.5); } 50% { transform: scaleY(1); } }
-    @media (prefers-reduced-motion: reduce) {
-      .speaker-caption .sound-wave.speaking span { animation: none; transform: scaleY(1); }
-      .word-search-caret { animation: none; }
-    }
-
-    /* ─── Result word display ──────────────────────────────── */
-    .result-word {
-      font-family: 'Playfair Display', serif;
-      font-size: 4rem;
-      font-weight: 800;
-      color: var(--secondary);
-      line-height: 1;
-      letter-spacing: 1px;
-    }
-    .syllable-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 14px;
-      padding: 8px 16px;
-      border-radius: 100px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--accent-proposal);
-      background: var(--accent-proposal-soft);
-      box-shadow:
-        inset 2px 2px 5px rgba(14,143,168,0.10),
-        inset -2px -2px 5px rgba(255,255,255,0.9);
-    }
-    .syllable-chip .syll-part {
-      padding: 2px 9px;
-      border-radius: 8px;
+    /* ── Word lab panel ─────────────────────────────────────── */
+    .dj-lab { margin-bottom: 24px; }
+    .dj-search-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .dj-search-field {
+      flex: 1; min-width: 200px;
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 22px; border-radius: 100px;
       background: #fff;
-      color: var(--secondary);
+      box-shadow: inset 0 0 0 3px rgba(63, 74, 61, 0.1);
     }
-    .syllable-chip .syll-btn {
-      border: none;
-      cursor: pointer;
-      font-family: var(--font);
-      font-size: 0.95rem;
-      font-weight: 700;
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    .dj-search-field svg { color: var(--k-ink-soft); flex-shrink: 0; }
+    .dj-search-text {
+      font-family: var(--k-font); font-size: 1.7rem; font-weight: 700;
+      color: var(--k-ink); letter-spacing: 0.5px;
     }
-    .syllable-chip .syll-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(14,143,168,0.18);
+    .dj-caret {
+      width: 3px; height: 1.5rem; border-radius: 2px;
+      background: var(--k-teal); display: inline-block;
+      animation: dj-caret 1.1s step-end infinite;
     }
-    .zh-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin: 14px 0 0 10px;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 100px;
-      font-family: var(--font);
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      color: var(--accent-proposal);
-      background: var(--accent-proposal-soft);
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .zh-chip:hover { transform: translateY(-2px); }
-    .zh-chip[hidden] { display: none; }
-    .kid-def {
-      font-size: 1.05rem;
-      color: var(--text);
-      line-height: 1.6;
-      margin-top: 18px;
-    }
-    .kid-def strong { color: var(--accent-proposal); }
-    .example-sentence {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-top: 14px;
-      padding: 14px 18px;
-      border-radius: var(--radius-sm);
-      background: var(--accent-proposal-soft);
-      font-size: 0.98rem;
-      color: var(--secondary);
-      font-style: italic;
-      line-height: 1.55;
-    }
-    .example-sentence svg { color: var(--accent-proposal); flex-shrink: 0; margin-top: 2px; }
+    @keyframes dj-caret { 50% { opacity: 0; } }
 
-    /* ─── Sentence starter pills ───────────────────────────── */
-    .starter-label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin: 22px 0 10px;
-    }
-    .starter-pills { display: flex; flex-wrap: wrap; gap: 10px; }
-    .starter-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 11px 18px;
-      border: none;
-      border-radius: 100px;
-      font-family: var(--font);
-      font-size: 0.92rem;
-      font-weight: 600;
-      color: var(--secondary);
-      background: var(--bg);
-      cursor: pointer;
-      box-shadow:
-        5px 5px 11px rgba(45,42,94,0.08),
-        -5px -5px 11px rgba(255,255,255,0.92);
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .starter-pill:hover { transform: translateY(-2px); }
-    .starter-pill .pill-dot {
-      width: 9px; height: 9px; border-radius: 50%;
-      background: var(--accent-proposal); flex-shrink: 0;
-    }
-
-    /* ─── Spell it! letter tiles ───────────────────────────── */
-    .spell-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 6px;
-    }
-    .spell-title {
-      display: flex; align-items: center; gap: 9px;
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      color: var(--secondary);
-    }
-    .spell-title .spark {
-      width: 30px; height: 30px; border-radius: 9px;
-      display: inline-flex; align-items: center; justify-content: center;
-      color: var(--accent-proposal); background: var(--accent-proposal-soft);
-    }
-    .spell-hint { font-size: 0.85rem; color: var(--text-light); margin-bottom: 18px; }
-    .letter-tiles { display: flex; gap: 14px; flex-wrap: wrap; }
-    .letter-tile {
-      width: 62px; height: 62px;
-      border: none;
-      border-radius: 16px;
+    /* Giant speaker button */
+    .dj-speaker {
+      width: 108px; height: 108px; border-radius: 50%;
+      border: none; flex-shrink: 0; cursor: pointer; color: #fff;
+      background: radial-gradient(circle at 50% 36%, #ffe08a 0%, var(--k-yellow) 58%, #eab23a 100%);
       display: flex; align-items: center; justify-content: center;
-      font-family: var(--font);
-      font-size: 1.7rem;
-      font-weight: 800;
-      color: var(--secondary);
-      background: var(--bg);
-      cursor: pointer;
-      position: relative;
-      box-shadow:
-        6px 6px 13px rgba(45,42,94,0.10),
-        -6px -6px 13px rgba(255,255,255,0.95);
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
+      box-shadow: 0 7px 0 rgba(63, 74, 61, 0.18),
+                  0 16px 30px rgba(255, 207, 92, 0.5),
+                  inset 0 5px 12px rgba(255, 255, 255, 0.4);
+      transition: transform 0.22s cubic-bezier(0.34, 1.7, 0.64, 1), box-shadow 0.22s ease;
     }
-    .letter-tile:hover:not(:disabled) { transform: translateY(-3px) rotate(-2deg); }
+    .dj-speaker svg { width: 50px; height: 50px; color: #7a5b12; }
+    .dj-speaker:hover { transform: translateY(-4px) rotate(-2deg) scale(1.04); }
+    .dj-speaker:active { transform: translateY(2px); box-shadow: var(--k-shadow-press); }
+    .dj-caption {
+      display: flex; align-items: center; gap: 8px; margin-top: 14px;
+      font-family: var(--k-hand); font-size: 1.1rem; color: var(--k-ink-soft);
+    }
+    .dj-caption .sound-wave { display: inline-flex; align-items: flex-end; gap: 3px; height: 15px; }
+    .dj-caption .sound-wave span {
+      width: 4px; border-radius: 2px; background: var(--k-teal);
+      transform: scaleY(0.5); transform-origin: bottom;
+    }
+    .dj-caption .sound-wave.speaking span { animation: dj-wave 1s ease-in-out infinite; }
+    .dj-caption .sound-wave span:nth-child(1) { height: 6px;  animation-delay: 0s; }
+    .dj-caption .sound-wave span:nth-child(2) { height: 14px; animation-delay: 0.15s; }
+    .dj-caption .sound-wave span:nth-child(3) { height: 10px; animation-delay: 0.3s; }
+    .dj-caption .sound-wave span:nth-child(4) { height: 15px; animation-delay: 0.45s; }
+    @keyframes dj-wave { 0%, 100% { transform: scaleY(0.5); } 50% { transform: scaleY(1); } }
+
+    /* Big word + sounds + meaning */
+    .dj-word {
+      font-family: var(--k-font); font-weight: 700;
+      font-size: clamp(3rem, 8vw, 4.6rem); line-height: 1;
+      color: var(--k-ink); margin-top: 22px;
+    }
+    .dj-syllables {
+      display: inline-flex; align-items: center; gap: 9px; flex-wrap: wrap;
+      margin-top: 16px; padding: 9px 16px; border-radius: 100px;
+      background: rgba(79, 184, 201, 0.14);
+      font-family: var(--k-font); font-size: 1.1rem; font-weight: 700; color: var(--k-teal);
+    }
+    .dj-syllables .syll-part {
+      padding: 5px 13px; border-radius: 12px;
+      background: #fff; color: var(--k-ink);
+    }
+    .dj-syllables .syll-btn {
+      border: none; cursor: pointer;
+      min-height: 40px; display: inline-flex; align-items: center;
+      font-family: var(--k-font); font-size: 1.1rem; font-weight: 700;
+      box-shadow: 0 3px 0 rgba(63, 74, 61, 0.12);
+      transition: transform 0.25s cubic-bezier(0.34, 1.6, 0.64, 1);
+    }
+    .dj-syllables .syll-btn:hover { transform: translateY(-2px) scale(1.05); }
+    .zh-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      min-height: 40px; margin: 16px 0 0 10px; padding: 9px 18px;
+      border: none; border-radius: 100px; cursor: pointer;
+      font-family: var(--k-font); font-size: 1.05rem; font-weight: 700;
+      color: var(--k-purple); background: rgba(180, 143, 217, 0.16);
+      transition: transform 0.25s cubic-bezier(0.34, 1.6, 0.64, 1);
+    }
+    .zh-chip:hover { transform: translateY(-2px) scale(1.04); }
+    .kid-def { font-size: 1.2rem; color: var(--k-ink); line-height: 1.6; margin-top: 20px; }
+    .kid-def strong { color: var(--k-teal); }
+    .dj-example {
+      display: flex; align-items: flex-start; gap: 10px; margin-top: 14px;
+      padding: 15px 19px; border-radius: 18px;
+      background: rgba(255, 207, 92, 0.18);
+      font-family: var(--k-hand); font-size: 1.25rem; color: var(--k-ink); line-height: 1.5;
+    }
+    .dj-example svg { color: #b98a2a; flex-shrink: 0; margin-top: 4px; }
+
+    /* Sentence starter pills */
+    .dj-starter-label {
+      font-size: 0.95rem; font-weight: 700; color: var(--k-ink);
+      margin: 24px 0 10px;
+    }
+    .dj-starters { display: flex; flex-wrap: wrap; gap: 10px; }
+    .dj-starters .starter-pill {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 13px 20px; border: 3px solid rgba(63, 74, 61, 0.1);
+      border-radius: 100px; cursor: pointer;
+      font-family: var(--k-font); font-size: 1.05rem; font-weight: 600;
+      color: var(--k-ink); background: #fff;
+      transition: transform 0.2s cubic-bezier(0.34, 1.7, 0.64, 1), border-color 0.2s ease;
+    }
+    .dj-starters .starter-pill:hover { transform: scale(1.05) rotate(-1deg); border-color: var(--k-teal); }
+    .dj-starters .pill-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--k-pink); flex-shrink: 0; }
+
+    /* ── Spell it! big tiles ────────────────────────────────── */
+    .dj-spell { margin-bottom: 24px; }
+    .dj-spell-hint { font-family: var(--k-hand); font-size: 1.15rem; color: var(--k-ink-soft); margin: 4px 0 20px; }
+    .dj-spell-hint strong { color: var(--k-ink); }
+    .letter-tiles, .spell-slots { display: flex; gap: 14px; flex-wrap: wrap; }
+    .spell-slots { margin-top: 22px; }
+    .letter-tile {
+      width: 78px; height: 78px;
+      border: none; border-radius: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--k-font); font-size: 2.1rem; font-weight: 700;
+      color: var(--k-ink); background: #fff;
+      box-shadow: 0 6px 0 rgba(63, 74, 61, 0.15), 0 12px 20px rgba(63, 74, 61, 0.1);
+      transition: transform 0.25s cubic-bezier(0.34, 1.6, 0.64, 1), opacity 0.2s ease;
+    }
+    .letter-tile:hover:not(:disabled) { transform: translateY(-4px) rotate(-3deg) scale(1.05); }
     .letter-tile.used {
-      opacity: 0.28;
-      cursor: default;
-      box-shadow: inset 3px 3px 8px rgba(45,42,94,0.10), inset -3px -3px 8px rgba(255,255,255,0.9);
-    }
-    .spell-slots {
-      display: flex; gap: 14px; margin-top: 22px; flex-wrap: wrap;
+      opacity: 0.25; cursor: default;
+      box-shadow: inset 0 4px 8px rgba(63, 74, 61, 0.12);
     }
     .spell-slot {
-      width: 62px; height: 62px;
-      border: none;
-      border-radius: 16px;
+      width: 78px; height: 78px;
+      border: 3px dashed rgba(63, 74, 61, 0.2); border-radius: 20px; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      font-family: var(--font);
-      font-size: 1.7rem; font-weight: 800;
-      color: var(--secondary);
-      background: var(--bg);
-      cursor: pointer;
-      box-shadow:
-        inset 5px 5px 11px rgba(45,42,94,0.10),
-        inset -5px -5px 11px rgba(255,255,255,0.95);
+      font-family: var(--k-font); font-size: 2.1rem; font-weight: 700;
+      color: var(--k-teal); background: rgba(255, 255, 255, 0.6);
     }
-    .spell-slot.filled { color: var(--accent-proposal); }
-    .spell-slot.pop { animation: slotPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-    @keyframes slotPop {
+    .spell-slot.filled { border-style: solid; border-color: var(--k-teal); background: #fff; }
+    .spell-slot.pop { animation: dj-slot-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes dj-slot-pop {
       0% { transform: scale(0.8); }
       60% { transform: scale(1.12); }
       100% { transform: scale(1); }
     }
-    @media (prefers-reduced-motion: reduce) { .spell-slot.pop { animation: none; } }
-    .spell-actions {
-      display: flex; align-items: center; gap: 14px;
-      margin-top: 22px; flex-wrap: wrap;
+    .dj-spell-actions { display: flex; align-items: center; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+    .dj-feedback {
+      font-family: var(--k-hand); font-size: 1.3rem; font-weight: 700; color: var(--k-hill-deep);
     }
-    .check-btn {
-      display: inline-flex; align-items: center; gap: 9px;
-      padding: 13px 26px;
-      border: none; border-radius: 100px;
-      font-family: var(--font);
-      font-size: 0.95rem; font-weight: 700;
-      color: #fff; cursor: pointer;
-      background: linear-gradient(150deg, var(--accent-proposal) 0%, #0b7287 100%);
-      box-shadow:
-        5px 5px 12px rgba(14,143,168,0.28),
-        -4px -4px 10px rgba(255,255,255,0.85);
-      transition: transform var(--transition);
-    }
-    .check-btn:hover { transform: translateY(-2px); }
-    .spell-feedback {
-      display: inline-flex; align-items: center; gap: 7px;
-      font-size: 0.9rem; font-weight: 600; color: var(--success);
-    }
-    .spell-feedback.is-error { color: var(--accent-proposal); }
+    .dj-feedback.is-error { color: #c26a2a; }
 
-    /* ─── My Words Jar (right rail) ────────────────────────── */
-    .jar-rail { display: flex; flex-direction: column; gap: 22px; }
-    .jar-card {
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
-    }
-    .jar-card h3 {
-      display: flex; align-items: center; gap: 9px;
-      font-size: 1.05rem; color: var(--secondary); margin-bottom: 4px;
-    }
-    .jar-card h3 svg { color: var(--accent-proposal); }
-    .jar-sub { font-size: 0.85rem; color: var(--text-light); margin-bottom: 18px; }
-
-    /* progress ring */
-    .ring-wrap { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
-    .ring { position: relative; width: 84px; height: 84px; flex-shrink: 0; }
-    .ring svg { transform: rotate(-90deg); }
+    /* ── My Word Jar ────────────────────────────────────────── */
+    .dj-jar { margin-bottom: 20px; }
+    .ring-wrap { display: flex; align-items: center; gap: 18px; margin: 16px 0 22px; flex-wrap: wrap; }
+    .ring { position: relative; width: 96px; height: 96px; flex-shrink: 0; }
+    .ring svg { transform: rotate(-90deg); width: 96px; height: 96px; }
     .ring-label {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      line-height: 1;
+      position: absolute; inset: 0; line-height: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .ring-pct { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 800; color: var(--secondary); }
-    .ring-cap { font-size: 0.62rem; color: var(--text-muted); margin-top: 2px; }
-    .ring-text strong { font-size: 1.05rem; color: var(--secondary); }
-    .ring-text p { font-size: 0.84rem; color: var(--text-light); line-height: 1.5; margin-top: 3px; }
+    .ring-pct { font-family: var(--k-font); font-size: 1.5rem; font-weight: 700; color: var(--k-ink); }
+    .ring-cap { font-size: 0.62rem; color: var(--k-ink-soft); margin-top: 3px; }
+    .ring-text strong { font-size: 1.1rem; color: var(--k-ink); }
+    .ring-text p { font-size: 0.9rem; color: var(--k-ink-soft); line-height: 1.5; margin-top: 3px; max-width: 420px; }
+    #dictRingCircle { transition: stroke-dashoffset 0.9s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-    .word-chip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .word-chip {
-      display: flex; flex-direction: column; gap: 7px;
-      padding: 12px 13px;
-      border-radius: var(--radius-sm);
-      background: var(--bg);
-      box-shadow:
-        4px 4px 9px rgba(45,42,94,0.06),
-        -4px -4px 9px rgba(255,255,255,0.92);
-    }
+    .word-chip-grid { display: flex; flex-wrap: wrap; gap: 12px; }
     .jar-chip {
-      border: none;
-      cursor: pointer;
-      align-items: flex-start;
-      text-align: left;
-      font-family: var(--font);
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+      display: inline-flex; align-items: center; gap: 10px;
+      border: 3px solid rgba(63, 74, 61, 0.1); border-radius: 100px;
+      padding: 12px 20px; cursor: pointer;
+      font-family: var(--k-font); background: #fff;
+      transition: transform 0.2s cubic-bezier(0.34, 1.7, 0.64, 1), border-color 0.2s ease;
     }
-    .jar-chip:hover { transform: translateY(-2px); }
-    .jar-chip.jar-active {
-      box-shadow:
-        inset 3px 3px 8px rgba(14,143,168,0.14),
-        inset -3px -3px 8px rgba(255,255,255,0.9),
-        0 0 0 2px var(--accent-proposal-line);
-    }
-    #dictRingCircle { transition: stroke-dashoffset 0.9s cubic-bezier(0.34,1.56,0.64,1); }
-    @media (prefers-reduced-motion: reduce) { #dictRingCircle { transition: none; } }
-    .word-chip .wc-word { font-weight: 700; font-size: 0.98rem; color: var(--secondary); }
+    .jar-chip:hover { transform: scale(1.06) rotate(-1deg); border-color: var(--k-teal); }
+    .jar-chip.jar-active { border-color: var(--k-red); background: #fff3f0; }
+    .jar-chip .wc-word { font-weight: 700; font-size: 1.25rem; color: var(--k-ink); }
     .wc-status {
-      align-self: flex-start;
-      padding: 3px 9px;
-      border-radius: 100px;
-      font-size: 0.66rem;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
+      padding: 4px 11px; border-radius: 100px;
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase;
     }
-    .wc-status.known    { background: rgba(16,185,129,0.12); color: var(--success); }
-    .wc-status.learning { background: rgba(255,158,24,0.14); color: var(--accent-warm); }
-    .wc-status.new      { background: var(--accent-proposal-soft); color: var(--accent-proposal); }
-
+    .wc-status.known    { background: rgba(95, 174, 98, 0.18); color: #2e7d43; }
+    .wc-status.learning { background: rgba(255, 207, 92, 0.35); color: #9c6b12; }
+    .wc-status.new      { background: rgba(79, 184, 201, 0.16); color: #2f8a99; }
     .jar-legend {
-      display: flex; flex-wrap: wrap; gap: 14px;
-      margin-top: 18px; padding-top: 16px;
-      border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 16px; margin-top: 18px;
+      font-size: 0.8rem; color: var(--k-ink-soft);
     }
-    .jar-legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--text-light); }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .legend-dot.known    { background: var(--success); }
-    .legend-dot.learning { background: var(--accent-warm); }
-    .legend-dot.new      { background: var(--accent-proposal); }
+    .jar-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .legend-dot.known    { background: var(--k-hill-deep); }
+    .legend-dot.learning { background: var(--k-yellow); }
+    .legend-dot.new      { background: var(--k-teal); }
 
-    @media (max-width: 600px) {
-      .result-word { font-size: 3rem; }
-      .word-chip-grid { grid-template-columns: 1fr; }
+    /* Educator hint line */
+    .dj-teacher-note {
+      font-size: 0.78rem; color: var(--k-ink-soft); line-height: 1.5;
+      background: rgba(255, 253, 245, 0.72);
+      border: 2px dashed rgba(63, 74, 61, 0.16);
+      border-radius: 18px; padding: 12px 18px; margin: 0 0 20px;
+    }
+    .dj-teacher-note strong { color: var(--k-ink); }
+
+    @media (max-width: 620px) {
+      .letter-tile, .spell-slot { width: 62px; height: 62px; font-size: 1.7rem; }
+      .dj-speaker { width: 92px; height: 92px; }
+      .dj-search-text { font-size: 1.35rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .dj-caret { animation: none; }
+      .dj-caption .sound-wave.speaking span { animation: none; transform: scaleY(1); }
+      .spell-slot.pop { animation: none; }
+      #dictRingCircle { transition: none; }
+      .dj-speaker, .letter-tile, .jar-chip, .dj-starters .starter-pill { transition: none; }
     }
   </style>
 </head>
-<body class="hub-home">
-<div class="bg-blobs" aria-hidden="true">
-  <div class="bg-blob bg-blob-1"></div>
-  <div class="bg-blob bg-blob-2"></div>
-  <div class="bg-blob bg-blob-3"></div>
-  <div class="bg-blob bg-blob-4"></div>
-  <div class="bg-blob bg-blob-5"></div>
-  <div class="bg-blob bg-blob-6"></div>
-</div>
-
-  <!-- ─── Navigation (umbrella) ─────────────────────────────── -->
-  <nav class="navbar" role="navigation" aria-label="Main navigation">
-    <div class="container">
-      <a href="index.html" class="navbar-brand"><div class="logo">PF</div> PedaForge</a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Dashboard</a></li>
-        <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
-          <a href="classes.html">My Classes</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
-        <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
-          <a href="coach.html">AI Coach</a><a href="observation.html">Lesson Observation</a><a href="lna.html">Learning Needs</a><a href="dashboard.html">PD Dashboard</a></div></li>
-        <li><span class="nav-dropdown-trigger">Spaces</span><div class="nav-dropdown">
-          <a href="sproutspace-layout.html">Layout Planner</a><a href="sproutspace-inventory.html">Resource Inventory</a><a href="sproutspace-control.html">HQ Control</a></div></li>
-        <li><span class="nav-dropdown-trigger">Home Literacy</span><div class="nav-dropdown">
-          <a href="home-phonics-studio.html">Phonics Studio</a><a href="home-benchmark.html">Termly Benchmark</a><a href="home-reading-coach.html">Reading Coach</a><a href="home-draw-reflect.html">Draw &amp; Reflect</a><a href="home-dictionary.html">Talking Dictionary</a></div></li>
-      </ul>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
-    </div>
-  </nav>
-
-  <!-- ─── Page Header ───────────────────────────────────────── -->
-  <header class="page-header">
-    <div class="container">
-      <div class="breadcrumb">
-        <a href="index.html">Home</a>
-        <span>&#8250;</span>
-        <a href="index.html">Home</a>
-        <span>&#8250;</span>
-        <span class="current">Talking Dictionary</span>
-      </div>
-      <span class="hub-pill">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        PedaForge Home
-      </span>
-      <h1>Talking Dictionary</h1>
-      <p>A child-safe word lab where a young reader types or taps a word, hears it spoken aloud with natural Azure Neural text-to-speech, then sees the syllables, a kid-friendly meaning and an example sentence. Sentence starters invite the child to use the word, a Spell it! game turns recognition into production, and a My Words Jar makes growth visible - all on their own, at their own pace.</p>
-      <div class="mt-2">
-        <a href="index.html" class="btn btn-secondary btn-sm">&larr; Back to Dashboard</a>
-      </div>
-      <!-- ─── Hub local sub-nav ─────────────────────────────── -->
-      <div class="hub-subnav">
-        <a href="home-phonics-studio.html">Phonics Studio</a>
-        <a href="home-benchmark.html">Termly Benchmark</a>
-        <a href="home-reading-coach.html">Reading Coach</a>
-        <a href="home-draw-reflect.html">Draw &amp; Reflect</a>
-        <a href="home-dictionary.html" class="active">Talking Dictionary</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- ─── Main Content ──────────────────────────────────────── -->
-  <main class="container main-content-spacing">
-
-    <!-- Who is exploring words? (live child picker) -->
-    <div class="panel-card" style="margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;">
-      <div style="flex:1;min-width:220px;">
-        <h3 style="font-size:1rem;color:var(--secondary);margin:0 0 2px;" id="dictPickerTitle">Whose Words Jar is this?</h3>
-        <p class="profile-meta" style="margin:0;">Pick a child so their word progress is saved to their own jar.</p>
-      </div>
-      <div id="dictPickerHost"></div>
+<body>
+  <div class="k-wrap">
+    <div class="k-hero">
+      <h1>Word Jar</h1>
+      <p>Tap a word to hear it, then spell it to fill your jar!</p>
     </div>
 
-    <div class="demo-two-col">
-
-      <!-- ─── Left: The Word Lab ──────────────────────────── -->
-      <div>
-        <div class="wordlab">
-
-          <!-- Search card -->
-          <div class="clay-card">
-            <div class="word-search">
-              <div class="word-search-field">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <span class="word-search-text" id="dictSearchText">ship</span><span class="word-search-caret" aria-hidden="true"></span>
-              </div>
-              <button class="speaker-btn" id="dictSpeakerBtn" aria-label="Say the word aloud">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-              </button>
-            </div>
-            <div class="speaker-caption">
-              <span class="sound-wave" id="dictWave" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
-              <span id="dictCaption">Tap the speaker to hear "ship" spoken aloud - real browser TTS</span>
-            </div>
-          </div>
-
-          <!-- Result card (re-rendered by js/home-dictionary.js) -->
-          <div class="clay-card">
-            <div class="result-word" id="dictWord">ship</div>
-            <div class="syllable-chip" id="dictSyllables"></div>
-            <button class="zh-chip" id="dictZhChip" hidden aria-label="Hear the word in Mandarin">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-              <span id="dictZhText"></span>
-              <small style="font-weight:600;opacity:0.75;">- Mandarin</small>
-            </button>
-            <p class="kid-def" id="dictDef"></p>
-            <div class="example-sentence">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l9-9 9 9"/><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"/><path d="M9 21V13h6v8"/></svg>
-              <span id="dictExample"></span>
-            </div>
-
-            <div class="starter-label">Now you try - finish a sentence</div>
-            <div class="starter-pills" id="dictStarters"></div>
-          </div>
-
-          <!-- Spell it! card (click-to-place tiles) -->
-          <div class="clay-card">
-            <div class="spell-head">
-              <span class="spell-title">
-                <span class="spark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2H22l-6 4.4 2.3 7.2-6.3-4.5L5.7 20.8 8 13.6 2 9.2h7.6z"/></svg></span>
-                Spell it!
-              </span>
-              <span class="tag tag-amount tag-sm">Self-led practice</span>
-            </div>
-            <p class="spell-hint">Tap each letter to drop it into the next box and spell <strong id="dictSpellWord">ship</strong>, then press Check. Tap a filled box to send its letter back. Try as many times as you like - mistakes are part of learning.</p>
-
-            <div class="letter-tiles" id="dictTiles"></div>
-
-            <div class="spell-slots" id="dictSlots"></div>
-
-            <div class="spell-actions">
-              <button class="check-btn" id="dictCheckBtn">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                Check
-              </button>
-              <span class="spell-feedback" id="dictFeedback"></span>
-            </div>
-          </div>
-
+    <!-- Word lab: hear it, see it, say it -->
+    <div class="k-panel dj-lab">
+      <div class="dj-search-row">
+        <div class="dj-search-field">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span class="dj-search-text" id="dictSearchText">ship</span><span class="dj-caret" aria-hidden="true"></span>
         </div>
+        <button class="dj-speaker" id="dictSpeakerBtn" aria-label="Say the word aloud">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        </button>
+      </div>
+      <div class="dj-caption">
+        <span class="sound-wave" id="dictWave" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        <span id="dictCaption">Tap the big speaker to hear "ship"!</span>
+      </div>
 
-        <!-- Pedagogy note under the lab -->
-        <div class="narrative-box mt-4">
-          <span class="narrative-label">How this helps a young reader grow</span>
-          <p class="narrative-text">Every word a child looks up becomes a small loop of independent learning: hear it, see how it breaks into sounds, understand what it means, use it in a sentence of their own, then spell it back. Because the Talking Dictionary speaks with natural Azure Neural voices and never marks a child wrong, it builds the confidence to keep trying. Words a child practises move from <em>New</em> to <em>Learning</em> to <em>Known</em> in their Words Jar, so progress is visible and motivating - to the child, the parent and the teacher.</p>
+      <div class="dj-word" id="dictWord">ship</div>
+      <div class="dj-syllables" id="dictSyllables"></div>
+      <button class="zh-chip" id="dictZhChip" hidden aria-label="Hear the word in Mandarin">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        <span id="dictZhText"></span>
+        <small style="font-weight:600;opacity:0.75;">in Mandarin</small>
+      </button>
+      <p class="kid-def" id="dictDef"></p>
+      <div class="dj-example">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l9-9 9 9"/><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"/><path d="M9 21V13h6v8"/></svg>
+        <span id="dictExample"></span>
+      </div>
+
+      <div class="dj-starter-label">Now you try - finish a sentence out loud</div>
+      <div class="dj-starters" id="dictStarters"></div>
+    </div>
+
+    <!-- Spell it! -->
+    <div class="k-panel dj-spell">
+      <h2 class="k-title">Spell it!</h2>
+      <p class="dj-spell-hint">Tap the letters to spell <strong id="dictSpellWord">ship</strong>. Tap a box to send a letter back.</p>
+
+      <div class="letter-tiles" id="dictTiles"></div>
+      <div class="spell-slots" id="dictSlots"></div>
+
+      <div class="dj-spell-actions">
+        <button class="k-btn teal big" id="dictCheckBtn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Check my word
+        </button>
+        <span class="dj-feedback" id="dictFeedback"></span>
+      </div>
+    </div>
+
+    <!-- My Word Jar -->
+    <div class="k-panel dj-jar">
+      <h2 class="k-title">My Word Jar</h2>
+      <p class="k-sub" id="dictJarSub">Hear a word and spell it to move it from New to Learning to Known. Tap any word to open it.</p>
+
+      <div class="ring-wrap">
+        <div class="ring" role="img" aria-label="Word jar growth ring">
+          <svg viewBox="0 0 84 84">
+            <circle cx="42" cy="42" r="36" fill="none" stroke="rgba(63,74,61,0.12)" stroke-width="9"/>
+            <circle id="dictRingCircle" cx="42" cy="42" r="36" fill="none" stroke="var(--k-teal)" stroke-width="9" stroke-linecap="round" stroke-dasharray="226.2" stroke-dashoffset="226.2"/>
+          </svg>
+          <div class="ring-label">
+            <span class="ring-pct" id="dictRingPct">0%</span>
+            <span class="ring-cap">known</span>
+          </div>
+        </div>
+        <div class="ring-text">
+          <strong>Your jar is growing!</strong>
+          <p id="dictRingText">Hear a word and spell it to grow the jar.</p>
         </div>
       </div>
 
-      <!-- ─── Right rail: My Words Jar ────────────────────── -->
-      <div class="jar-rail">
+      <div class="word-chip-grid" id="dictJarGrid"></div>
 
-        <div class="jar-card">
-          <h3>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8"/><path d="M9 2v2.79a4 4 0 0 1-.52 1.97l-.18.32A4 4 0 0 0 7.78 9H16.2a4 4 0 0 0-.52-1.92l-.18-.32A4 4 0 0 1 15 4.79V2"/><path d="M7.78 9A6 6 0 0 0 6 13v5a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-5a6 6 0 0 0-1.78-4"/></svg>
-            My Words Jar
-          </h3>
-          <p class="jar-sub" id="dictJarSub">Every word explored drops into the jar. Hear a word and spell it to move it from <em>New</em> to <em>Learning</em> to <em>Known</em>. Tap any word to open it.</p>
-
-          <!-- Progress ring -->
-          <div class="ring-wrap">
-            <div class="ring" role="img" aria-label="Word recognition growth ring">
-              <svg width="84" height="84" viewBox="0 0 84 84">
-                <circle cx="42" cy="42" r="36" fill="none" stroke="var(--border)" stroke-width="9"/>
-                <circle id="dictRingCircle" cx="42" cy="42" r="36" fill="none" stroke="var(--accent-proposal)" stroke-width="9" stroke-linecap="round" stroke-dasharray="226.2" stroke-dashoffset="226.2"/>
-              </svg>
-              <div class="ring-label">
-                <span class="ring-pct" id="dictRingPct">0%</span>
-                <span class="ring-cap">known</span>
-              </div>
-            </div>
-            <div class="ring-text">
-              <strong>Word recognition</strong>
-              <p id="dictRingText">Hear a word and spell it to grow the jar.</p>
-            </div>
-          </div>
-
-          <!-- Word chips (rendered by js/home-dictionary.js) -->
-          <div class="word-chip-grid" id="dictJarGrid"></div>
-
-          <div class="jar-legend">
-            <span><span class="legend-dot known"></span>Known</span>
-            <span><span class="legend-dot learning"></span>Learning</span>
-            <span><span class="legend-dot new"></span>New</span>
-          </div>
-        </div>
-
-        <!-- Safe & encouraging panel -->
-        <div class="jar-card">
-          <h3>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-            Child-safe by design
-          </h3>
-          <ul class="icon-list">
-            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Only age-appropriate words and definitions from a curated early-reading dictionary - no open web search.</li>
-            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Encouraging feedback only - the child is never told they are wrong, just nudged to try again.</li>
-            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Natural Azure Neural voices read every word, so the child can learn pronunciation independently.</li>
-            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Singapore-hosted, PDPA-compliant - the Words Jar belongs to the child and family.</li>
-          </ul>
-        </div>
-
+      <div class="jar-legend">
+        <span><span class="legend-dot known"></span>Known</span>
+        <span><span class="legend-dot learning"></span>Learning</span>
+        <span><span class="legend-dot new"></span>New</span>
       </div>
-
     </div>
 
-  </main>
+    <!-- Educator hint -->
+    <p class="dj-teacher-note"><strong>For your teacher:</strong> words move New to Learning to Known as the child hears and spells them; progress saves to the jar of the child picked in the dock above. Curated early-reading word list only - no open web search. Real browser TTS here; Azure Neural TTS in production.</p>
+  </div>
 
-  <!-- ─── Footer ────────────────────────────────────────────── -->
   <footer class="footer"><div class="container"><div class="footer-bottom">
-    <span>PedaForge - Busy Bees network - functional proof of concept</span>
-    <div class="footer-badges"><span class="footer-badge">PDPA Compliant</span><span class="footer-badge">SG Data Residency</span><span class="footer-badge">Row-Level Security</span></div>
+    <span>PedaForge Home - part of the PedaForge teaching studio</span>
   </div></div></footer>
 
-  <button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/pf-auth.js"></script>
   <script src="js/pf-api.js"></script>
-  <script src="js/pf-markdown.js"></script>
-  <script src="js/pf-shell.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/pf-kids.js"></script>
   <script src="js/home-speech.js"></script>
   <script src="js/home-dictionary-data.js"></script>
   <script src="js/home-dictionary.js"></script>

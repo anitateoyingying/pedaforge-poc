@@ -44,9 +44,9 @@
   };
   var simBadgeEl = null;
   var support = { stt: false, tts: false };
-  var pickedChild = null;   // {id,name} from pfApi.childPicker (or null = general)
+  var pickedChild = null;   // {id,name} from the kids dock (or null = general)
 
-  function childName() { return pickedChild ? pickedChild.name : 'friend'; }
+  function childName() { return pickedChild ? pickedChild.name.split(' ')[0] : 'friend'; }
 
   function reducedMotion() {
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -117,10 +117,10 @@
     var isSim = state.mode === 'sim';
     if (phase === 'idle') {
       els.micLabel.textContent = state.hasResult
-        ? 'Read again'
-        : (isSim ? 'Play sample reading' : 'Tap to read');
+        ? 'Read again!'
+        : (isSim ? 'Play a pretend read' : 'Tap to read');
       els.micHint.textContent = isSim
-        ? 'A scripted sample read drives the very same pipeline.'
+        ? 'Watch a pretend reader light up the words.'
         : 'Take your time - there are no wrong tries here.';
     } else if (phase === 'counting') {
       els.micLabel.textContent = 'Get ready...';
@@ -128,7 +128,7 @@
     } else if (phase === 'listening') {
       els.micLabel.textContent = isSim ? 'Playing... tap to stop' : 'I\'m listening... tap to stop';
       els.micHint.textContent = isSim
-        ? 'Watch the words light up as the sample child reads.'
+        ? 'Watch the words light up as the pretend reader goes.'
         : 'Read your story out loud, nice and clear.';
     }
   }
@@ -184,7 +184,7 @@
       },
       onerror: function (code) {
         if (code === 'not-allowed' || code === 'audio-capture' || code === 'service-not-allowed') {
-          fallBackToSim('Mic unavailable - playing a sample reading instead.');
+          fallBackToSim('The mic is shy today - here is a pretend read instead.');
         }
       },
       onend: function (manual) {
@@ -200,7 +200,7 @@
       }
     });
     if (!state.listener) {
-      fallBackToSim('Speech recognition unavailable - playing a sample reading.');
+      fallBackToSim('The mic is shy today - here is a pretend read instead.');
       return;
     }
     resetSilenceTimer();
@@ -307,12 +307,34 @@
         if (window.pfToast) pfToast('Could not save session: ' + r.error.message);
         return;
       }
-      if (window.pfToast) pfToast('Reading session saved - WCPM ' + wcpm);
+      if (window.pfKids) {
+        window.pfKids.celebrate();
+        window.pfKids.refreshStars();
+      }
       loadRecentSessions();
     });
   }
 
-  /* ─── Recent sessions (live from reading_sessions) ───────── */
+  /* ─── Your last reads: kid-friendly chips ────────────────── */
+  function bookIcon() {
+    var svgNS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '1.7');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    svg.setAttribute('aria-hidden', 'true');
+    var p1 = document.createElementNS(svgNS, 'path');
+    p1.setAttribute('d', 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z');
+    var p2 = document.createElementNS(svgNS, 'path');
+    p2.setAttribute('d', 'M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z');
+    svg.appendChild(p1);
+    svg.appendChild(p2);
+    return svg;
+  }
+
   function loadRecentSessions() {
     var list = document.getElementById('rcSessionsList');
     var sub = document.getElementById('rcSessionsSub');
@@ -324,76 +346,43 @@
     q = pickedChild ? q.eq('child_id', pickedChild.id) : q.is('child_id', null);
     q.then(function (r) {
       list.textContent = '';
-      if (r.error) { sub.textContent = 'Could not load sessions: ' + r.error.message; return; }
+      if (r.error) { sub.textContent = 'Could not load your reads right now.'; return; }
       var rows = r.data || [];
       if (!rows.length) {
-        sub.textContent = pickedChild
-          ? 'No saved reads for ' + pickedChild.name + ' yet - press the big circle to start the first one!'
-          : 'No saved reads yet - press the big circle to start the first one!';
+        sub.textContent = 'No stories yet, ' + childName() + ' - press the big button to read your first one!';
         return;
       }
-      sub.textContent = (pickedChild ? pickedChild.name + '\'s' : 'Your') + ' latest reads, newest first.';
+      sub.textContent = 'Look how much you have read, ' + childName() + '!';
       rows.forEach(function (s) {
-        var row = document.createElement('div');
-        row.style.cssText = 'display:flex;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border);font-size:0.86rem;';
-        var wcpm = document.createElement('strong');
-        wcpm.style.color = 'var(--secondary)';
-        wcpm.textContent = s.wcpm + ' WCPM';
-        var acc = document.createElement('span');
-        acc.textContent = s.accuracy + '% accuracy';
-        var mode = document.createElement('span');
-        mode.style.cssText = 'font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;';
-        mode.textContent = s.mode;
-        var when = document.createElement('span');
-        when.style.cssText = 'margin-left:auto;color:var(--text-muted);font-size:0.76rem;';
-        when.textContent = window.pfApi ? window.pfApi.ago(s.created_at) : '';
-        row.appendChild(wcpm); row.appendChild(acc); row.appendChild(mode); row.appendChild(when);
-        list.appendChild(row);
+        var chip = document.createElement('span');
+        chip.className = 'k-chip rc-read-chip';
+        chip.appendChild(bookIcon());
+        var when = window.pfApi && window.pfApi.ago ? window.pfApi.ago(s.created_at) : '';
+        chip.appendChild(document.createTextNode('A story' + (when ? ' - ' + when : '')));
+        list.appendChild(chip);
       });
     });
   }
 
-  /* ─── Child picker (pfApi) ───────────────────────────────── */
-  function makeProfileLink(host) {
-    if (!document.getElementById('pfXlinkCss')) {
-      var s = document.createElement('style');
-      s.id = 'pfXlinkCss';
-      s.textContent = '.pf-xlink{display:inline-block;margin-top:6px;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-decoration:none;}.pf-xlink:hover{color:var(--accent-proposal,var(--primary));text-decoration:underline;}';
-      document.head.appendChild(s);
+  /* ─── Dock child (pf-kids.js drives who is reading) ──────── */
+  function applyKid(kid) {
+    pickedChild = kid ? { id: kid.id, name: kid.name } : null;
+    if (els.mascotTitle && !state.hasResult) {
+      els.mascotTitle.textContent = 'Hello, ' + childName() + '!';
     }
-    var a = document.createElement('a');
-    a.className = 'pf-xlink';
-    a.textContent = 'View full profile →';
-    a.hidden = true;
-    host.parentNode.insertBefore(a, host.nextSibling);
-    return a;
+    loadRecentSessions();
   }
 
-  function initChildPicker() {
-    var host = document.getElementById('rcPickerHost');
-    var title = document.getElementById('rcChildTitle');
-    if (!host || !window.pfApi || !window.pfApi.childPicker) return;
-    var profileLink = makeProfileLink(host);
-    window.pfApi.childPicker(host, {
-      allowNone: true,
-      onPick: function (child) {
-        pickedChild = child ? { id: child.id, name: child.name } : null;
-        if (title) title.textContent = pickedChild ? pickedChild.name + '\'s reading time' : 'Reading time';
-        if (els.mascotTitle && !state.hasResult) els.mascotTitle.textContent = 'Hello, ' + childName() + '!';
-        if (pickedChild) {
-          profileLink.href = 'child.html?id=' + encodeURIComponent(pickedChild.id);
-          profileLink.hidden = false;
-        } else {
-          profileLink.hidden = true;
-        }
-        loadRecentSessions();
-      }
+  function initKidWiring() {
+    if (!window.pfAuthReady) return;
+    window.pfAuthReady.then(function (ctx) {
+      if (!ctx.user) return;
+      document.addEventListener('pf-kid-change', function (e) { applyKid(e.detail); });
+      if (window.pfKids && window.pfKids.activeChild()) applyKid(window.pfKids.activeChild());
     });
   }
-  if (window.pfAuthReady) window.pfAuthReady.then(initChildPicker);
-  else document.addEventListener('DOMContentLoaded', function () {
-    if (window.pfAuthReady) window.pfAuthReady.then(initChildPicker);
-  });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initKidWiring);
+  else initKidWiring();
 
   function showResults(elapsedSec, reason) {
     var ok = countOk();
@@ -409,7 +398,7 @@
     var body;
     if (attempted === 0) {
       title = 'I didn\'t quite hear you, ' + childName() + '!';
-      body = 'Let\'s try again together - press the big circle and read nice and loud.';
+      body = 'Let\'s try again together - press the big button and read nice and loud.';
     } else if (accuracy >= 95) {
       title = 'Superstar reading, ' + childName() + '!';
       body = 'You read ' + ok + ' of ' + total + ' words beautifully!';
@@ -461,7 +450,7 @@
       li.className = 'rc-error-item';
       var mark = document.createElement('span');
       mark.className = 'rc-error-mark';
-      mark.textContent = '✓';
+      mark.textContent = 'OK';
       var div = document.createElement('div');
       div.textContent = 'No miscues in this read - clean, confident decoding.';
       li.appendChild(mark);
@@ -557,7 +546,7 @@
 
     /* Simulated badge (visible whenever scripted mode is active) */
     var badgeHost = document.getElementById('rcSimBadgeHost');
-    simBadgeEl = window.pfSpeech.simBadge(badgeHost, 'Simulated demo');
+    simBadgeEl = window.pfSpeech.simBadge(badgeHost, 'Pretend read');
 
     /* Mode toggle wiring */
     var liveBtn = els.modeToggle.querySelector('[data-mode="live"]');

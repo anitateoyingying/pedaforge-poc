@@ -25,12 +25,8 @@
       { href: 'sproutspace-inventory.html', name: 'Inventory', ico: 'M21 8V21H3V8M1 3h22v5H1zM10 12h4' },
       { href: 'sproutspace-control.html', name: 'HQ Control', ico: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
     ]},
-    { label: 'Literacy', items: [
-      { href: 'home-reading-coach.html', name: 'Reading Coach', ico: 'M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v4' },
-      { href: 'home-phonics-studio.html', name: 'Phonics Studio', ico: 'M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z' },
-      { href: 'home-dictionary.html', name: 'Dictionary', ico: 'M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14' },
-      { href: 'home-benchmark.html', name: 'Benchmark', ico: 'M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11' },
-      { href: 'home-draw-reflect.html', name: 'Draw & Reflect', ico: 'M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5zM2 2l7.586 7.586M11 11a2 2 0 1 0 4 0 2 2 0 0 0-4 0z' },
+    { label: 'PedaForge Home', items: [
+      { href: 'home.html', name: 'Kids World', ico: 'M3 10.5 12 3l9 7.5M5 9.5V21h5v-6h4v6h5V9.5', badge: 'kids' },
     ]},
   ];
 
@@ -152,6 +148,8 @@
 
   function boot() {
     if (!window.pfAuthReady) return;
+    // Kids world pages get the pf-kids chrome instead of the studio shell.
+    if (/^home(-[a-z-]+)?\.html$/.test(currentPage())) return;
     window.pfAuthReady.then(function (ctx) {
       if (!ctx.user) return; // login page or signed out
       mount();

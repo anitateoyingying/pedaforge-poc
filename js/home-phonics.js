@@ -1,10 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════
-   PedaForge Home - Phonics Studio demo
-   Sound chips speak their phoneme ("sh... as in ship"), the blending
-   strip taps tiles for individual sounds then blends sh-i-p with
-   accelerating audio and a springy tile slide-together, and reader
-   Play buttons narrate title + first line with real TTS.
-   Requires js/home-speech.js.
+   PedaForge Home - Sound Studio (kids paint-world)
+   Sound bubbles speak their phoneme ("sh... as in ship"), the big
+   blend-a-word strip taps tiles for individual sounds then blends
+   sh-i-p with accelerating audio, a springy slide-together and a
+   confetti celebration, and story Play buttons narrate title +
+   first line with real TTS. "Read with me" lights each word up.
+   Requires js/home-speech.js; celebration via js/pf-kids.js.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -34,36 +35,31 @@
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
-  /* ─── This week's sounds chips ───────────────────────────── */
+  function wiggle(el) {
+    if (reducedMotion()) return;
+    el.classList.remove('k-wiggle');
+    void el.offsetWidth;
+    el.classList.add('k-wiggle');
+  }
+
+  function celebrate() {
+    if (window.pfKids && window.pfKids.celebrate) window.pfKids.celebrate();
+  }
+
+  /* ─── This week's sounds bubbles ─────────────────────────── */
   function wireSoundChips() {
-    var chips = document.querySelectorAll('.ps-phoneme');
+    var chips = document.querySelectorAll('.k-sound');
     chips.forEach(function (chip) {
-      chip.style.cursor = 'pointer';
-      chip.setAttribute('role', 'button');
-      chip.setAttribute('tabindex', '0');
-      chip.title = tts ? 'Tap to hear this sound' : 'Audio unavailable in this browser';
-      function play() {
-        var key = (chip.textContent.match(/\/[a-z]+\//) || [null])[0];
-        var info = key ? PHONEME_SPEECH[key] : null;
-        if (!info || !tts) return;
-        bounce(chip);
-        window.pfSpeech.speak(info.cue, { rate: 0.72 });
-      }
-      chip.addEventListener('click', play);
-      chip.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); play(); }
+      if (!tts) chip.title = 'Audio unavailable in this browser';
+      chip.addEventListener('click', function () {
+        var info = PHONEME_SPEECH[chip.dataset.phoneme];
+        wiggle(chip);
+        if (info && tts) window.pfSpeech.speak(info.cue, { rate: 0.72 });
       });
     });
   }
 
-  function bounce(el) {
-    if (reducedMotion()) return;
-    el.classList.remove('ps-bounce');
-    void el.offsetWidth;
-    el.classList.add('ps-bounce');
-  }
-
-  /* ─── Blending strip ─────────────────────────────────────── */
+  /* ─── Blend-a-word strip ─────────────────────────────────── */
   function speakSequence(items, gaps, done) {
     var i = 0;
     function next() {
@@ -86,13 +82,13 @@
     var word = document.getElementById('psBlendWord');
     if (!strip || !btn) return;
 
-    var tiles = Array.prototype.slice.call(strip.querySelectorAll('.ps-blend-tile'));
+    var tiles = Array.prototype.slice.call(strip.querySelectorAll('.k-blend-tile'));
 
     tiles.forEach(function (tile, i) {
       tile.addEventListener('click', function () {
-        if (blending || !tts) return;
-        bounce(tile);
-        window.pfSpeech.speak(BLEND_TILES[i].sound, { rate: 0.72 });
+        if (blending) return;
+        wiggle(tile);
+        if (tts) window.pfSpeech.speak(BLEND_TILES[i].sound, { rate: 0.72 });
       });
       if (!tts) tile.title = 'Audio unavailable - sounds shown visually';
     });
@@ -108,7 +104,7 @@
         return {
           text: BLEND_TILES[i].sound,
           rate: 0.72,
-          before: function () { bounce(tile); tile.classList.add('lit'); }
+          before: function () { wiggle(tile); tile.classList.add('lit'); }
         };
       });
 
@@ -116,6 +112,7 @@
         strip.classList.add('blended');       /* tiles slide together */
         setTimeout(function () {
           word.classList.add('show');
+          celebrate();
           if (tts) window.pfSpeech.speak('ship!', { rate: 0.85 });
           setTimeout(function () {
             strip.classList.remove('blended');
@@ -128,27 +125,25 @@
       }
 
       if (tts) {
-        /* sounds accelerate: 500ms → 260ms → 90ms gaps, then the word */
+        /* sounds accelerate: 500ms then 260ms then 90ms gaps, then the word */
         speakSequence(seq, [500, 260, 90], finish);
       } else {
         /* visual-only fallback: light tiles in rhythm, then slide */
-        var i = 0;
-        var delays = [0, 550, 950, 1250];
+        var delays = [0, 550, 950];
         tiles.forEach(function (tile, idx) {
-          setTimeout(function () { bounce(tile); tile.classList.add('lit'); }, delays[idx]);
+          setTimeout(function () { wiggle(tile); tile.classList.add('lit'); }, delays[idx]);
         });
-        i = delays[delays.length - 1];
-        setTimeout(finish, i + 250);
+        setTimeout(finish, delays[delays.length - 1] + 550);
       }
     });
   }
 
-  /* ─── Reader Play buttons ────────────────────────────────── */
+  /* ─── Story shelf play buttons ───────────────────────────── */
   function wireReaders() {
-    var cards = document.querySelectorAll('.ps-reader-card');
+    var cards = document.querySelectorAll('.k-reader');
     cards.forEach(function (card) {
-      var btn = card.querySelector('.ps-play');
-      var titleEl = card.querySelector('.ps-reader-title');
+      var btn = card.querySelector('.k-play');
+      var titleEl = card.querySelector('.k-reader-title');
       if (!btn || !titleEl) return;
       if (!tts) {
         btn.title = 'Audio unavailable in this browser';
@@ -159,32 +154,34 @@
         var title = titleEl.textContent.trim();
         var line = READER_LINES[title] || '';
         btn.disabled = true;
-        var label = btn.querySelector('.ps-play-label');
+        wiggle(card);
+        var label = btn.querySelector('.k-play-label');
         if (label) label.textContent = 'Reading...';
         window.pfSpeech.speak(title + '. ' + line, {
           rate: 0.85,
           onend: function () {
             btn.disabled = false;
-            if (label) label.textContent = 'Play reader';
+            if (label) label.textContent = 'Play story';
           }
         });
       });
     });
   }
 
-  /* ─── Read-along transport play button ───────────────────── */
+  /* ─── Read with me: light words up while speaking ────────── */
   function wireReadAlong() {
-    var play = document.querySelector('.ps-transport-play');
-    var wordsEls = document.querySelectorAll('.ps-sentence .ps-word');
-    var progressFill = document.querySelector('.ps-progress-fill');
-    if (!play || wordsEls.length === 0) return;
+    var play = document.querySelector('.k-read-play');
+    var wordEls = document.querySelectorAll('.k-sentence .k-word');
+    var progressFill = document.querySelector('.k-read-fill');
+    if (!play || wordEls.length === 0) return;
     var running = false;
     play.addEventListener('click', function () {
       if (running) return;
       running = true;
-      var words = Array.prototype.slice.call(wordsEls);
+      wiggle(play);
+      var words = Array.prototype.slice.call(wordEls);
       var sentence = words.map(function (w) { return w.textContent; }).join(' ');
-      words.forEach(function (w) { w.classList.remove('ps-read', 'ps-active'); });
+      words.forEach(function (w) { w.classList.remove('done', 'on'); });
       if (progressFill) {
         progressFill.style.transition = reducedMotion() ? 'none' : 'width 0.4s ease';
         progressFill.style.width = '0%';
@@ -193,11 +190,11 @@
       var perWord = 430;
       function highlight() {
         if (i > 0) {
-          words[i - 1].classList.remove('ps-active');
-          words[i - 1].classList.add('ps-read');
+          words[i - 1].classList.remove('on');
+          words[i - 1].classList.add('done');
         }
         if (i >= words.length) { running = false; return; }
-        words[i].classList.add('ps-active');
+        words[i].classList.add('on');
         i += 1;
         if (progressFill) progressFill.style.width = Math.round((i / words.length) * 100) + '%';
         setTimeout(highlight, perWord);
@@ -218,9 +215,13 @@
     window.pfSpeech.simBadge(document.getElementById('psReadalongSim'), 'Simulated timing');
   }
 
+  function boot() {
+    if (window.pfAuthReady) window.pfAuthReady.then(init);
+    else init();
+  }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
-    init();
+    boot();
   }
 }());

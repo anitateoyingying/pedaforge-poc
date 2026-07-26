@@ -19,7 +19,7 @@
   var typeTimer = null;
   var tts = false;
   var hasZh = false;
-  var pickedChild = null;  // {id,name} or null (educator/general jar)
+  var pickedChild = null;  // {id,name} from the kids dock, or null (general jar)
 
   function reducedMotion() {
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -48,7 +48,11 @@
       child_id: pickedChild ? pickedChild.id : null,
       updated_at: new Date().toISOString()
     }).then(function (r) {
-      if (r.error && window.pfToast) pfToast('Could not sync word: ' + r.error.message);
+      if (r.error) {
+        if (window.pfToast) pfToast('Could not sync word: ' + r.error.message);
+        return;
+      }
+      if (window.pfKids) window.pfKids.refreshStars();
     });
   }
 
@@ -93,51 +97,31 @@
     });
   }
 
-  function makeProfileLink(host) {
-    if (!document.getElementById('pfXlinkCss')) {
-      var s = document.createElement('style');
-      s.id = 'pfXlinkCss';
-      s.textContent = '.pf-xlink{display:inline-block;margin-top:6px;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-decoration:none;}.pf-xlink:hover{color:var(--accent-proposal,var(--primary));text-decoration:underline;}';
-      document.head.appendChild(s);
+  /* ─── Dock child (pf-kids.js drives whose jar this is) ───── */
+  function applyKid(kid) {
+    pickedChild = kid ? { id: kid.id, name: kid.name } : null;
+    var jarSub = document.getElementById('dictJarSub');
+    if (jarSub) {
+      jarSub.textContent = pickedChild
+        ? 'This is ' + pickedChild.name.split(' ')[0] + '\'s jar. Hear a word and spell it to move it from New to Learning to Known.'
+        : 'Hear a word and spell it to move it from New to Learning to Known. Tap any word to open it.';
     }
-    var a = document.createElement('a');
-    a.className = 'pf-xlink';
-    a.textContent = 'View full profile →';
-    a.hidden = true;
-    host.parentNode.insertBefore(a, host.nextSibling);
-    return a;
+    if (pickedChild) progress = {}; /* fresh jar view, filled from the child's cloud rows */
+    else progress = loadProgress();
+    renderJar();
+    hydrateFromCloud();
   }
 
-  function initChildPicker() {
-    var host = document.getElementById('dictPickerHost');
-    var title = document.getElementById('dictPickerTitle');
-    var jarSub = document.getElementById('dictJarSub');
-    if (!host || !window.pfApi || !window.pfApi.childPicker) { hydrateFromCloud(); return; }
-    var profileLink = makeProfileLink(host);
-    window.pfApi.childPicker(host, {
-      allowNone: true,
-      onPick: function (child) {
-        pickedChild = child ? { id: child.id, name: child.name } : null;
-        if (pickedChild) {
-          profileLink.href = 'child.html?id=' + encodeURIComponent(pickedChild.id);
-          profileLink.hidden = false;
-        } else {
-          profileLink.hidden = true;
-        }
-        if (title) title.textContent = pickedChild ? pickedChild.name + '\'s Words Jar' : 'Whose Words Jar is this?';
-        if (jarSub) {
-          jarSub.textContent = pickedChild
-            ? 'Every word ' + pickedChild.name + ' explores drops into their jar. Hear a word and spell it to move it from New to Learning to Known.'
-            : 'Every word explored drops into the jar. Hear a word and spell it to move it from New to Learning to Known. Tap any word to open it.';
-        }
-        if (pickedChild) progress = {}; /* fresh jar view, filled from the child\'s cloud rows */
-        else progress = loadProgress();
-        renderJar();
-        hydrateFromCloud();
-      }
+  function initKidWiring() {
+    if (!window.pfAuthReady) { hydrateFromCloud(); return; }
+    window.pfAuthReady.then(function (ctx) {
+      if (!ctx.user) return;
+      document.addEventListener('pf-kid-change', function (e) { applyKid(e.detail); });
+      if (window.pfKids && window.pfKids.activeChild()) applyKid(window.pfKids.activeChild());
     });
   }
-  if (window.pfAuthReady) window.pfAuthReady.then(initChildPicker);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initKidWiring);
+  else initKidWiring();
 
   function recordEvent(word, field) {
     var entry = progress[word] || { heard: false, spelled: false };
@@ -293,8 +277,8 @@
     els.example.textContent = entry.example;
     els.speakerBtn.setAttribute('aria-label', 'Say the word ' + entry.word + ' aloud');
     els.caption.textContent = tts
-      ? 'Tap the speaker to hear "' + entry.word + '" spoken aloud - real browser TTS'
-      : 'Audio unavailable - syllables shown visually';
+      ? 'Tap the big speaker to hear "' + entry.word + '"!'
+      : 'No sound on this device - look at the word parts instead.';
 
     renderSyllables(entry);
     renderStarters(entry);
@@ -381,6 +365,16 @@
     'Super spelling - you did it!'
   ];
 
+  function wiggleSlots() {
+    if (reducedMotion()) return;
+    var slots = els.slots.querySelectorAll('.spell-slot');
+    for (var i = 0; i < slots.length; i += 1) {
+      slots[i].classList.remove('k-wiggle');
+      void slots[i].offsetWidth;
+      slots[i].classList.add('k-wiggle');
+    }
+  }
+
   function checkSpelling() {
     if (!current) return;
     var slots = els.slots.querySelectorAll('.spell-slot');
@@ -393,11 +387,13 @@
     }
     if (attempt === current.word) {
       els.feedback.textContent = PRAISE[Math.floor(Math.random() * PRAISE.length)];
+      if (window.pfKids) window.pfKids.celebrate();
       recordEvent(current.word, 'spelled');
       speakWithWave('You spelled ' + current.word + '! Well done!', { rate: 0.9 });
     } else {
       els.feedback.classList.add('is-error');
       els.feedback.textContent = 'Good try! Tap a letter to move it back and try a new order.';
+      wiggleSlots();
     }
   }
 

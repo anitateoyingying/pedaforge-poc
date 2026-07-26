@@ -4,587 +4,222 @@
 <script>document.documentElement.classList.add("pf-auth-pending");</script><style>.pf-auth-pending body{visibility:hidden;}</style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PedaForge Home - Termly Benchmarking &amp; Home-School Reading Bridge: a shared parent and teacher workspace tracking five early-reading strands with advisory, teacher-confirmed AI growth summaries and collaborative reading strategies.">
-  <title>PedaForge Home: Termly Benchmarking &amp; Home-School Reading Bridge | PedaForge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <meta name="robots" content="noindex">
+  <title>Star Check - PedaForge Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/app-shell.css">
+  <link rel="stylesheet" href="css/kids.css">
   <style>
-    /* ─── PedaForge Home accent namespace (teal) ─────────── */
-    body.hub-home {
-      --accent-proposal: #0E8FA8;
-      --accent-proposal-soft: rgba(14,143,168,0.10);
-      --accent-proposal-line: rgba(14,143,168,0.24);
-    }
+    .k-wrap .k-panel { margin: 0 0 24px; }
+    .k-shelf-head { text-align: center; margin: 6px 0 4px; }
+    .k-shelf-head .k-sub { font-family: var(--k-hand); font-size: 1.2rem; }
 
-    /* ─── Benchmark strand rows ──────────────────────────── */
-    .bm-strand {
-      display: grid;
-      grid-template-columns: 150px 1fr 110px;
-      align-items: center;
-      gap: 16px;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border);
+    /* Try 3 little games */
+    .k-quiz-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .k-quiz-head .k-title { margin: 0; }
+    .k-quiz-stars { margin-left: auto; display: inline-flex; gap: 6px; }
+    .k-quiz-stars svg { width: 30px; height: 30px; color: rgba(63, 74, 61, 0.18); }
+    .k-quiz-stars svg.lit { color: var(--k-yellow); }
+    .k-quiz-step {
+      font-family: var(--k-hand); font-size: 1.1rem;
+      color: var(--k-ink-soft); margin: 14px 0 4px;
     }
-    .bm-strand:last-child { border-bottom: none; }
-    .bm-strand-name {
-      font-weight: 600;
-      font-size: 0.92rem;
-      color: var(--text);
+    .k-quiz-prompt {
+      font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 700;
+      color: var(--k-ink); margin: 0 0 4px;
     }
-    .bm-strand-name small {
-      display: block;
-      font-weight: 400;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 2px;
+    .k-quiz-hint { font-family: var(--k-hand); font-size: 1.05rem; color: var(--k-ink-soft); margin: 0 0 16px; }
+    .k-quiz-options { display: flex; flex-wrap: wrap; gap: 14px; }
+    .k-quiz-pill { font-size: 1.2rem; font-weight: 700; padding: 16px 34px; }
+    .k-quiz-pill:disabled { cursor: default; }
+    .k-quiz-pill.is-right { border-color: var(--k-hill-deep); background: #eef8ea; color: #3c7a40; }
+    .k-quiz-pill.is-gentle { border-color: var(--k-yellow); background: #fff8e6; color: #8a6a1c; }
+    .k-quiz-feedback {
+      min-height: 1.6rem; margin-top: 14px;
+      font-family: var(--k-hand); font-size: 1.2rem; color: var(--k-ink);
     }
-    .bm-bar {
-      position: relative;
-      height: 10px;
-      border-radius: 100px;
-      background: var(--bg);
-      overflow: hidden;
-    }
-    .bm-bar-fill {
-      position: absolute;
-      top: 0; left: 0; bottom: 0;
-      border-radius: 100px;
-      background: #0E8FA8;
-    }
-    .bm-bar-fill.is-developing { background: #d68a14; }
-    .bm-status {
-      justify-self: end;
-    }
-    .tag-emerging { background: rgba(232,6,60,0.10); color: #c2185b; }
-    .tag-developing { background: rgba(214,138,20,0.12); color: #b06a00; }
-    .tag-secure { background: rgba(14,143,168,0.12); color: #0a6e82; }
+    .k-quiz-summary h3 { font-size: 1.35rem; font-weight: 700; color: var(--k-ink); margin: 12px 0 6px; }
+    .k-quiz-summary p { font-family: var(--k-hand); font-size: 1.15rem; color: var(--k-ink-soft); margin: 0 0 16px; }
 
-    /* ─── Evidence timeline (centre vs home) ─────────────── */
-    .ev-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
+    /* Five star cards */
+    .k-strands {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 20px; margin: 16px 0 24px;
     }
-    @media (max-width: 700px) { .ev-grid { grid-template-columns: 1fr; } }
-    .ev-col-head {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-      margin-bottom: 12px;
+    .k-strand-card {
+      background: var(--k-paper); border-radius: 26px;
+      box-shadow: var(--k-shadow); padding: 22px 20px 20px;
     }
-    .ev-col-head.centre { color: #0a6e82; }
-    .ev-col-head.home { color: #7a4ad0; }
-    .ev-col-head .ev-dot {
-      width: 22px; height: 22px;
-      border-radius: 50%;
+    .k-strand-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .k-strand-star {
+      width: 54px; height: 54px; flex-shrink: 0;
+      border-radius: 44% 56% 52% 48% / 54% 46% 54% 46%;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
     }
-    .ev-col-head.centre .ev-dot { background: rgba(14,143,168,0.12); color: #0a6e82; }
-    .ev-col-head.home .ev-dot { background: rgba(139,92,246,0.12); color: #7a4ad0; }
-    .ev-bubbles {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .k-strand-star svg { width: 30px; height: 30px; }
+    .k-strand-head b { display: block; font-size: 1.15rem; font-weight: 700; color: var(--k-ink); }
+    .k-strand-head span { display: block; font-family: var(--k-hand); font-size: 0.98rem; color: var(--k-ink-soft); }
+    .k-bands { display: flex; gap: 10px; }
+    .k-band {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 14px 6px 12px; border-radius: 20px; cursor: pointer;
+      border: 3px solid rgba(63, 74, 61, 0.1); background: #fff;
+      font-family: var(--k-font); font-weight: 600; font-size: 0.88rem;
+      color: var(--k-ink-soft);
+      transition: transform 0.2s cubic-bezier(0.34, 1.7, 0.64, 1), border-color 0.2s ease, background 0.2s ease;
     }
-    .ev-bubble {
-      position: relative;
-      padding: 12px 14px;
-      border-radius: 14px;
-      font-size: 0.85rem;
-      line-height: 1.55;
-      color: var(--text);
-    }
-    .ev-bubble.centre {
-      background: rgba(14,143,168,0.06);
-      border: 1px solid rgba(14,143,168,0.16);
-      border-bottom-left-radius: 4px;
-    }
-    .ev-bubble.home {
-      background: rgba(139,92,246,0.06);
-      border: 1px solid rgba(139,92,246,0.16);
-      border-bottom-right-radius: 4px;
-    }
-    .ev-bubble .ev-meta {
-      display: block;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-      margin-top: 6px;
-    }
+    .k-band svg { width: 34px; height: 34px; }
+    .k-band:hover { transform: scale(1.06) rotate(-1deg); }
+    .k-band[data-band="emerging"] svg { color: var(--k-hill-near); }
+    .k-band[data-band="developing"] svg { color: var(--k-hill-deep); }
+    .k-band[data-band="secure"] svg { color: var(--k-pink); }
+    .k-band.on { color: var(--k-ink); }
+    .k-band.on[data-band="emerging"] { border-color: var(--k-hill-near); background: #f1f9ec; }
+    .k-band.on[data-band="developing"] { border-color: var(--k-hill-deep); background: #e9f5ea; }
+    .k-band.on[data-band="secure"] { border-color: var(--k-pink); background: #fff1f4; }
 
-    /* ─── AI summary toolbar ─────────────────────────────── */
-    .ai-summary-tools {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 10px;
-      margin-top: 14px;
-    }
-    .pill-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 14px;
-      border-radius: 100px;
-      font-family: var(--font);
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--bg-card);
-      color: var(--text-light);
-      transition: all var(--transition);
-    }
-    .pill-btn:hover { border-color: #0E8FA8; color: #0a6e82; }
-    .pill-btn.primary {
-      background: #0E8FA8;
-      border-color: #0E8FA8;
-      color: #fff;
-    }
-    .pill-btn.primary:hover { background: #0a6e82; color: #fff; }
+    /* Save row */
+    .k-save-panel { text-align: center; padding: 26px 24px 30px; }
+    .k-save-hint { font-family: var(--k-hand); font-size: 1.15rem; color: var(--k-ink-soft); margin: 12px 0 0; }
 
-    .advisory-note {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 0.8rem;
-      line-height: 1.55;
-      color: var(--text-muted);
-      margin-top: 14px;
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      background: rgba(255,158,24,0.06);
-      border: 1px solid rgba(255,158,24,0.18);
+    /* Stars from before */
+    .k-hist { display: flex; gap: 12px; flex-wrap: wrap; padding-top: 10px; }
+    .k-hist-pill {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: #fff; border: 3px solid rgba(63, 74, 61, 0.1);
+      border-radius: 100px; padding: 10px 20px;
+      font-weight: 600; color: var(--k-ink);
     }
-    .advisory-note svg { color: var(--warning); flex-shrink: 0; margin-top: 1px; }
+    .k-hist-band { display: inline-flex; align-items: center; gap: 3px; font-size: 0.95rem; }
+    .k-hist-band svg { width: 20px; height: 20px; }
+    .k-hist-band.emerging svg { color: var(--k-hill-near); }
+    .k-hist-band.developing svg { color: var(--k-hill-deep); }
+    .k-hist-band.secure svg { color: var(--k-pink); }
 
-    /* ─── Sidebar strategy cards ─────────────────────────── */
-    .strategy-card {
-      background: var(--bg-card);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      border: 1px solid var(--border);
+    /* Educator panel (demoted) */
+    .k-edu-note { padding: 18px 22px; background: rgba(255, 253, 245, 0.72); box-shadow: none; }
+    .k-edu-note b.k-edu-label {
+      display: block; font-size: 0.78rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--k-ink-soft); margin-bottom: 5px;
     }
-    .strategy-card + .strategy-card { margin-top: 12px; }
-    .strategy-card h4 {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.92rem;
-      color: var(--secondary);
-      margin-bottom: 6px;
+    .k-edu-note p { font-size: 0.82rem; color: var(--k-ink-soft); line-height: 1.6; margin: 0 0 12px; }
+    .k-edu-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
+    .k-edu-row label {
+      display: block; font-size: 0.78rem; font-weight: 700;
+      color: var(--k-ink-soft); margin-bottom: 4px;
     }
-    .strategy-card h4 .sc-num {
-      width: 24px; height: 24px;
-      border-radius: 50%;
-      background: rgba(14,143,168,0.10);
-      color: #0a6e82;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.78rem; font-weight: 700;
-      flex-shrink: 0;
+    .k-edu-row select, .k-edu-row textarea {
+      font-family: var(--k-font); font-size: 0.86rem; color: var(--k-ink);
+      border: 2px solid rgba(63, 74, 61, 0.14); border-radius: 12px;
+      padding: 8px 10px; background: #fff;
     }
-    .strategy-card p {
-      font-size: 0.82rem;
-      color: var(--text-light);
-      line-height: 1.55;
-    }
+    .k-edu-row textarea { width: min(420px, 100%); resize: vertical; }
 
-    /* ─── Family reading log ─────────────────────────────── */
-    .reading-log {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-    }
-    .reading-log li {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .reading-log li:last-child { border-bottom: none; }
-    .rl-date {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #0a6e82;
-      width: 46px;
-      flex-shrink: 0;
-      text-align: center;
-      line-height: 1.2;
-    }
-    .rl-book {
-      flex: 1;
-      font-size: 0.84rem;
-      color: var(--text);
-      line-height: 1.4;
-    }
-    .rl-book small { display: block; color: var(--text-muted); font-size: 0.74rem; }
-    .rl-mins {
-      font-size: 0.76rem;
-      font-weight: 600;
-      color: var(--text-light);
-      background: var(--bg);
-      padding: 3px 9px;
-      border-radius: 100px;
-      flex-shrink: 0;
-    }
-    .rl-total {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 2px solid var(--border);
-      font-size: 0.85rem;
-    }
-    .rl-total strong { color: #0a6e82; font-size: 1.05rem; }
-
-    .shared-banner {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(14,143,168,0.06);
-      border: 1px solid rgba(14,143,168,0.18);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      margin-bottom: 8px;
-    }
-    .shared-banner svg { color: #0E8FA8; flex-shrink: 0; }
-    .shared-banner p { font-size: 0.84rem; color: var(--text-light); line-height: 1.5; margin: 0; }
-    .shared-banner strong { color: var(--secondary); }
-
-    /* ─── 3-question check-in quiz ───────────────────────── */
-    .bmq-card {
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
-    }
-    .bmq-head {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-    .bmq-ring { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
-    .bmq-ring svg { transform: rotate(-90deg); display: block; }
-    .bmq-ring-fill { transition: stroke-dashoffset 0.8s cubic-bezier(0.34,1.56,0.64,1); }
-    .bmq-ring-label {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem; font-weight: 800; color: var(--secondary);
-    }
-    .bmq-title h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      color: var(--secondary);
-      margin: 0 0 3px;
-    }
-    .bmq-title p { font-size: 0.84rem; color: var(--text-light); margin: 0; }
-    .bmq-step {
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.4px;
-      text-transform: uppercase; color: #0a6e82;
-      margin-bottom: 6px;
-    }
-    .bmq-prompt {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.35rem; color: var(--secondary);
-      margin: 0 0 4px;
-    }
-    .bmq-hint { font-size: 0.84rem; color: var(--text-muted); margin: 0 0 16px; }
-    .bmq-options { display: flex; flex-wrap: wrap; gap: 12px; }
-    .bmq-option {
-      border: none;
-      cursor: pointer;
-      padding: 14px 24px;
-      border-radius: 100px;
-      font-family: var(--font);
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--secondary);
-      background: var(--bg);
-      box-shadow: inset 0 0 0 1px var(--border);
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
-    }
-    .bmq-option:hover:not(:disabled) {
-      transform: translateY(-3px);
-      box-shadow: inset 0 0 0 2px rgba(14,143,168,0.4), 0 8px 18px rgba(14,143,168,0.14);
-    }
-    .bmq-option:disabled { cursor: default; }
-    .bmq-option.is-right {
-      background: rgba(16,185,129,0.14);
-      color: #0f7a56;
-      box-shadow: inset 0 0 0 2px rgba(16,185,129,0.5), 0 0 0 5px rgba(16,185,129,0.10);
-    }
-    .bmq-option.is-gentle {
-      background: rgba(255,158,24,0.10);
-      color: #a86400;
-      box-shadow: inset 0 0 0 2px rgba(255,158,24,0.35);
-    }
-    .bmq-feedback {
-      min-height: 1.4rem;
-      margin-top: 14px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #0a6e82;
-    }
-    .bmq-summary[hidden] { display: none; }
-    .bmq-summary h4 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.25rem; color: var(--secondary);
-      margin: 0 0 8px;
-    }
-    .bmq-summary p { font-size: 0.9rem; color: var(--text-light); line-height: 1.6; margin: 0 0 16px; }
-    .bmq-strand {
-      display: grid;
-      grid-template-columns: 150px 1fr 60px;
-      align-items: center;
-      gap: 16px;
-      padding: 12px 14px;
-      border-radius: var(--radius-sm);
-      background: var(--bg);
-    }
-    .bmq-strand-val { font-size: 0.82rem; font-weight: 700; color: #0a6e82; justify-self: end; }
     @media (prefers-reduced-motion: reduce) {
-      .bmq-ring-fill { transition: none; }
-      .bmq-option:hover:not(:disabled) { transform: none; }
-    }
-    @media (max-width: 600px) {
-      .bmq-strand { grid-template-columns: 1fr; gap: 8px; }
-      .bmq-strand-val { justify-self: start; }
+      .k-band { transition: none; }
     }
   </style>
 </head>
-<body class="hub-home">
-<div class="bg-blobs" aria-hidden="true">
-  <div class="bg-blob bg-blob-1"></div>
-  <div class="bg-blob bg-blob-2"></div>
-  <div class="bg-blob bg-blob-3"></div>
-  <div class="bg-blob bg-blob-4"></div>
-  <div class="bg-blob bg-blob-5"></div>
-  <div class="bg-blob bg-blob-6"></div>
-</div>
-
-  <!-- ─── Navigation (umbrella) ─────────────────────────────── -->
-  <nav class="navbar" role="navigation" aria-label="Main navigation">
-    <div class="container">
-      <a href="index.html" class="navbar-brand"><div class="logo">PF</div> PedaForge</a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Dashboard</a></li>
-        <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
-          <a href="classes.html">My Classes</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
-        <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
-          <a href="coach.html">AI Coach</a><a href="observation.html">Lesson Observation</a><a href="lna.html">Learning Needs</a><a href="dashboard.html">PD Dashboard</a></div></li>
-        <li><span class="nav-dropdown-trigger">Spaces</span><div class="nav-dropdown">
-          <a href="sproutspace-layout.html">Layout Planner</a><a href="sproutspace-inventory.html">Resource Inventory</a><a href="sproutspace-control.html">HQ Control</a></div></li>
-        <li><span class="nav-dropdown-trigger">Home Literacy</span><div class="nav-dropdown">
-          <a href="home-phonics-studio.html">Phonics Studio</a><a href="home-benchmark.html">Termly Benchmark</a><a href="home-reading-coach.html">Reading Coach</a><a href="home-draw-reflect.html">Draw &amp; Reflect</a><a href="home-dictionary.html">Talking Dictionary</a></div></li>
-      </ul>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
-    </div>
-  </nav>
-
-  <!-- ─── Page Header ───────────────────────────────────────── -->
-  <header class="page-header">
-    <div class="container">
-      <div class="breadcrumb">
-        <a href="index.html">Home</a>
-        <span>&#8250;</span>
-        <a href="index.html">Home</a>
-        <span>&#8250;</span>
-        <span class="current">Termly Benchmark</span>
-      </div>
-      <h1>Termly Benchmarking</h1>
-      <p>A shared parent and teacher workspace that bridges centre and home reading - tracking five early-literacy strands with an advisory, teacher-confirmed AI growth summary. This is a formative, supportive snapshot, not a high-stakes test.</p>
-      <div style="margin-top:18px;">
-        <span class="hub-pill">PedaForge Home - Module 2</span>
-      </div>
-      <!-- ─── Hub local sub-nav ─────────────────────────────── -->
-      <div class="hub-subnav">
-        <a href="index.html">Overview</a>
-        <a href="home-phonics-studio.html">Phonics Studio</a>
-        <a href="home-benchmark.html" class="active">Termly Benchmark</a>
-        <a href="home-reading-coach.html">Reading Coach</a>
-        <a href="home-draw-reflect.html">Draw &amp; Reflect</a>
-        <a href="home-dictionary.html">Talking Dictionary</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- ─── Main Content ──────────────────────────────────────── -->
-  <main class="container main-content-spacing">
-
-    <!-- Back to hub -->
-    <div style="margin-bottom:16px;">
-      <a href="index.html" class="btn btn-secondary btn-sm">&larr; Back to Dashboard Overview</a>
+<body>
+  <div class="k-wrap">
+    <div class="k-hero">
+      <h1>Star Check</h1>
+      <p id="bmKidLine">Show what you know - together with your grown-up!</p>
     </div>
 
-    <!-- Shared workspace banner -->
-    <div class="shared-banner">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <p><strong>A shared workspace.</strong> Teachers and parents both contribute evidence and read the same benchmark together. Reading grows fastest when home and centre pull in the same direction.</p>
+    <!-- No child picked yet -->
+    <div class="k-panel" id="bmNoKid" hidden>
+      <h2 class="k-title">Who is playing?</h2>
+      <p class="k-sub">Tap the round face button at the top to pick a child first.</p>
     </div>
 
-    <div class="demo-two-col">
+    <div id="bmForm" hidden>
 
-      <!-- ═══ MAIN COLUMN ═══════════════════════════════════ -->
-      <div style="display:flex;flex-direction:column;gap:24px;">
+      <!-- Try 3 little games -->
+      <div class="k-panel">
+        <div class="k-quiz-head">
+          <h2 class="k-title">Try 3 little games</h2>
+          <span class="k-quiz-stars" id="bmqStars" aria-hidden="true"></span>
+        </div>
+        <p class="k-sub">Little games, no wrong answers. Every try earns a star!</p>
 
-        <!-- Child picker (required) -->
-        <div class="panel-card">
-          <div class="portfolio-header" style="margin-bottom:10px;">
-            <div class="child-avatar"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-            <div style="flex:1;">
-              <h2 class="profile-name-lg" id="bmChildName" style="margin-bottom:2px;">Choose a child to benchmark</h2>
-              <p class="profile-subtitle">Benchmarks are saved to the child's record and build a term-by-term picture.</p>
-            </div>
-          </div>
-          <div id="bmPickerHost"></div>
+        <div id="bmqBody">
+          <div class="k-quiz-step" id="bmqStep">Game 1 of 3</div>
+          <p class="k-quiz-prompt" id="bmqPrompt"></p>
+          <p class="k-quiz-hint" id="bmqHint"></p>
+          <div class="k-quiz-options" id="bmqOptions"></div>
+          <div class="k-quiz-feedback" id="bmqFeedback" aria-live="polite"></div>
         </div>
 
-        <!-- Benchmark entry form (live) -->
-        <div class="panel-card" id="bmForm" hidden>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
-            <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--secondary);margin:0;">New Termly Benchmark</h3>
-            <select class="age-select" id="bmTerm" aria-label="Term">
-              <option value="2026-T1">2026 - Term 1</option>
-              <option value="2026-T2">2026 - Term 2</option>
-              <option value="2026-T3" selected>2026 - Term 3</option>
-              <option value="2026-T4">2026 - Term 4</option>
-            </select>
-          </div>
-          <p class="profile-meta" style="margin-bottom:14px;">Rate each of the five early-reading strands <strong>Emerging</strong>, <strong>Developing</strong> or <strong>Secure</strong> against age-typical expectations. This is formative and supportive - never a high-stakes test.</p>
-          <div id="bmStrands"></div>
-          <div style="margin-top:16px;">
-            <label class="profile-meta" for="bmNotes" style="font-weight:600;display:block;margin-bottom:6px;">Notes (optional)</label>
-            <textarea class="form-control" id="bmNotes" rows="2" maxlength="600" placeholder="Evidence, context, or next steps to remember..."></textarea>
-          </div>
-          <div class="ai-summary-tools">
-            <button type="button" class="pill-btn primary" id="bmSaveBtn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-              Save Benchmark
+        <div class="k-quiz-summary" id="bmqSummary" hidden>
+          <h3 id="bmqSummaryHead"></h3>
+          <p id="bmqSummaryBody"></p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button type="button" class="k-btn teal" id="bmqApplyBtn" hidden></button>
+            <button type="button" class="k-btn ghost" id="bmqRestartBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Play again
             </button>
-            <span class="profile-meta" id="bmFormHint"></span>
-          </div>
-          <div class="advisory-note">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <span>Only <strong>your ratings</strong> are saved. The optional mini-quiz below can suggest a band for one strand, but the educator's selection is what counts.</span>
           </div>
         </div>
-
-        <!-- Benchmark history (live) -->
-        <div class="panel-card" id="bmHistoryCard" hidden>
-          <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--secondary);margin-bottom:6px;">Benchmark History</h3>
-          <p class="profile-meta" style="margin-bottom:14px;" id="bmHistorySub">Previous terms for this child, as a strand-by-strand band table.</p>
-          <div class="table-scroll">
-            <table class="budget-table" id="bmHistoryTable">
-              <thead id="bmHistoryHead"></thead>
-              <tbody id="bmHistoryBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Optional 3-question check-in (fun aid) -->
-        <div class="bmq-card">
-          <div class="bmq-head">
-            <div class="bmq-ring" aria-hidden="true">
-              <svg width="76" height="76" viewBox="0 0 76 76">
-                <circle cx="38" cy="38" r="34" fill="none" stroke="var(--border)" stroke-width="7"/>
-                <circle id="bmqRingFill" class="bmq-ring-fill" cx="38" cy="38" r="34" fill="none" stroke="#0E8FA8" stroke-width="7" stroke-linecap="round" stroke-dasharray="213.63" stroke-dashoffset="213.63"/>
-              </svg>
-              <span class="bmq-ring-label" id="bmqRingLabel">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E8FA8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </span>
-            </div>
-            <div class="bmq-title" style="flex:1;">
-              <h3>Optional: 3-question check-in</h3>
-              <p>A warm, game-like aid. At the end it can <em>suggest</em> a Phonics band above - you decide whether to accept it.</p>
-            </div>
-          </div>
-
-          <div id="bmqBody">
-            <div class="bmq-step" id="bmqStep">Question 1 of 3</div>
-            <p class="bmq-prompt" id="bmqPrompt"></p>
-            <p class="bmq-hint" id="bmqHint"></p>
-            <div class="bmq-options" id="bmqOptions"></div>
-            <div class="bmq-feedback" id="bmqFeedback" aria-live="polite"></div>
-          </div>
-
-          <div class="bmq-summary" id="bmqSummary" hidden>
-            <h4 id="bmqSummaryHead"></h4>
-            <p id="bmqSummaryBody"></p>
-            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
-              <button type="button" class="pill-btn primary" id="bmqApplyBtn" hidden></button>
-              <button type="button" class="pill-btn" id="bmqRestartBtn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                Try it again
-              </button>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- ═══ SIDEBAR (340px) ═══════════════════════════════ -->
-      <aside style="display:flex;flex-direction:column;gap:24px;">
+      <!-- Five star cards -->
+      <div class="k-shelf-head">
+        <h2 class="k-title">My five stars</h2>
+        <p class="k-sub">Your grown-up taps how each star is growing: sprout, leaf or flower.</p>
+      </div>
+      <div class="k-strands" id="bmStrands"></div>
 
-        <!-- Collaborative reading strategies (static pedagogy content) -->
-        <div class="panel-card">
-          <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--secondary);margin-bottom:6px;">Collaborative Reading Strategies</h3>
-          <p class="profile-meta" style="margin-bottom:16px;">Simple, evidence-based moves parents can try tonight - pick the ones that match the child's developing strands.</p>
+      <!-- Save -->
+      <div class="k-panel k-save-panel">
+        <button type="button" class="k-btn big" id="bmSaveBtn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span id="bmSaveLabel">Save my stars</span>
+        </button>
+        <p class="k-save-hint" id="bmFormHint"></p>
+      </div>
 
-          <div class="strategy-card">
-            <h4><span class="sc-num">1</span> Echo Reading</h4>
-            <p>Read a short line aloud first, then have the child echo it straight back - matching your pace and expression. Builds fluent decoding without the pressure of going it alone.</p>
-          </div>
-
-          <div class="strategy-card">
-            <h4><span class="sc-num">2</span> Pause &amp; Predict</h4>
-            <p>Stop at an exciting moment and ask "What do you think happens next?" Accept any reasonable guess. This directly grows the comprehension strand.</p>
-          </div>
-
-          <div class="strategy-card">
-            <h4><span class="sc-num">3</span> Point &amp; Read</h4>
-            <p>Run a finger under each word as you read together. Slows reading to one word at a time and reinforces sight words in context.</p>
-          </div>
-        </div>
-
-        <!-- Where evidence comes from -->
-        <div class="panel-card">
-          <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--secondary);margin-bottom:6px;">Evidence Sources</h3>
-          <p class="profile-meta" style="margin-bottom:14px;">Ratings work best when anchored in real activity from across PedaForge Home:</p>
-          <ul class="icon-list">
-            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><a href="home-reading-coach.html">Reading Coach</a> sessions - accuracy and WCPM per read.</li>
-            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><a href="home-dictionary.html">Talking Dictionary</a> - the child's Words Jar (sight words in growth).</li>
-            <li class="icon-list-item"><span class="icon-list-mark positive"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Classroom observations from the <a href="portfolio.html">Portfolio</a>.</li>
-          </ul>
-        </div>
-
-      </aside>
+      <!-- Stars from before -->
+      <div class="k-panel" id="bmHistoryCard" hidden>
+        <h2 class="k-title">Your stars from before</h2>
+        <p class="k-sub" id="bmHistorySub"></p>
+        <div class="k-hist" id="bmHistory"></div>
+      </div>
 
     </div>
-  </main>
 
-  <!-- ─── Footer ────────────────────────────────────────────── -->
+    <!-- Educator panel (demoted) -->
+    <div class="k-panel k-edu-note">
+      <b class="k-edu-label">For educators</b>
+      <p>Star Check is the termly benchmark, done with the child. Sprout = Emerging, Leaf = Developing, Flower = Secure across the five early-reading strands. Only your taps are saved to the child's record - the three little games can suggest a band for the Sound Star (Phonics), but you decide whether to accept it. Formative and supportive, never a high-stakes test.</p>
+      <div class="k-edu-row">
+        <div>
+          <label for="bmTerm">Term</label>
+          <select id="bmTerm" aria-label="Term">
+            <option value="2026-T1">2026 - Term 1</option>
+            <option value="2026-T2">2026 - Term 2</option>
+            <option value="2026-T3" selected>2026 - Term 3</option>
+            <option value="2026-T4">2026 - Term 4</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:220px;">
+          <label for="bmNotes">Notes (optional)</label>
+          <textarea id="bmNotes" rows="2" maxlength="600" placeholder="Evidence, context, or next steps to remember..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer class="footer"><div class="container"><div class="footer-bottom">
-    <span>PedaForge - Busy Bees network - functional proof of concept</span>
-    <div class="footer-badges"><span class="footer-badge">PDPA Compliant</span><span class="footer-badge">SG Data Residency</span><span class="footer-badge">Row-Level Security</span></div>
+    <span>PedaForge Home - part of the PedaForge teaching studio</span>
   </div></div></footer>
 
-  <button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/pf-auth.js"></script>
   <script src="js/pf-api.js"></script>
-  <script src="js/pf-markdown.js"></script>
-  <script src="js/pf-shell.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/pf-kids.js"></script>
   <script src="js/home-speech.js"></script>
   <script src="js/home-benchmark-quiz.js"></script>
 </body>

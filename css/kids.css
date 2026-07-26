@@ -1,0 +1,298 @@
+/* PedaForge Home: kids paint-world design system.
+   Ghibli-inspired: watercolor sky, rolling hills, drifting clouds,
+   warm hand-painted surfaces. Loaded ONLY on home.html + home-*.html. */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Gaegu:wght@400;700&display=swap');
+
+:root {
+  --k-sky-top: #aee3f5;
+  --k-sky-mid: #cdeff7;
+  --k-sky-low: #fdf3d8;
+  --k-hill-far: #b8dfa4;
+  --k-hill-near: #8ecb7a;
+  --k-hill-deep: #5fae62;
+  --k-sun: #ffd66b;
+  --k-cloud: #ffffff;
+  --k-ink: #3f4a3d;
+  --k-ink-soft: #6b7a68;
+  --k-paper: #fffdf5;
+  --k-red: #ff7d6b;
+  --k-teal: #4fb8c9;
+  --k-purple: #b48fd9;
+  --k-yellow: #ffcf5c;
+  --k-pink: #ff9eb5;
+  --k-font: 'Fredoka', 'Outfit', sans-serif;
+  --k-hand: 'Gaegu', 'Comic Sans MS', cursive;
+  --k-radius: 26px;
+  --k-shadow: 0 6px 0 rgba(63, 74, 61, 0.12), 0 14px 30px rgba(63, 74, 61, 0.14);
+  --k-shadow-press: 0 2px 0 rgba(63, 74, 61, 0.12), 0 5px 12px rgba(63, 74, 61, 0.12);
+}
+
+body.pf-kids [hidden] { display: none !important; }
+
+body.pf-kids {
+  font-family: var(--k-font);
+  color: var(--k-ink);
+  background: linear-gradient(180deg, var(--k-sky-top) 0%, var(--k-sky-mid) 46%, var(--k-sky-low) 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── The painted scene (fixed backdrop) ─────────────────── */
+.k-scene {
+  position: fixed; inset: 0; z-index: -1; overflow: hidden;
+  pointer-events: none;
+}
+.k-sun {
+  position: absolute; top: 7%; right: 10%;
+  width: 110px; height: 110px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #ffe9a8, var(--k-sun) 62%, #ffc244 100%);
+  box-shadow: 0 0 70px 28px rgba(255, 214, 107, 0.45);
+  animation: k-sun-breathe 7s ease-in-out infinite;
+}
+@keyframes k-sun-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.k-cloud {
+  position: absolute;
+  background: var(--k-cloud);
+  border-radius: 100px;
+  opacity: 0.92;
+  filter: drop-shadow(0 8px 10px rgba(120, 160, 190, 0.18));
+  animation: k-drift linear infinite;
+}
+.k-cloud::before, .k-cloud::after {
+  content: ''; position: absolute; background: inherit; border-radius: 50%;
+}
+.k-cloud.c1 { top: 12%; left: -220px; width: 190px; height: 56px; animation-duration: 95s; }
+.k-cloud.c1::before { width: 84px; height: 84px; top: -42px; left: 28px; }
+.k-cloud.c1::after { width: 60px; height: 60px; top: -28px; left: 96px; }
+.k-cloud.c2 { top: 27%; left: -300px; width: 150px; height: 44px; animation-duration: 130s; animation-delay: -50s; opacity: 0.75; }
+.k-cloud.c2::before { width: 64px; height: 64px; top: -30px; left: 22px; }
+.k-cloud.c2::after { width: 44px; height: 44px; top: -18px; left: 76px; }
+.k-cloud.c3 { top: 6%; left: -160px; width: 120px; height: 36px; animation-duration: 110s; animation-delay: -80s; opacity: 0.6; }
+.k-cloud.c3::before { width: 52px; height: 52px; top: -24px; left: 18px; }
+.k-cloud.c3::after { width: 38px; height: 38px; top: -14px; left: 62px; }
+@keyframes k-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(100vw + 420px)); }
+}
+.k-hills {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 34vh; min-height: 200px;
+}
+.k-hills svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.k-sparkle {
+  position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  background: #fff; opacity: 0;
+  animation: k-twinkle 5s ease-in-out infinite;
+}
+@keyframes k-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.6); }
+  50% { opacity: 0.85; transform: scale(1.15); }
+}
+
+/* ── Kids top dock ──────────────────────────────────────── */
+.k-dock {
+  position: sticky; top: 12px; z-index: 50;
+  margin: 12px auto 6px; max-width: 1080px;
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255, 253, 245, 0.88);
+  backdrop-filter: blur(8px);
+  border-radius: 100px; padding: 8px 10px 8px 16px;
+  box-shadow: var(--k-shadow);
+}
+.k-dock .k-brand {
+  display: flex; align-items: center; gap: 9px;
+  font-weight: 700; font-size: 1.06rem; color: var(--k-ink);
+  text-decoration: none;
+}
+.k-dock .k-brand .blob {
+  width: 36px; height: 36px; flex-shrink: 0;
+  border-radius: 46% 54% 55% 45% / 52% 44% 56% 48%;
+  background: linear-gradient(135deg, var(--k-red), var(--k-pink));
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.8rem; font-weight: 700;
+  animation: k-blob 9s ease-in-out infinite;
+}
+@keyframes k-blob {
+  0%, 100% { border-radius: 46% 54% 55% 45% / 52% 44% 56% 48%; }
+  50% { border-radius: 54% 46% 44% 56% / 46% 56% 44% 54%; }
+}
+.k-dock .k-spacer { flex: 1; }
+.k-stars {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--k-yellow);
+  border-radius: 100px; padding: 7px 15px;
+  font-weight: 700; font-size: 0.92rem; color: #7a5b12;
+  box-shadow: inset 0 -3px 0 rgba(122, 91, 18, 0.18);
+}
+.k-stars svg { width: 17px; height: 17px; }
+.k-kid-switch {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; border: none; cursor: pointer;
+  border-radius: 100px; padding: 6px 14px 6px 6px;
+  font-family: var(--k-font); font-weight: 600; font-size: 0.9rem; color: var(--k-ink);
+  box-shadow: inset 0 0 0 2px rgba(63, 74, 61, 0.08);
+  transition: transform 0.25s cubic-bezier(0.34, 1.6, 0.64, 1);
+}
+.k-kid-switch:hover { transform: scale(1.04); }
+.k-kid-switch .k-face {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.72rem; font-weight: 700;
+  background: var(--k-teal);
+}
+.k-exit {
+  font-size: 0.78rem; font-weight: 600; color: var(--k-ink-soft);
+  text-decoration: none; padding: 8px 14px; border-radius: 100px;
+}
+.k-exit:hover { background: rgba(63, 74, 61, 0.07); color: var(--k-ink); }
+
+/* ── Painted panels & buttons ───────────────────────────── */
+.k-panel {
+  background: var(--k-paper);
+  border-radius: var(--k-radius);
+  box-shadow: var(--k-shadow);
+  padding: 26px 28px;
+  position: relative;
+}
+.k-panel::before {
+  /* wobbly hand-painted edge */
+  content: ''; position: absolute; inset: -3px;
+  border-radius: calc(var(--k-radius) + 4px);
+  border: 3px solid rgba(63, 74, 61, 0.07);
+  pointer-events: none;
+}
+.k-title {
+  font-family: var(--k-font); font-weight: 700;
+  font-size: 1.45rem; color: var(--k-ink); margin: 0 0 6px;
+}
+.k-sub { font-size: 0.95rem; color: var(--k-ink-soft); margin: 0; line-height: 1.55; }
+
+.k-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  font-family: var(--k-font); font-weight: 700; font-size: 1.02rem;
+  color: #fff; background: var(--k-red);
+  border: none; border-radius: 100px; cursor: pointer;
+  padding: 14px 30px;
+  box-shadow: 0 5px 0 rgba(63, 74, 61, 0.18), 0 12px 22px rgba(255, 125, 107, 0.35);
+  transition: transform 0.22s cubic-bezier(0.34, 1.7, 0.64, 1), box-shadow 0.22s ease;
+}
+.k-btn:hover { transform: translateY(-3px) rotate(-1deg) scale(1.03); }
+.k-btn:active { transform: translateY(2px); box-shadow: var(--k-shadow-press); }
+.k-btn:disabled { opacity: 0.55; cursor: wait; transform: none; }
+.k-btn.teal { background: var(--k-teal); box-shadow: 0 5px 0 rgba(63, 74, 61, 0.18), 0 12px 22px rgba(79, 184, 201, 0.35); }
+.k-btn.purple { background: var(--k-purple); box-shadow: 0 5px 0 rgba(63, 74, 61, 0.18), 0 12px 22px rgba(180, 143, 217, 0.35); }
+.k-btn.ghost {
+  background: #fff; color: var(--k-ink);
+  box-shadow: inset 0 0 0 3px rgba(63, 74, 61, 0.12), 0 5px 0 rgba(63, 74, 61, 0.08);
+}
+.k-btn.big { font-size: 1.2rem; padding: 18px 40px; }
+
+/* ── Module doors (hub) ─────────────────────────────────── */
+.k-doors {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 20px; margin: 26px 0 40px;
+}
+.k-door {
+  position: relative; text-decoration: none; text-align: center;
+  background: var(--k-paper);
+  border-radius: 30px 30px 26px 26px;
+  padding: 26px 16px 20px;
+  box-shadow: var(--k-shadow);
+  transition: transform 0.28s cubic-bezier(0.34, 1.7, 0.64, 1);
+  overflow: hidden;
+}
+.k-door::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 9px;
+  background: var(--door, var(--k-teal));
+  border-radius: 30px 30px 0 0;
+}
+.k-door:hover { transform: translateY(-7px) rotate(-1.2deg) scale(1.03); }
+.k-door:nth-child(even):hover { transform: translateY(-7px) rotate(1.2deg) scale(1.03); }
+.k-door .k-door-art {
+  width: 84px; height: 84px; margin: 4px auto 12px;
+  border-radius: 44% 56% 52% 48% / 54% 46% 54% 46%;
+  background: color-mix(in srgb, var(--door, var(--k-teal)) 18%, #fff);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--door, var(--k-teal));
+}
+.k-door .k-door-art svg { width: 42px; height: 42px; }
+.k-door b { display: block; font-size: 1.12rem; font-weight: 700; color: var(--k-ink); }
+.k-door span { display: block; font-size: 0.78rem; color: var(--k-ink-soft); margin-top: 3px; line-height: 1.4; }
+.k-door .k-door-badge {
+  position: absolute; top: 16px; right: 14px;
+  background: var(--k-yellow); color: #7a5b12;
+  border-radius: 100px; font-size: 0.66rem; font-weight: 700;
+  padding: 3px 10px;
+}
+
+/* ── Progress garden ────────────────────────────────────── */
+.k-garden {
+  display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap;
+  padding: 8px 4px 0;
+}
+.k-plant { text-align: center; width: 74px; }
+.k-plant svg { width: 58px; height: 72px; display: block; margin: 0 auto; }
+.k-plant b { display: block; font-size: 0.72rem; color: var(--k-ink); margin-top: 2px; }
+.k-plant span { font-size: 0.62rem; color: var(--k-ink-soft); }
+.k-plant .stage { transform-origin: bottom center; animation: k-sprout 0.9s cubic-bezier(0.34, 1.6, 0.64, 1) both; }
+@keyframes k-sprout {
+  from { transform: scale(0.2); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ── Word chips, big touch targets ──────────────────────── */
+.k-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--k-font); font-weight: 600; font-size: 1rem;
+  background: #fff; color: var(--k-ink);
+  border: 3px solid rgba(63, 74, 61, 0.1); border-radius: 100px;
+  padding: 10px 20px; cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.7, 0.64, 1), border-color 0.2s ease;
+}
+.k-chip:hover { transform: scale(1.06) rotate(-1deg); border-color: var(--k-teal); }
+.k-chip.on { border-color: var(--k-red); background: #fff3f0; }
+
+/* ── Celebration ────────────────────────────────────────── */
+.k-confetti {
+  position: fixed; width: 12px; height: 12px; z-index: 300; top: -20px;
+  border-radius: 3px; pointer-events: none;
+  animation: k-fall 2.6s ease-in forwards;
+}
+@keyframes k-fall {
+  to { transform: translateY(110vh) rotate(720deg); opacity: 0.2; }
+}
+.k-wiggle { animation: k-wiggle 0.55s ease; }
+@keyframes k-wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-4deg) scale(1.05); }
+  70% { transform: rotate(3deg) scale(1.03); }
+}
+
+/* ── Layout helpers ─────────────────────────────────────── */
+.k-wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px 60px; }
+.k-hero { text-align: center; padding: 34px 0 10px; }
+.k-hero h1 {
+  font-family: var(--k-font); font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.6rem); color: var(--k-ink); margin: 0 0 8px;
+  text-shadow: 0 3px 0 rgba(255, 255, 255, 0.7);
+}
+.k-hero p { font-family: var(--k-hand); font-size: 1.35rem; color: var(--k-ink-soft); margin: 0; }
+
+/* Hide educator chrome on kids pages */
+body.pf-kids nav.navbar, body.pf-kids .back-to-top, body.pf-kids > .bg-blobs { display: none !important; }
+body.pf-kids footer.footer { background: none; border: none; }
+body.pf-kids footer.footer .footer-grid { display: none; }
+body.pf-kids footer.footer .footer-bottom {
+  justify-content: center; border: none; color: var(--k-ink-soft);
+  font-family: var(--k-font); font-size: 0.72rem; opacity: 0.75;
+}
+body.pf-kids footer.footer .footer-badges { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .k-sun, .k-cloud, .k-sparkle, .k-dock .k-brand .blob, .k-plant .stage { animation: none; }
+  .k-btn, .k-door, .k-chip, .k-kid-switch { transition: none; }
+  .k-confetti { display: none; }
+}
