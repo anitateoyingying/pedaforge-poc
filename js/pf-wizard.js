@@ -8,6 +8,22 @@
 
   var TAGS = ['visual-spatial', 'advanced-verbal', 'sensory-avoidant', 'kinesthetic', 'emergent-reader', 'EAL', 'needs-movement-breaks', 'high-support'];
 
+  /* Stroke SVG icons (24px viewBox), matching the app shell's icon style */
+  var ICONS = {
+    educator: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z',
+    director: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4',
+    ic: 'M12 3a7 7 0 0 1 7 7v1a7 7 0 0 1-14 0v-1a7 7 0 0 1 7-7zM12 3v3M9 21h6M12 18v3',
+    pg: 'M12 11a4 4 0 1 0-4-4M12 11a4 4 0 1 1 4-4M12 11v10M7 21h10M5.5 13.5 3 16M18.5 13.5 21 16',
+    n1: 'M12 3c3 0 5 2.5 5 5.5S14 16 12 16s-5-4.5-5-7.5S9 3 12 3zM12 16v5M10 21h4',
+    n2: 'M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5zM2 2l7.586 7.586',
+    k1: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2zM9 7h6M9 11h6',
+    k2: 'M22 9 12 4 2 9l10 5 10-5zM6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5M22 9v6',
+    dice: 'M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5zM8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01'
+  };
+  function svgIcon(key, size) {
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + ICONS[key] + '"/></svg>';
+  }
+
   var css =
     '.pfw-scrim{position:fixed;inset:0;background:rgba(34,29,68,0.55);backdrop-filter:blur(3px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s ease;}' +
     '.pfw-scrim.on{opacity:1;}' +
@@ -23,7 +39,7 @@
     '.pfw-role{border:2px solid var(--border,#e8e4dd);border-radius:18px;padding:20px 18px;cursor:pointer;background:var(--bg,#faf6f0);text-align:left;font-family:inherit;transition:border-color .2s ease,transform .25s cubic-bezier(0.34,1.56,0.64,1);}' +
     '.pfw-role:hover{transform:translateY(-3px);}' +
     '.pfw-role.on{border-color:var(--primary,#e8063c);background:rgba(232,6,60,0.05);}' +
-    '.pfw-role .ico{font-size:1.5rem;display:block;margin-bottom:8px;}' +
+    '.pfw-role .ico{display:block;margin-bottom:8px;color:var(--primary,#e8063c);}' +
     '.pfw-role b{display:block;font-size:.95rem;color:var(--secondary,#2D2A5E);margin-bottom:4px;}' +
     '.pfw-role span{font-size:.76rem;color:var(--text-muted,#9ca3af);line-height:1.5;display:block;}' +
     '.pfw-field{margin-bottom:14px;}' +
@@ -46,7 +62,7 @@
     '@media(max-width:560px){.pfw-age-grid{grid-template-columns:repeat(2,1fr);}}' +
     '.pfw-age{border:2px solid var(--border,#e8e4dd);border-radius:14px;padding:11px 8px 9px;cursor:pointer;background:#fff;text-align:center;font-family:inherit;transition:border-color .18s ease,background .18s ease,transform .25s cubic-bezier(0.34,1.56,0.64,1);}' +
     '.pfw-age:hover{transform:translateY(-2px);}' +
-    '.pfw-age .em{font-size:1.25rem;display:block;margin-bottom:3px;}' +
+    '.pfw-age .em{display:block;margin-bottom:4px;color:var(--text-muted,#9ca3af);}.pfw-age.on .em{color:var(--primary,#e8063c);}' +
     '.pfw-age b{display:block;font-size:.78rem;color:var(--secondary,#2D2A5E);}' +
     '.pfw-age span{display:block;font-size:.62rem;color:var(--text-muted,#9ca3af);margin-top:1px;}' +
     '.pfw-age.on{border-color:var(--primary,#e8063c);background:rgba(232,6,60,0.05);}' +
@@ -58,8 +74,8 @@
     '@media(max-width:560px){.pfw-2col{grid-template-columns:1fr;}}' +
     '.pfw-name-wrap{position:relative;}' +
     '.pfw-name-wrap input{padding-right:44px;}' +
-    '.pfw-dice{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:none;font-size:1.05rem;cursor:pointer;padding:6px;border-radius:10px;line-height:1;}' +
-    '.pfw-dice:hover{background:var(--bg,#faf6f0);}' +
+    '.pfw-dice{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:none;color:var(--text-muted,#9ca3af);cursor:pointer;padding:6px;border-radius:10px;line-height:0;}' +
+    '.pfw-dice:hover{background:var(--bg,#faf6f0);color:var(--secondary,#2D2A5E);}' +
     '.pfw-classcard{margin-top:18px;border-radius:18px;padding:16px 18px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(120deg,#2D2A5E,#221d44);transition:background .4s ease;box-shadow:0 12px 30px rgba(34,29,68,0.25);}' +
     '.pfw-classcard::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.08);}' +
     '.pfw-classcard .cc-label{font-size:.58rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;opacity:.65;}' +
@@ -152,17 +168,19 @@
       box.appendChild(dots(1));
       box.appendChild(el('h2', null, 'Welcome to PedaForge'));
       var name = (ctx.profile && ctx.profile.full_name || '').split(' ')[0];
-      box.appendChild(el('p', 'lead', (name ? name + ', l' : 'L') + 'et\'s set up your studio in under two minutes. First - how will you use PedaForge?'));
+      box.appendChild(el('p', 'lead', (name ? name + ', l' : 'L') + 'et\'s set up your studio in under two minutes. First, how will you use PedaForge?'));
       var roles = el('div', 'pfw-roles');
       var defs = [
-        { key: 'educator', ico: '🍎', b: 'I teach a class', s: 'Plan lessons, build portfolios, run reading sessions, and design my classroom.' },
-        { key: 'director', ico: '🧭', b: 'I lead a centre / HQ', s: 'Observe educators, review layouts, and see activity across the network.' },
+        { key: 'educator', b: 'I teach a class', s: 'Plan lessons, build portfolios, run reading sessions, and design my classroom.' },
+        { key: 'director', b: 'I lead a centre / HQ', s: 'Observe educators, review layouts, and see activity across the network.' },
       ];
       var btns = [];
       defs.forEach(function (d) {
         var b = el('button', 'pfw-role' + (state.role === d.key ? ' on' : ''));
         b.type = 'button';
-        b.appendChild(el('span', 'ico', d.ico));
+        var ic = el('span', 'ico');
+        ic.innerHTML = svgIcon(d.key, 26);
+        b.appendChild(ic);
         b.appendChild(el('b', null, d.b));
         b.appendChild(el('span', null, d.s));
         b.addEventListener('click', function () {
@@ -183,12 +201,12 @@
 
     /* ── Step 2: create class (dynamic) ── */
     var AGES = [
-      { key: 'ic', em: '🍼', name: 'Infant Care', range: '2-18 mths' },
-      { key: 'pg', em: '🧸', name: 'Playgroup', range: '18-30 mths' },
-      { key: 'n1', em: '🎈', name: 'Nursery 1', range: '3 yrs' },
-      { key: 'n2', em: '🖍️', name: 'Nursery 2', range: '4 yrs' },
-      { key: 'k1', em: '📚', name: 'Kindergarten 1', range: '5 yrs' },
-      { key: 'k2', em: '🎓', name: 'Kindergarten 2', range: '6 yrs' }
+      { key: 'ic', name: 'Infant Care', range: '2-18 mths' },
+      { key: 'pg', name: 'Playgroup', range: '18-30 mths' },
+      { key: 'n1', name: 'Nursery 1', range: '3 yrs' },
+      { key: 'n2', name: 'Nursery 2', range: '4 yrs' },
+      { key: 'k1', name: 'Kindergarten 1', range: '5 yrs' },
+      { key: 'k2', name: 'Kindergarten 2', range: '6 yrs' }
     ];
     var NAME_IDEAS = {
       ic: ['Buttercups', 'Little Sprouts', 'Snuggle Bugs'],
@@ -216,7 +234,9 @@
       AGES.forEach(function (a) {
         var b = el('button', 'pfw-age' + (a.key === age ? ' on' : ''));
         b.type = 'button';
-        b.appendChild(el('span', 'em', a.em));
+        var em = el('span', 'em');
+        em.innerHTML = svgIcon(a.key, 22);
+        b.appendChild(em);
         b.appendChild(el('b', null, a.name));
         b.appendChild(el('span', null, a.range));
         b.addEventListener('click', function () {
@@ -236,7 +256,8 @@
       var nameIn = el('input');
       nameIn.placeholder = 'e.g. K1 Sunshine';
       nameIn.maxLength = 60;
-      var dice = el('button', 'pfw-dice', '🎲');
+      var dice = el('button', 'pfw-dice');
+      dice.innerHTML = svgIcon('dice', 18);
       dice.type = 'button';
       dice.title = 'Suggest a name';
       dice.setAttribute('aria-label', 'Suggest a class name');
@@ -295,7 +316,7 @@
         ccName.textContent = nameIn.value.trim() || 'Name your class...';
         ccName.style.opacity = nameIn.value.trim() ? '1' : '0.55';
         ccMeta.innerHTML = '';
-        ccMeta.appendChild(el('span', 'cc-pill', a.em + ' ' + a.name + ' - ' + a.range));
+        ccMeta.appendChild(el('span', 'cc-pill', a.name + ' - ' + a.range));
         ccMeta.appendChild(el('span', 'cc-pill', SESSIONS.filter(function (s) { return s[0] === session; })[0][1]));
         if (centreIn.value.trim()) ccMeta.appendChild(el('span', 'cc-pill', centreIn.value.trim()));
         card.style.background = GRADIENTS[age];
