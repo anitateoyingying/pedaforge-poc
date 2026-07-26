@@ -41,7 +41,32 @@
     '.pfw-done-list{list-style:none;margin:0 0 6px;padding:0;}' +
     '.pfw-done-list li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;font-size:.88rem;line-height:1.5;}' +
     '.pfw-done-list .n{width:24px;height:24px;border-radius:50%;flex-shrink:0;background:var(--primary,#e8063c);color:#fff;font-size:.72rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}' +
-    '@media(prefers-reduced-motion:reduce){.pfw,.pfw-role{transition:none;}}';
+    /* ── create-class step ── */
+    '.pfw-age-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:4px;}' +
+    '@media(max-width:560px){.pfw-age-grid{grid-template-columns:repeat(2,1fr);}}' +
+    '.pfw-age{border:2px solid var(--border,#e8e4dd);border-radius:14px;padding:11px 8px 9px;cursor:pointer;background:#fff;text-align:center;font-family:inherit;transition:border-color .18s ease,background .18s ease,transform .25s cubic-bezier(0.34,1.56,0.64,1);}' +
+    '.pfw-age:hover{transform:translateY(-2px);}' +
+    '.pfw-age .em{font-size:1.25rem;display:block;margin-bottom:3px;}' +
+    '.pfw-age b{display:block;font-size:.78rem;color:var(--secondary,#2D2A5E);}' +
+    '.pfw-age span{display:block;font-size:.62rem;color:var(--text-muted,#9ca3af);margin-top:1px;}' +
+    '.pfw-age.on{border-color:var(--primary,#e8063c);background:rgba(232,6,60,0.05);}' +
+    '.pfw-age.on b{color:var(--primary,#e8063c);}' +
+    '.pfw-seg{display:flex;background:var(--bg,#faf6f0);border:1px solid var(--border,#e8e4dd);border-radius:100px;padding:3px;gap:2px;}' +
+    '.pfw-seg button{flex:1;border:none;border-radius:100px;padding:8px 6px;background:none;font-family:inherit;font-size:.78rem;font-weight:600;color:var(--text-muted,#9ca3af);cursor:pointer;transition:all .2s ease;}' +
+    '.pfw-seg button.on{background:#fff;color:var(--secondary,#2D2A5E);box-shadow:0 1px 3px rgba(45,42,94,0.12),0 3px 8px rgba(45,42,94,0.08);}' +
+    '.pfw-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}' +
+    '@media(max-width:560px){.pfw-2col{grid-template-columns:1fr;}}' +
+    '.pfw-name-wrap{position:relative;}' +
+    '.pfw-name-wrap input{padding-right:44px;}' +
+    '.pfw-dice{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:none;font-size:1.05rem;cursor:pointer;padding:6px;border-radius:10px;line-height:1;}' +
+    '.pfw-dice:hover{background:var(--bg,#faf6f0);}' +
+    '.pfw-classcard{margin-top:18px;border-radius:18px;padding:16px 18px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(120deg,#2D2A5E,#221d44);transition:background .4s ease;box-shadow:0 12px 30px rgba(34,29,68,0.25);}' +
+    '.pfw-classcard::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.08);}' +
+    '.pfw-classcard .cc-label{font-size:.58rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;opacity:.65;}' +
+    '.pfw-classcard .cc-name{font-family:"Playfair Display",serif;font-size:1.35rem;font-weight:700;margin:2px 0 6px;min-height:1.3em;}' +
+    '.pfw-classcard .cc-meta{display:flex;gap:7px;flex-wrap:wrap;}' +
+    '.pfw-classcard .cc-pill{font-size:.64rem;font-weight:700;padding:3px 11px;border-radius:100px;background:rgba(255,255,255,0.16);backdrop-filter:blur(2px);}' +
+    '@media(prefers-reduced-motion:reduce){.pfw,.pfw-role,.pfw-age{transition:none;}}';
 
   var state = { role: 'educator', classId: null, className: '', added: 0 };
 
@@ -156,39 +181,142 @@
       }));
     }
 
-    /* ── Step 2: create class ── */
+    /* ── Step 2: create class (dynamic) ── */
+    var AGES = [
+      { key: 'ic', em: '🍼', name: 'Infant Care', range: '2–18 mths' },
+      { key: 'pg', em: '🧸', name: 'Playgroup', range: '18–30 mths' },
+      { key: 'n1', em: '🎈', name: 'Nursery 1', range: '3 yrs' },
+      { key: 'n2', em: '🖍️', name: 'Nursery 2', range: '4 yrs' },
+      { key: 'k1', em: '📚', name: 'Kindergarten 1', range: '5 yrs' },
+      { key: 'k2', em: '🎓', name: 'Kindergarten 2', range: '6 yrs' }
+    ];
+    var NAME_IDEAS = {
+      ic: ['Buttercups', 'Little Sprouts', 'Snuggle Bugs'],
+      pg: ['Busy Bees', 'Ducklings', 'Tiny Explorers'],
+      n1: ['Sunbeams', 'Rainbow Fish', 'Cheeky Monkeys'],
+      n2: ['Starlights', 'Bumblebees', 'Wonder Cubs'],
+      k1: ['Sunshine', 'Trailblazers', 'Curious Owls'],
+      k2: ['Voyagers', 'Bright Sparks', 'Pathfinders']
+    };
+    var SESSIONS = [['full', 'Full day'], ['am', 'Morning'], ['pm', 'Afternoon']];
+
     function step2() {
       box.innerHTML = '';
       box.appendChild(dots(2));
       box.appendChild(el('h2', null, 'Create your first class'));
       box.appendChild(el('p', 'lead', 'Everything in PedaForge — lesson plans, portfolios, reading progress — hangs off your class and its children.'));
-      var f1 = el('div', 'pfw-field');
-      f1.appendChild(el('label', null, 'Class name'));
+
+      var age = 'k1', session = 'full', ideaIdx = 0;
+
+      /* Age-group cards */
+      var fAge = el('div', 'pfw-field');
+      fAge.appendChild(el('label', null, 'Age group'));
+      var grid = el('div', 'pfw-age-grid');
+      var ageBtns = {};
+      AGES.forEach(function (a) {
+        var b = el('button', 'pfw-age' + (a.key === age ? ' on' : ''));
+        b.type = 'button';
+        b.appendChild(el('span', 'em', a.em));
+        b.appendChild(el('b', null, a.name));
+        b.appendChild(el('span', null, a.range));
+        b.addEventListener('click', function () {
+          age = a.key;
+          Object.keys(ageBtns).forEach(function (k) { ageBtns[k].classList.toggle('on', k === age); });
+          preview();
+        });
+        ageBtns[a.key] = b;
+        grid.appendChild(b);
+      });
+      fAge.appendChild(grid);
+
+      /* Name with idea dice */
+      var fName = el('div', 'pfw-field');
+      fName.appendChild(el('label', null, 'Class name'));
+      var nameWrap = el('div', 'pfw-name-wrap');
       var nameIn = el('input');
       nameIn.placeholder = 'e.g. K1 Sunshine';
-      f1.appendChild(nameIn);
-      var f2 = el('div', 'pfw-field');
-      f2.appendChild(el('label', null, 'Age group'));
-      var ageSel = el('select');
-      [['ic', 'Infant Care'], ['pg', 'Playgroup'], ['n1', 'Nursery N1'], ['n2', 'Nursery N2'], ['k1', 'Kindergarten K1'], ['k2', 'Kindergarten K2']].forEach(function (o) {
-        var op = el('option', null, o[1]); op.value = o[0];
-        if (o[0] === 'k1') op.selected = true;
-        ageSel.appendChild(op);
+      nameIn.maxLength = 60;
+      var dice = el('button', 'pfw-dice', '🎲');
+      dice.type = 'button';
+      dice.title = 'Suggest a name';
+      dice.setAttribute('aria-label', 'Suggest a class name');
+      dice.addEventListener('click', function () {
+        var ideas = NAME_IDEAS[age] || NAME_IDEAS.k1;
+        var label = AGES.filter(function (a) { return a.key === age; })[0].name.replace('indergarten ', '').replace('ursery ', '');
+        nameIn.value = label + ' ' + ideas[ideaIdx % ideas.length];
+        ideaIdx++;
+        preview();
+        nameIn.focus();
       });
-      f2.appendChild(ageSel);
-      var f3 = el('div', 'pfw-field');
-      f3.appendChild(el('label', null, 'Centre (optional)'));
+      nameWrap.appendChild(nameIn); nameWrap.appendChild(dice);
+      fName.appendChild(nameWrap);
+
+      /* Session + centre side by side */
+      var two = el('div', 'pfw-2col');
+      var fSess = el('div', 'pfw-field');
+      fSess.appendChild(el('label', null, 'Session'));
+      var seg = el('div', 'pfw-seg');
+      var segBtns = {};
+      SESSIONS.forEach(function (s) {
+        var b = el('button', s[0] === session ? 'on' : '', s[1]);
+        b.type = 'button';
+        b.addEventListener('click', function () {
+          session = s[0];
+          Object.keys(segBtns).forEach(function (k) { segBtns[k].classList.toggle('on', k === session); });
+          preview();
+        });
+        segBtns[s[0]] = b;
+        seg.appendChild(b);
+      });
+      fSess.appendChild(seg);
+      var fCentre = el('div', 'pfw-field');
+      fCentre.appendChild(el('label', null, 'Centre (optional)'));
       var centreIn = el('input');
       centreIn.placeholder = 'e.g. Busy Bees @ Tampines';
-      f3.appendChild(centreIn);
-      box.appendChild(f1); box.appendChild(f2); box.appendChild(f3);
+      centreIn.maxLength = 80;
+      fCentre.appendChild(centreIn);
+      two.appendChild(fSess); two.appendChild(fCentre);
+
+      /* Live class-card preview */
+      var card = el('div', 'pfw-classcard');
+      card.setAttribute('aria-hidden', 'true');
+      card.appendChild(el('span', 'cc-label', 'Your class'));
+      var ccName = el('div', 'cc-name', '—');
+      var ccMeta = el('div', 'cc-meta');
+      card.appendChild(ccName); card.appendChild(ccMeta);
+
+      var GRADIENTS = {
+        ic: 'linear-gradient(120deg,#f59e0b,#e8063c)', pg: 'linear-gradient(120deg,#e8063c,#773E8B)',
+        n1: 'linear-gradient(120deg,#0E8FA8,#1c9c6b)', n2: 'linear-gradient(120deg,#1c9c6b,#0E8FA8)',
+        k1: 'linear-gradient(120deg,#2D2A5E,#773E8B)', k2: 'linear-gradient(120deg,#773E8B,#2D2A5E)'
+      };
+      function preview() {
+        var a = AGES.filter(function (x) { return x.key === age; })[0];
+        ccName.textContent = nameIn.value.trim() || 'Name your class…';
+        ccName.style.opacity = nameIn.value.trim() ? '1' : '0.55';
+        ccMeta.innerHTML = '';
+        ccMeta.appendChild(el('span', 'cc-pill', a.em + ' ' + a.name + ' · ' + a.range));
+        ccMeta.appendChild(el('span', 'cc-pill', SESSIONS.filter(function (s) { return s[0] === session; })[0][1]));
+        if (centreIn.value.trim()) ccMeta.appendChild(el('span', 'cc-pill', centreIn.value.trim()));
+        card.style.background = GRADIENTS[age];
+      }
+      nameIn.addEventListener('input', preview);
+      centreIn.addEventListener('input', preview);
+
+      box.appendChild(fAge); box.appendChild(fName); box.appendChild(two); box.appendChild(card);
+      preview();
+
       box.appendChild(foot('Create class', function (btn) {
         var n = nameIn.value.trim();
-        if (!n) { nameIn.focus(); return; }
+        if (!n) { nameIn.focus(); nameIn.style.borderColor = 'var(--danger, #dc2626)'; return; }
         var done = window.pfApi.spinner(btn, 'Creating…');
-        window.pfApi.createClass(n, ageSel.value, centreIn.value.trim()).then(function (cls) {
+        window.pfDb.from('classes').insert({
+          owner: window.pfUser.id, name: n, age_group: age,
+          centre: centreIn.value.trim() || null, session: session
+        }).select().single().then(function (r) {
           done();
-          state.classId = cls.id; state.className = cls.name;
+          if (r.error) { window.pfToast('Could not create class: ' + r.error.message); return; }
+          state.classId = r.data.id; state.className = r.data.name;
           step3();
         }, function (e) { done(); window.pfToast('Could not create class: ' + e.message); });
       }, { back: step1 }));
