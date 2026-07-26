@@ -1,6 +1,6 @@
 # PedaForge
 
-The full working application of PedaForge, the AI teaching platform for the Busy Bees early-childhood network in Singapore.
+The full working application of PedaForge, the AI teaching platform for early childhood education in Singapore.
 
 **Live:** https://anitateoyingying.github.io/pedaforge-poc/
 
@@ -22,7 +22,7 @@ One sign-in, two worlds:
 
 **Today** - a live dashboard: Plan / Set the Room / Capture / Grow journey ribbon, your class as clickable children, a rule-driven "What's Next" feed, and a cross-module activity stream.
 
-**My Classes** - create classes (real Busy Bees Singapore centre dropdown covering 6 brands and 91 centres), add children with learning-profile tags, card or table view. Each child links to a profile hub (`child.html`) that aggregates their learning stories, reading progress, benchmarks, word jar, artwork, and work samples.
+**My Classes** - create classes (Singapore preschool centre dropdown covering 6 brands and 91 centres), add children with learning-profile tags, card or table view. Each child links to a profile hub (`child.html`) that aggregates their learning stories, reading progress, benchmarks, word jar, artwork, and work samples.
 
 **Teach**
 - *Lesson Planner* - AI drafts a plan differentiated for each child's actual learning profile; save and reuse lessons
@@ -59,7 +59,7 @@ Voice quality: the app picks the best text-to-speech voice your browser offers (
 
 ## Architecture
 
-Static frontend (no build step, classic scripts) + Supabase backend. Everything deploys to GitHub Pages via Actions on push to `main`.
+Static frontend (no build step, classic scripts) + Supabase backend. Hosted on GitHub Pages.
 
 ```
 Frontend        GitHub Pages (this repo, static HTML/CSS/JS)
@@ -101,29 +101,15 @@ js/pf-kids-wizard.js       paint-world welcome wizard
 js/pf-kids-home.js         kids hub: doors, garden, streak
 js/pf-kids-admin.js        Home Admin: enrolments, curriculum, templates
 js/pf-wizard.js            educator onboarding wizard
-js/pf-centres.js           Busy Bees Singapore brands and centres
+js/pf-centres.js           Singapore preschool brands and centres
 js/pf-classes.js           My Classes page
 js/pf-today.js             Today dashboard
 js/pf-child.js             child profile hub
 js/pf-planner|portfolio|worksample|coach|observation|lna|dash|inventory.js   studio modules
 js/home-*.js               kids modules (speech, reading, dictionary, phonics, draw, benchmark)
 js/pf-markdown.js          escape-first markdown renderer for AI text
-supabase/functions/ai/     AI edge function (deployed separately via Supabase)
-.github/workflows/         GitHub Pages deploy
+supabase/functions/ai/     AI edge function (managed in Supabase)
 ```
-
-## Local development
-
-```bash
-python3 -m http.server 8873
-# open http://localhost:8873/login.html and sign in with a demo account
-```
-
-No build step. The site talks to the live Supabase project, so local pages run against real auth, data, and AI.
-
-## Deploying
-
-Push to `main`. The GitHub Actions workflow publishes the repo to GitHub Pages. The AI edge function and database schema are managed in Supabase and deploy independently of the frontend.
 
 ## Related
 

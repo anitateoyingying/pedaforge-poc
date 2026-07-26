@@ -210,7 +210,7 @@
     ];
     var NAME_IDEAS = {
       ic: ['Buttercups', 'Little Sprouts', 'Snuggle Bugs'],
-      pg: ['Busy Bees', 'Ducklings', 'Tiny Explorers'],
+      pg: ['Bumble Bees', 'Ducklings', 'Tiny Explorers'],
       n1: ['Sunbeams', 'Rainbow Fish', 'Cheeky Monkeys'],
       n2: ['Starlights', 'Bumblebees', 'Wonder Cubs'],
       k1: ['Sunshine', 'Trailblazers', 'Curious Owls'],

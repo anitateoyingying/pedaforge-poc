@@ -1,4 +1,4 @@
-/* Busy Bees Singapore network: brands and centres.
+/* Singapore preschool network: brands and centres.
    Sourced from each brand's official centre directory (July 2026):
    theschoolhouse.com.sg, learningvision.com, smallwonderpreschool.com,
    brightonmontessori.com.sg, agapelittleuni.com, theodyssey.global. */
@@ -40,7 +40,7 @@
         'Yishun (Adora Green)', 'Yishun Central', 'Yishun St 71']
     },
     {
-      brand: 'The Schoolhouse by Busy Bees',
+      brand: 'The Schoolhouse',
       centres: ['Alexandra', 'Aroozoo', 'Buckley', 'Dover', 'Gentle Road', 'Katong', 'Kovan',
         'Kovan 2', 'Mount Emily', 'Punggol Digital District', 'Ridgewood', 'River Valley',
         'Sembawang', 'West Coast']
