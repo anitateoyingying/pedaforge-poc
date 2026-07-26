@@ -7,7 +7,9 @@
 (function () {
   'use strict';
 
-  var LS_DONE = 'pedaforge:kids:welcomed';
+  // v2: bumping the key replays the wizard for everyone after a reset.
+  // home.html?welcome forces a replay anytime.
+  var LS_DONE = 'pedaforge:kids:welcomed:v2';
   var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var FACE_COLORS = ['#ff7d6b', '#4fb8c9', '#b48fd9', '#ffcf5c', '#ff9eb5', '#5fae62'];
 
@@ -173,7 +175,7 @@
       setTimeout(function () {
         root.remove();
         if (showConfetti && window.pfKidsCelebrate) window.pfKidsCelebrate(30);
-        window.location.reload();
+        window.location.replace(window.location.pathname); // drops ?welcome, reloads
       }, 850);
     }
 
@@ -275,9 +277,10 @@
     if (!window.pfAuthReady) return;
     window.pfAuthReady.then(function (ctx) {
       if (!ctx.user) return;
+      var replay = new URLSearchParams(window.location.search).has('welcome');
       var done = '';
       try { done = localStorage.getItem(LS_DONE) || ''; } catch (e) {}
-      if (done) return;
+      if (done && !replay) return;
       /* wait for pf-kids.js to load the class list, then launch */
       var launched = false;
       function launch(kids) {
