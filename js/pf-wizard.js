@@ -291,10 +291,8 @@
       });
       fSess.appendChild(seg);
       var fCentre = el('div', 'pfw-field');
-      fCentre.appendChild(el('label', null, 'Centre (optional)'));
-      var centreIn = el('input');
-      centreIn.placeholder = 'e.g. Busy Bees @ Tampines';
-      centreIn.maxLength = 80;
+      fCentre.appendChild(el('label', null, 'Centre'));
+      var centreIn = window.pfCentreSelect({ placeholder: 'Select your centre (optional)' });
       fCentre.appendChild(centreIn);
       two.appendChild(fSess); two.appendChild(fCentre);
 
@@ -318,11 +316,11 @@
         ccMeta.innerHTML = '';
         ccMeta.appendChild(el('span', 'cc-pill', a.name + ' - ' + a.range));
         ccMeta.appendChild(el('span', 'cc-pill', SESSIONS.filter(function (s) { return s[0] === session; })[0][1]));
-        if (centreIn.value.trim()) ccMeta.appendChild(el('span', 'cc-pill', centreIn.value.trim()));
+        if (centreIn.value) ccMeta.appendChild(el('span', 'cc-pill', centreIn.value));
         card.style.background = GRADIENTS[age];
       }
       nameIn.addEventListener('input', preview);
-      centreIn.addEventListener('input', preview);
+      centreIn.addEventListener('change', preview);
 
       box.appendChild(fAge); box.appendChild(fName); box.appendChild(two); box.appendChild(card);
       preview();
@@ -333,7 +331,7 @@
         var done = window.pfApi.spinner(btn, 'Creating...');
         window.pfDb.from('classes').insert({
           owner: window.pfUser.id, name: n, age_group: age,
-          centre: centreIn.value.trim() || null, session: session
+          centre: centreIn.value || null, session: session
         }).select().single().then(function (r) {
           done();
           if (r.error) { window.pfToast('Could not create class: ' + r.error.message); return; }

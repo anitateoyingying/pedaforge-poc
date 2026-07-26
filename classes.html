@@ -68,7 +68,7 @@
         <option value="n1">N1</option><option value="n2">N2</option>
         <option value="k1" selected>K1</option><option value="k2">K2</option>
       </select>
-      <input type="text" id="ncCentre" placeholder="Centre (optional)" style="min-width:160px;">
+      <select id="ncCentre" class="age-select" style="min-width:200px;"></select>
       <button class="btn btn-primary btn-sm" id="ncBtn">Create Class</button>
     </div>
 
@@ -85,12 +85,20 @@
   <script src="js/pf-api.js"></script>
   <script src="js/pf-markdown.js"></script>
   <script src="js/pf-shell.js"></script>
+  <script src="js/pf-centres.js"></script>
   <script src="js/app.js"></script>
   <script>
   (function () {
     'use strict';
     var TAGS = ['visual-spatial', 'advanced-verbal', 'sensory-avoidant', 'kinesthetic', 'emergent-reader', 'EAL', 'needs-movement-breaks', 'high-support'];
     var grid = document.getElementById('clsGrid');
+
+    (function fillCentres() {
+      var host = document.getElementById('ncCentre');
+      if (!host || !window.pfCentreSelect) return;
+      var sel = window.pfCentreSelect({ placeholder: 'Select centre (optional)' });
+      Array.prototype.slice.call(sel.children).forEach(function (n) { host.appendChild(n); });
+    })();
 
     function esc(s) { return window.pfApi.esc(s); }
 
@@ -173,7 +181,7 @@
       var name = document.getElementById('ncName').value.trim();
       if (!name) { document.getElementById('ncName').focus(); return; }
       var done = window.pfApi.spinner(this, 'Creating...');
-      window.pfApi.createClass(name, document.getElementById('ncAge').value, document.getElementById('ncCentre').value.trim())
+      window.pfApi.createClass(name, document.getElementById('ncAge').value, document.getElementById('ncCentre').value)
         .then(function () { done(); document.getElementById('ncName').value = ''; load(); },
           function (e) { done(); if (window.pfToast) pfToast('Failed: ' + e.message); });
     });
