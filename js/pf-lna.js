@@ -55,12 +55,13 @@
     }
 
     var actions = el('div', 'lna-actions');
-    var copyBtn = el('button', 'btn btn-secondary btn-sm', 'Copy to IDP');
+    var copyBtn = el('button', 'btn btn-secondary');
     copyBtn.type = 'button';
+    copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Goals to IDP';
     copyBtn.addEventListener('click', copyToIdp);
     actions.appendChild(copyBtn);
-    var hint = el('span', null, 'Copies the goals as text for pasting into your Individual Development Plan.');
-    hint.style.cssText = 'font-size:0.76rem;color:var(--text-muted);align-self:center;';
+    var hint = el('span', 'lna-hint', 'Copies the goals as text for pasting into your Individual Development Plan.');
+    hint.style.alignSelf = 'center';
     actions.appendChild(hint);
     host.appendChild(actions);
 

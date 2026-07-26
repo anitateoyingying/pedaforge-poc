@@ -288,6 +288,23 @@
     }
   }
 
+  /* Wrap the shared picker's bare selects in labeled .field blocks. */
+  function decoratePicker(host) {
+    var sels = host.querySelectorAll('select');
+    if (sels.length < 2) return;
+    host.classList.add('ws-picker-row');
+    var labels = ['Class', 'Child'];
+    Array.prototype.forEach.call(sels, function (sel, i) {
+      sel.id = sel.id || 'wsPick' + labels[i];
+      var wrap = el('div', 'field');
+      var lab = el('label', null, labels[i]);
+      lab.htmlFor = sel.id;
+      host.insertBefore(wrap, sel);
+      wrap.appendChild(lab);
+      wrap.appendChild(sel);
+    });
+  }
+
   function init(ctx) {
     if (!ctx || !ctx.user) return;
     if (!$('wsAnalyse')) return;
@@ -295,7 +312,8 @@
     wireDomains();
     $('wsAnalyse').addEventListener('click', analyse);
     $('wsSave').addEventListener('click', save);
-    window.pfApi.childPicker($('wsPicker'), { onPick: onPick, allowNone: true });
+    window.pfApi.childPicker($('wsPicker'), { onPick: onPick, allowNone: true })
+      .then(function () { decoratePicker($('wsPicker')); });
     loadGallery();
   }
 

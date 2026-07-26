@@ -11,12 +11,43 @@
   <link rel="stylesheet" href="css/app-shell.css">
   <style>
     /* ─── Observation page local layout (accent-aware) ─────── */
+    /* panel headings: match the studio's Playfair panel-title style */
+    .dash-panel > h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+
+    /* labeled form fields (same pattern as classes.html) */
+    .field label {
+      display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 11px 14px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.9rem;
+      color: var(--text); background: var(--bg-card); min-height: 44px; outline: none;
+      transition: border-color var(--transition);
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); }
+    .field textarea { resize: vertical; line-height: 1.55; }
+    .obs-form-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px; margin-bottom: 16px;
+    }
+    .obs-action-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+    .obs-action-row .btn { min-height: 44px; }
+    .obs-hint { font-size: 0.76rem; color: var(--text-muted); line-height: 1.45; }
+    .obs-divider-row {
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+      margin-top: 18px; border-top: 1px dashed var(--border); padding-top: 16px;
+    }
+    .obs-divider-row .btn { min-height: 44px; }
+
     /* captured anecdotal-note cards */
     .note-feed { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
     .note-card {
       background: var(--bg); border: 1px solid var(--border);
       border-radius: var(--radius-sm); padding: 14px 16px;
     }
+    .note-card .note-why { font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+    .note-empty { font-size: 0.85rem; color: var(--text-muted); font-style: italic; padding: 8px 2px; }
     .note-card .note-head {
       display: flex; align-items: center; justify-content: space-between;
       gap: 10px; margin-bottom: 8px;
@@ -108,9 +139,39 @@
       .obs-stage { padding-bottom: 28px; }
     }
 
+    /* ─── Past observations list rows ──────────────────────── */
+    .past-row {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); overflow: hidden;
+    }
+    .past-row-head {
+      display: flex; align-items: center; gap: 12px; width: 100%;
+      min-height: 52px; padding: 12px 16px; border: none; background: none;
+      cursor: pointer; font-family: var(--font); text-align: left;
+      transition: background var(--transition);
+    }
+    .past-row-head:hover { background: var(--accent-proposal-soft); }
+    .past-row-main { flex: 1; min-width: 0; }
+    .past-row-who {
+      font-size: 0.88rem; font-weight: 600; color: var(--secondary);
+      display: block; margin-bottom: 2px;
+    }
+    .past-row-meta { font-size: 0.76rem; color: var(--text-muted); }
+    .past-row-ago { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+    .past-row-chevron {
+      flex-shrink: 0; color: var(--text-muted);
+      transition: transform 0.2s ease;
+    }
+    .past-row.open .past-row-chevron { transform: rotate(180deg); }
+    .past-row-detail { padding: 0 16px 14px; }
+
     /* ─── Report sections (strengths / growth / follow-up) ── */
     .play-rep-sec { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 13px 16px; margin-bottom: 10px; }
-    .play-rep-sec h5 { font-size: 0.85rem; color: var(--secondary); margin-bottom: 8px; }
+    .play-rep-sec h5 {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
+    }
+    .past-row-detail .play-rep-sec { background: var(--bg-card); }
     .play-rep-sec p { font-size: 0.85rem; color: var(--text); line-height: 1.55; margin: 0; }
     .play-rep-sec textarea.form-control { background: var(--bg-card); }
     .play-rep-growth { border-left: 3px solid var(--warning); }
@@ -182,29 +243,31 @@
         <div class="dash-panel mb-3">
           <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> New Observation</h3>
 
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:16px;">
-            <div>
-              <label for="obsEducator" style="display:block;font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:6px;">Educator being observed</label>
-              <input type="text" id="obsEducator" class="form-control" placeholder="e.g. Sarah Lim" autocomplete="off">
+          <div class="obs-form-grid">
+            <div class="field">
+              <label for="obsEducator">Educator being observed</label>
+              <input type="text" id="obsEducator" placeholder="e.g. Sarah Lim" autocomplete="off">
             </div>
-            <div>
-              <label for="obsClass" style="display:block;font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:6px;">Class (optional)</label>
-              <input type="text" id="obsClass" class="form-control" placeholder="e.g. K1 Sunshine" autocomplete="off">
+            <div class="field">
+              <label for="obsClass">Class (optional)</label>
+              <input type="text" id="obsClass" placeholder="e.g. K1 Sunshine" autocomplete="off">
             </div>
           </div>
 
-          <label for="obsNoteInput" style="display:block;font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:6px;">Anecdotal note - what did you just see or hear?</label>
-          <textarea id="obsNoteInput" class="form-control" rows="3" placeholder="e.g. Sat at Leo's eye level when he got frustrated with the blocks, named the feeling, then waited."></textarea>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-            <button class="btn btn-primary btn-sm" id="obsTagBtn" type="button">Tag with AI</button>
-            <span style="font-size:0.76rem;color:var(--text-muted);align-self:center;">Each note is matched to an ECDA QTT indicator (met / emerging) with a rationale. Ctrl+Enter to tag.</span>
+          <div class="field">
+            <label for="obsNoteInput">Anecdotal note - what did you just see or hear?</label>
+            <textarea id="obsNoteInput" rows="3" placeholder="e.g. Sat at Leo's eye level when he got frustrated with the blocks, named the feeling, then waited."></textarea>
+          </div>
+          <div class="obs-action-row">
+            <button class="btn btn-primary" id="obsTagBtn" type="button">Tag with AI</button>
+            <span class="obs-hint">Each note is matched to an ECDA QTT indicator (met / emerging) with a rationale. Ctrl+Enter to tag.</span>
           </div>
 
           <div class="note-feed" id="obsNoteFeed"></div>
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;border-top:1px dashed var(--border);padding-top:16px;">
+          <div class="obs-divider-row">
             <button class="btn btn-primary" id="obsGenerate" type="button" disabled title="Capture at least 2 tagged notes first">Generate Report</button>
-            <span style="font-size:0.76rem;color:var(--text-muted);align-self:center;">Needs at least 2 tagged notes.</span>
+            <span class="obs-hint">Needs at least 2 tagged notes.</span>
           </div>
         </div>
 
@@ -223,7 +286,7 @@
             <h5>Follow-up plan</h5>
             <textarea id="obsRepFollowup" class="form-control" rows="3"></textarea>
           </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+          <div class="obs-action-row">
             <button class="btn btn-primary" id="obsSave" type="button">Save Observation</button>
             <a href="coach.html?handoff=latest" class="btn btn-secondary">Discuss with AI Coach &rarr;</a>
           </div>

@@ -30,6 +30,15 @@
     if (typeof window.animateCounter === 'function') window.animateCounter(node);
   }
   function whoName(p) { return p && p.full_name ? p.full_name : null; }
+  function emptyWithLink(before, href, linkText, after) {
+    // Friendly zero state that links to the creation flow (XSS-safe: all textContent).
+    var wrap = el('span', null, before + ' ');
+    var a = el('a', null, linkText);
+    a.href = href;
+    wrap.appendChild(a);
+    wrap.appendChild(document.createTextNode(after || '.'));
+    return wrap;
+  }
 
   /* ── Stat tiles + mode bars ──────────────────────────── */
   function renderModeBars(sessions) {
@@ -42,7 +51,9 @@
     });
     var total = sessions.length;
     if (!total) {
-      host.appendChild(el('p', 'dash-empty', 'No coaching sessions yet - start one in the AI Coach and it will appear here.'));
+      var p = el('p', 'dash-empty');
+      p.appendChild(emptyWithLink('No coaching sessions yet - start one in the', 'coach.html', 'AI Coach', ' and it will appear here.'));
+      host.appendChild(p);
       return;
     }
     Object.keys(MODE_NAMES).forEach(function (mode) {
@@ -69,8 +80,9 @@
     tbody.innerHTML = '';
     if (!observations.length) {
       var tr = el('tr');
-      var td = el('td', 'dash-empty', 'No observations recorded yet - capture one in Lesson Observation.');
+      var td = el('td', 'dash-empty');
       td.colSpan = 4;
+      td.appendChild(emptyWithLink('No observations recorded yet - capture your first in', 'observation.html', 'Lesson Observation'));
       tr.appendChild(td);
       tbody.appendChild(tr);
       return;
@@ -110,8 +122,9 @@
     tbody.innerHTML = '';
     if (!items.length) {
       var tr = el('tr');
-      var td = el('td', 'dash-empty', 'No activity yet. Observations, coaching sessions and layout submissions will show up here.');
+      var td = el('td', 'dash-empty');
       td.colSpan = 4;
+      td.appendChild(emptyWithLink('Nothing here yet. Record an', 'observation.html', 'observation', ' - it will show up alongside coaching sessions and layout submissions.'));
       tr.appendChild(td);
       tbody.appendChild(tr);
       return;

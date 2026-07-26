@@ -36,9 +36,31 @@
       box-shadow: 0 1px 2px rgba(45,42,94,0.15), 0 4px 10px rgba(45,42,94,0.15); }
     .lp-handle:hover { color: var(--accent-proposal); }
     .lp-handle-del:hover { color: var(--danger); }
-    .lp-tool { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer;
-      background: var(--bg); color: var(--text); font-size: 0.95rem; transition: all var(--transition); }
+    .lp-tool { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer;
+      background: var(--bg); color: var(--text); font-size: 0.95rem; transition: all var(--transition);
+      display: inline-flex; align-items: center; justify-content: center; }
     .lp-tool:hover { border-color: var(--accent-proposal); background: var(--accent-proposal-soft); }
+    .lp-tool svg { width: 17px; height: 17px; }
+
+    /* Toolbar: labeled controls at consistent 40px+ heights */
+    .layout-toolbar { align-items: flex-end; }
+    .lp-tb-group { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
+    .lp-field { min-width: 150px; }
+    .lp-field label {
+      display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+    }
+    .lp-field .age-select { min-height: 40px; width: 100%; }
+    .lp-scale-note { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; align-self: center; margin-left: 4px; }
+
+    /* Inspector: consistent headings + uniform full-width actions */
+    .layout-palette h3, .layout-inspector h3 {
+      font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--secondary);
+    }
+    .lp-my-layouts { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
+    .lp-my-layouts h3 { margin-bottom: 12px; }
+    .layout-inspector .age-select { width: 100%; min-height: 40px; margin-bottom: 10px; }
+    #lpSave, #lpSubmit { width: 100%; justify-content: center; min-height: 44px; }
     .lp-hint { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-light);
       background: var(--accent-proposal-soft); border: 1px solid var(--accent-proposal-line);
       border-radius: var(--radius-sm); padding: 9px 13px; margin-bottom: 12px; line-height: 1.45; }
@@ -201,29 +223,40 @@
       <!-- ─── Centre: Canvas ──────────────────────────── -->
       <div class="layout-canvas-wrap">
         <div class="layout-toolbar">
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <label for="ageGroup" class="profile-meta" style="font-weight:600;">Age group</label>
-            <select class="age-select" id="ageGroup">
-              <option value="ic">Infant Care</option>
-              <option value="pg">Playgroup</option>
-              <option value="n1">Nursery N1</option>
-              <option value="n2">Nursery N2</option>
-              <option value="k1" selected>Kindergarten K1</option>
-              <option value="k2">Kindergarten K2</option>
-            </select>
-            <select class="age-select" id="lpPreset" aria-label="Room presets">
-              <option value="">Presets...</option>
-              <option value="ic">Infant Care room</option>
-              <option value="n2">Nursery N2 room</option>
-              <option value="k1">K1 reference room</option>
-              <option value="k2">K2 room</option>
-            </select>
+          <div class="lp-tb-group">
+            <div class="lp-field">
+              <label for="ageGroup">Age group</label>
+              <select class="age-select" id="ageGroup">
+                <option value="ic">Infant Care</option>
+                <option value="pg">Playgroup</option>
+                <option value="n1">Nursery N1</option>
+                <option value="n2">Nursery N2</option>
+                <option value="k1" selected>Kindergarten K1</option>
+                <option value="k2">Kindergarten K2</option>
+              </select>
+            </div>
+            <div class="lp-field">
+              <label for="lpPreset">Start from a preset</label>
+              <select class="age-select" id="lpPreset">
+                <option value="">Choose a room...</option>
+                <option value="ic">Infant Care room</option>
+                <option value="n2">Nursery N2 room</option>
+                <option value="k1">K1 reference room</option>
+                <option value="k2">K2 room</option>
+              </select>
+            </div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <button class="lp-tool" id="lpUndo" title="Undo (Ctrl+Z)" aria-label="Undo">↺</button>
-            <button class="lp-tool" id="lpRedo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↻</button>
-            <button class="lp-tool" id="lpClear" title="Clear furniture" aria-label="Clear furniture">🗑</button>
-            <span class="profile-meta">1 grid = 0.5&nbsp;m</span>
+          <div class="lp-tb-group">
+            <button class="lp-tool" id="lpUndo" title="Undo (Ctrl+Z)" aria-label="Undo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+            </button>
+            <button class="lp-tool" id="lpRedo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg>
+            </button>
+            <button class="lp-tool" id="lpClear" title="Clear all furniture" aria-label="Clear all furniture">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+            <span class="lp-scale-note">1 grid = 0.5&nbsp;m</span>
           </div>
         </div>
 
@@ -258,15 +291,15 @@
         <h3>Live Safety Check</h3>
         <div id="lpFlags" aria-live="polite"></div>
 
-        <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border);">
-          <h3 style="margin-bottom:12px;">My Layouts</h3>
-          <select class="age-select" id="lpSaved" style="width:100%;margin-bottom:10px;"></select>
-          <select class="age-select" id="lpClassSel" style="width:100%;margin-bottom:10px;" aria-label="Tag this layout with one of your classes (optional)" hidden></select>
-          <button class="btn btn-secondary btn-sm" id="lpSave" style="width:100%;justify-content:center;">Save Current Layout</button>
+        <div class="lp-my-layouts">
+          <h3>My Layouts</h3>
+          <select class="age-select" id="lpSaved" aria-label="Open a saved layout"></select>
+          <select class="age-select" id="lpClassSel" aria-label="Tag this layout with one of your classes (optional)" hidden></select>
+          <button class="btn btn-secondary btn-sm" id="lpSave">Save Current Layout</button>
           <p class="profile-meta" style="margin-top:10px;line-height:1.5;">Layouts save to your account and appear in the Director's approval queue once submitted.</p>
         </div>
 
-        <button class="btn btn-primary mt-3" id="lpSubmit" disabled style="width:100%;justify-content:center;background:var(--sprout);border-color:var(--sprout);">
+        <button class="btn btn-primary mt-3" id="lpSubmit" disabled style="background:var(--sprout);border-color:var(--sprout);">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           Submit Layout for Approval
         </button>

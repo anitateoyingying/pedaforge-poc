@@ -37,8 +37,7 @@
     line.appendChild(tag);
     card.appendChild(line);
     if (n.rationale) {
-      var why = el('div', null);
-      why.style.cssText = 'font-size:0.78rem;color:var(--text-muted);margin-top:8px;line-height:1.5;';
+      var why = el('div', 'note-why');
       window.pfMd.renderInto(why, n.rationale);
       card.appendChild(why);
     }
@@ -49,9 +48,8 @@
     var feed = $('obsNoteFeed');
     feed.innerHTML = '';
     if (!notes.length) {
-      var empty = el('div', null, 'No notes yet. Type what you see in the classroom and press "Tag with AI" - each note is matched to an ECDA QTT indicator.');
-      empty.style.cssText = 'font-size:0.85rem;color:var(--text-muted);font-style:italic;padding:8px 2px;';
-      feed.appendChild(empty);
+      feed.appendChild(el('div', 'note-empty',
+        'No notes yet. Type what you see in the classroom and press "Tag with AI" - each note is matched to an ECDA QTT indicator.'));
     } else {
       notes.forEach(function (n) { feed.appendChild(noteCard(n)); });
     }
@@ -171,29 +169,40 @@
   }
 
   function pastRow(o) {
-    var card = el('div', 'note-card');
-    card.style.cursor = 'pointer';
-    var head = el('div', 'note-head');
-    var who = el('span', 'note-source');
-    who.textContent = o.educator_name + (o.class_name ? ' - ' + o.class_name : '');
-    head.appendChild(who);
-    head.appendChild(el('span', 'note-time', window.pfApi.ago(o.created_at)));
-    card.appendChild(head);
-    var meta = el('div', null,
+    var row = el('div', 'past-row');
+
+    var head = el('button', 'past-row-head');
+    head.type = 'button';
+    head.setAttribute('aria-expanded', 'false');
+
+    var main = el('div', 'past-row-main');
+    main.appendChild(el('span', 'past-row-who',
+      o.educator_name + (o.class_name ? ' - ' + o.class_name : '')));
+    main.appendChild(el('span', 'past-row-meta',
       ((o.evidence && o.evidence.length) || 0) + ' notes' +
-      (o.profiles && o.profiles.full_name ? ' - observed by ' + o.profiles.full_name : ''));
-    meta.style.cssText = 'font-size:0.78rem;color:var(--text-muted);';
-    card.appendChild(meta);
-    var detail = el('div');
+      (o.profiles && o.profiles.full_name ? ' - observed by ' + o.profiles.full_name : '')));
+    head.appendChild(main);
+    head.appendChild(el('span', 'past-row-ago', window.pfApi.ago(o.created_at)));
+
+    var chev = el('span', 'past-row-chevron');
+    chev.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+    head.appendChild(chev);
+    row.appendChild(head);
+
+    var detail = el('div', 'past-row-detail');
     detail.hidden = true;
-    detail.style.marginTop = '10px';
     var rep = o.report || {};
     detail.appendChild(reportSection('Strengths', rep.strengths, 'play-rep-strengths'));
     detail.appendChild(reportSection('Growth areas', rep.growth, 'play-rep-growth'));
     detail.appendChild(reportSection('Follow-up', rep.followup, 'play-rep-followup'));
-    card.appendChild(detail);
-    card.addEventListener('click', function () { detail.hidden = !detail.hidden; });
-    return card;
+    row.appendChild(detail);
+
+    head.addEventListener('click', function () {
+      detail.hidden = !detail.hidden;
+      row.classList.toggle('open', !detail.hidden);
+      head.setAttribute('aria-expanded', String(!detail.hidden));
+    });
+    return row;
   }
 
   function loadPast() {

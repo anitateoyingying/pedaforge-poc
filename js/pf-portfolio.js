@@ -237,13 +237,31 @@
     loadObservations();
   }
 
+  /* Wrap the shared picker's bare selects in labeled .field blocks. */
+  function decoratePicker(host) {
+    var sels = host.querySelectorAll('select');
+    if (sels.length < 2) return;
+    host.classList.add('pfo-picker-row');
+    var labels = ['Class', 'Child'];
+    Array.prototype.forEach.call(sels, function (sel, i) {
+      sel.id = sel.id || 'pfoPick' + labels[i];
+      var wrap = el('div', 'field');
+      var lab = el('label', null, labels[i]);
+      lab.htmlFor = sel.id;
+      host.insertBefore(wrap, sel);
+      wrap.appendChild(lab);
+      wrap.appendChild(sel);
+    });
+  }
+
   function init(ctx) {
     if (!ctx || !ctx.user) return;
     var picker = $('pfoPicker');
     if (!picker) return;
     $('pfoDraft').addEventListener('click', draftWithAi);
     $('pfoSave').addEventListener('click', saveObservation);
-    window.pfApi.childPicker(picker, { onPick: onPick });
+    window.pfApi.childPicker(picker, { onPick: onPick })
+      .then(function () { decoratePicker(picker); });
   }
 
   function boot() { if (window.pfAuthReady) window.pfAuthReady.then(init); }

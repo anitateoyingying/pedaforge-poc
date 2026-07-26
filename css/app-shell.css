@@ -200,6 +200,38 @@ body.pf-shell { position: relative; }
   .pf-side, .pf-nav a, .pf-quick { transition: none; }
 }
 
+/* ── Form-control refinements (studio-wide) ─────────────── */
+body.pf-shell input[type="checkbox"],
+body.pf-shell input[type="radio"] {
+  width: 20px; height: 20px;
+  accent-color: var(--primary, #e8063c);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+body.pf-shell label:has(> input[type="checkbox"]),
+body.pf-shell label:has(> input[type="radio"]) {
+  display: inline-flex; align-items: center; gap: 10px;
+  min-height: 36px; cursor: pointer;
+}
+
+/* Segmented view toggle (card/table) */
+.pf-viewseg {
+  display: inline-flex; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 100px; padding: 3px; gap: 2px;
+}
+.pf-viewseg button {
+  display: inline-flex; align-items: center; gap: 7px;
+  border: none; border-radius: 100px; cursor: pointer;
+  background: none; font-family: var(--font); font-size: 0.78rem; font-weight: 600;
+  color: var(--text-muted); padding: 7px 15px;
+  transition: all 0.2s ease;
+}
+.pf-viewseg button.on {
+  background: var(--bg-card); color: var(--secondary);
+  box-shadow: 0 1px 3px rgba(45, 42, 94, 0.12), 0 3px 8px rgba(45, 42, 94, 0.08);
+}
+.pf-viewseg button svg { width: 14px; height: 14px; }
+
 /* ── Markdown output (AI text) ────────────────────────── */
 .pf-md p { margin: 0 0 0.7em; }
 .pf-md p:last-child { margin-bottom: 0; }

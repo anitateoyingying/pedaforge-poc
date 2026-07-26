@@ -10,7 +10,45 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/app-shell.css">
   <style>
+    /* ── Field pattern (label above, uppercase muted) ────── */
+    .field { margin-bottom: 16px; }
+    .field > label, .pfo-label {
+      display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 11px 14px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.9rem;
+      background: #fff; min-height: 44px; color: var(--text);
+    }
+    .field textarea { resize: vertical; line-height: 1.55; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--primary); }
+
+    /* ── Child picker ────────────────────────────────────── */
+    .pfo-picker-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
+    .pfo-picker-row .field { margin-bottom: 0; min-width: 180px; }
+    .pfo-picker-row .pf-picker-manage {
+      padding-bottom: 13px; font-size: 0.8rem; font-weight: 600;
+      color: var(--text-muted); text-decoration: none;
+    }
+    .pfo-picker-row .pf-picker-manage:hover { color: var(--primary); text-decoration: underline; }
+    #pfoPicker select {
+      min-height: 44px; padding: 10px 14px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.88rem;
+      background: #fff; color: var(--text);
+    }
+
+    /* ── Domain checkboxes (global 20px styling applies) ── */
     .pfo-domain-boxes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px 16px; margin-bottom: 12px; }
+    .pfo-domain-boxes label { font-size: 0.85rem; color: var(--text); }
+
+    #pfoDraft, #pfoSave { min-height: 44px; }
+    .btn-sm { min-height: 36px; }
+
+    /* ── Observation timeline ────────────────────────────── */
+    #pfoTimeline .observation-card { transition: border-color 0.2s ease; }
+    #pfoTimeline .observation-card:hover { border-color: var(--primary); }
+
     .pfo-draft-box { margin-top: 16px; }
     .pfo-draft-box textarea { min-height: 110px; }
     .pfo-next-step {
@@ -25,6 +63,16 @@
     }
     .pfo-empty h4 { color: var(--secondary); margin-bottom: 6px; }
     .pfo-empty p { font-size: 0.88rem; color: var(--text-muted); }
+
+    /* ── Section spacing (moved from inline styles) ─────── */
+    .pfo-head-main { flex: 1; }
+    #pfoPicker { margin-top: 10px; }
+    .pfo-coverage-title { margin-bottom: 6px; }
+    #pfoCoverageMeta { margin-bottom: 20px; }
+    .pfo-obs-title { margin-bottom: 12px; }
+    .pfo-badge-row { margin-bottom: 8px; }
+    .pfo-draft-box .field { margin-bottom: 12px; }
+    .pfo-timeline-title { margin-bottom: 16px; }
   </style>
 </head>
 <body class="hub-classroom">
@@ -83,10 +131,10 @@
     <!-- Child Picker -->
     <div class="portfolio-header">
       <div class="child-avatar"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <div style="flex: 1;">
+      <div class="pfo-head-main">
         <h2 class="profile-name-lg" id="pfoChildName">Portfolio</h2>
         <p class="profile-subtitle" id="pfoChildMeta">Pick a child to open their living portfolio.</p>
-        <div id="pfoPicker" style="margin-top: 10px;"></div>
+        <div id="pfoPicker"></div>
       </div>
     </div>
 
@@ -94,34 +142,34 @@
 
       <!-- Domain coverage from real observations -->
       <div class="panel-card mb-3">
-        <h3 class="section-title" style="margin-bottom: 6px;">Observation Coverage by Domain</h3>
-        <p class="profile-meta" style="margin-bottom: 20px;" id="pfoCoverageMeta"></p>
+        <h3 class="section-title pfo-coverage-title">Observation Coverage by Domain</h3>
+        <p class="profile-meta" id="pfoCoverageMeta"></p>
         <div class="domain-grid" id="pfoDomainGrid"></div>
       </div>
 
       <!-- New observation -->
       <div class="panel-card mb-3">
-        <h3 class="section-title" style="margin-bottom: 12px;">New Observation</h3>
-        <div class="form-group">
+        <h3 class="section-title pfo-obs-title">New Observation</h3>
+        <div class="field">
           <label for="pfoNote">What did you observe?</label>
-          <textarea class="form-control" id="pfoNote" rows="4" placeholder="e.g. During block play, she built a bridge between two towers and tested three configurations before it held..."></textarea>
+          <textarea id="pfoNote" rows="4" placeholder="e.g. During block play, she built a bridge between two towers and tested three configurations before it held..."></textarea>
         </div>
-        <label class="narrative-label" style="margin-bottom: 8px; display: block;">Learning domains</label>
+        <span class="pfo-label">Learning domains</span>
         <div class="pfo-domain-boxes" id="pfoDomains">
-          <label class="checkbox-label"><input type="checkbox" value="Language &amp; Literacy">Language &amp; Literacy</label>
-          <label class="checkbox-label"><input type="checkbox" value="Numeracy">Numeracy</label>
-          <label class="checkbox-label"><input type="checkbox" value="Motor Skills">Motor Skills</label>
-          <label class="checkbox-label"><input type="checkbox" value="Social-Emotional">Social-Emotional</label>
-          <label class="checkbox-label"><input type="checkbox" value="Discovery of the World">Discovery of the World</label>
-          <label class="checkbox-label"><input type="checkbox" value="Aesthetics">Aesthetics</label>
+          <label><input type="checkbox" value="Language &amp; Literacy"> Language &amp; Literacy</label>
+          <label><input type="checkbox" value="Numeracy"> Numeracy</label>
+          <label><input type="checkbox" value="Motor Skills"> Motor Skills</label>
+          <label><input type="checkbox" value="Social-Emotional"> Social-Emotional</label>
+          <label><input type="checkbox" value="Discovery of the World"> Discovery of the World</label>
+          <label><input type="checkbox" value="Aesthetics"> Aesthetics</label>
         </div>
         <button class="btn btn-primary" id="pfoDraft">Draft with AI</button>
 
         <div class="pfo-draft-box hidden" id="pfoDraftBox">
-          <p style="margin-bottom: 8px;"><span class="pf-ai-badge">AI-generated - editable</span></p>
-          <div class="form-group" style="margin-bottom: 12px;">
+          <p class="pfo-badge-row"><span class="pf-ai-badge">AI-generated - editable</span></p>
+          <div class="field">
             <label for="pfoNarrative">Portfolio narrative (edit before saving)</label>
-            <textarea class="form-control" id="pfoNarrative" rows="5"></textarea>
+            <textarea id="pfoNarrative" rows="5"></textarea>
           </div>
           <div class="obs-tags" id="pfoDraftTags"></div>
           <div class="pfo-next-step hidden" id="pfoNextStep"></div>
@@ -130,7 +178,7 @@
       </div>
 
       <!-- Timeline -->
-      <h3 class="section-title" style="margin-bottom: 16px;">Observation Timeline</h3>
+      <h3 class="section-title pfo-timeline-title">Observation Timeline</h3>
       <div id="pfoTimeline"></div>
 
     </div>

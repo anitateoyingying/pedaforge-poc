@@ -22,6 +22,9 @@
   };
   var CONDITION_ORDER = ['good', 'fair', 'worn'];
   var CONDITION_DOTS = { good: 3, fair: 2, worn: 1 };
+  var CONDITION_LABEL = { good: 'Good', fair: 'Fair', worn: 'Worn' };
+  var LS_VIEW = 'pedaforge:inventory:view';
+  var CHEV_SVG = '<svg class="inv-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
 
   var items = [];
   var els = {};
@@ -160,6 +163,57 @@
     return dots;
   }
 
+  /* Dots + readable label so the legend is self-explanatory */
+  function conditionRow(condition) {
+    var row = document.createElement('div');
+    row.className = 'inv-cond-row';
+    row.appendChild(conditionDots(condition));
+    var lbl = document.createElement('span');
+    lbl.textContent = CONDITION_LABEL[condition] || condition;
+    row.appendChild(lbl);
+    return row;
+  }
+
+  /* Shared action buttons (card + table views) */
+  function actionButtons(item) {
+    var actions = document.createElement('div');
+    actions.className = 'inv-actions';
+
+    var moveBtn = document.createElement('button');
+    var goingOut = item.status === 'in';
+    moveBtn.className = goingOut
+      ? 'btn btn-primary btn-sm inv-btn-out'
+      : 'btn btn-secondary btn-sm inv-btn-in';
+    moveBtn.textContent = goingOut ? 'Check Out' : 'Check In';
+    moveBtn.title = goingOut ? 'Take this resource to your room' : 'Return this resource to the shelf';
+    moveBtn.addEventListener('click', function () { toggleStatus(item, moveBtn); });
+    actions.appendChild(moveBtn);
+
+    var condBtn = document.createElement('button');
+    condBtn.className = 'btn btn-secondary btn-sm';
+    condBtn.textContent = 'Log Wear';
+    condBtn.title = 'Currently ' + (CONDITION_LABEL[item.condition] || item.condition) + ' - tap to log wear (good, fair, worn)';
+    condBtn.addEventListener('click', function () { cycleCondition(item, condBtn); });
+    actions.appendChild(condBtn);
+
+    return actions;
+  }
+
+  function historyButton(item, histBox) {
+    var histBtn = document.createElement('button');
+    histBtn.className = 'btn btn-secondary btn-sm inv-hist-btn';
+    histBtn.innerHTML = 'History ' + CHEV_SVG;
+    histBtn.title = 'Who moved this resource last';
+    histBtn.setAttribute('aria-expanded', 'false');
+    histBtn.addEventListener('click', function () {
+      toggleHistory(item, histBox, histBtn);
+      var open = !histBox.hidden;
+      histBtn.classList.toggle('open', open);
+      histBtn.setAttribute('aria-expanded', String(open));
+    });
+    return histBtn;
+  }
+
   function renderCard(item) {
     var card = document.createElement('div');
     card.className = 'inv-card';
@@ -195,55 +249,112 @@
       card.appendChild(holder);
     }
 
-    card.appendChild(conditionDots(item.condition));
+    card.appendChild(conditionRow(item.condition));
 
-    var actions = document.createElement('div');
-    actions.className = 'inv-actions';
-
-    var moveBtn = document.createElement('button');
-    moveBtn.className = 'btn btn-secondary btn-sm';
-    moveBtn.textContent = item.status === 'in' ? 'Check Out' : 'Check In';
-    moveBtn.addEventListener('click', function () { toggleStatus(item, moveBtn); });
-    actions.appendChild(moveBtn);
-
-    var condBtn = document.createElement('button');
-    condBtn.className = 'btn btn-secondary btn-sm';
-    condBtn.textContent = 'Condition: ' + item.condition;
-    condBtn.title = 'Tap to log wear (good → fair → worn)';
-    condBtn.addEventListener('click', function () { cycleCondition(item, condBtn); });
-    actions.appendChild(condBtn);
-
-    var histBtn = document.createElement('button');
-    histBtn.className = 'btn btn-secondary btn-sm';
-    histBtn.textContent = 'History';
-    actions.appendChild(histBtn);
-
-    card.appendChild(actions);
-
+    var actions = actionButtons(item);
     var histBox = document.createElement('div');
     histBox.className = 'inv-history';
     histBox.hidden = true;
+    actions.appendChild(historyButton(item, histBox));
+    card.appendChild(actions);
     card.appendChild(histBox);
-    histBtn.addEventListener('click', function () { toggleHistory(item, histBox, histBtn); });
 
     return card;
   }
 
+  /* ─── Table rendering ────────────────────────────────────── */
+  function renderTableRow(item) {
+    var tr = document.createElement('tr');
+
+    var tdName = document.createElement('td');
+    var name = document.createElement('span');
+    name.className = 'inv-item-name';
+    name.textContent = item.name;
+    tdName.appendChild(name);
+    if (item.status === 'out') {
+      var holder = document.createElement('div');
+      holder.className = 'inv-meta';
+      holder.textContent = 'With ' + ((item.holder && item.holder.full_name) || 'a colleague');
+      tdName.appendChild(holder);
+    }
+    tr.appendChild(tdName);
+
+    var tdCat = document.createElement('td');
+    tdCat.className = 'inv-td-cat';
+    tdCat.textContent = CATEGORY_LABEL[item.category] || item.category;
+    tr.appendChild(tdCat);
+
+    var tdAges = document.createElement('td');
+    tdAges.className = 'inv-td-cat';
+    var ages = (item.age_groups || []).map(function (a) { return AGE_LABEL[a] || a.toUpperCase(); }).join(', ');
+    tdAges.textContent = ages || 'All ages';
+    tr.appendChild(tdAges);
+
+    var tdCond = document.createElement('td');
+    tdCond.appendChild(conditionRow(item.condition));
+    tr.appendChild(tdCond);
+
+    var tdStatus = document.createElement('td');
+    tdStatus.appendChild(statusPill(item));
+    tr.appendChild(tdStatus);
+
+    var tdActions = document.createElement('td');
+    tdActions.appendChild(actionButtons(item));
+    tr.appendChild(tdActions);
+
+    return tr;
+  }
+
+  function tableMessageRow(text) {
+    var tr = document.createElement('tr');
+    var td = document.createElement('td');
+    td.className = 'inv-empty-cell';
+    td.colSpan = 6;
+    td.textContent = text;
+    tr.appendChild(td);
+    return tr;
+  }
+
   function renderGrid() {
     els.grid.textContent = '';
+    els.tableBody.textContent = '';
     var visible = items.filter(passesFilters);
     if (!items.length) {
       els.empty.hidden = false;
+      els.tableWrap.hidden = true;
       els.empty.textContent = 'No resources in the shared inventory yet - add the first item above and it becomes visible to every educator in the centre.';
       return;
     }
     if (!visible.length) {
       els.empty.hidden = false;
+      els.tableWrap.hidden = true;
       els.empty.textContent = 'No resources match these filters. Clear the search or filters to see all ' + items.length + ' items.';
       return;
     }
     els.empty.hidden = true;
-    visible.forEach(function (item) { els.grid.appendChild(renderCard(item)); });
+    els.tableWrap.hidden = false;
+    visible.forEach(function (item) {
+      els.grid.appendChild(renderCard(item));
+      els.tableBody.appendChild(renderTableRow(item));
+    });
+  }
+
+  /* ─── View toggle (cards/table, persisted) ───────────────── */
+  function setView(v) {
+    document.body.classList.toggle('view-table', v === 'table');
+    els.viewCards.classList.toggle('on', v !== 'table');
+    els.viewTable.classList.toggle('on', v === 'table');
+    els.viewCards.setAttribute('aria-selected', String(v !== 'table'));
+    els.viewTable.setAttribute('aria-selected', String(v === 'table'));
+    try { localStorage.setItem(LS_VIEW, v); } catch (e) { /* private mode: view just won't persist */ }
+  }
+
+  function wireViewToggle() {
+    els.viewCards.addEventListener('click', function () { setView('cards'); });
+    els.viewTable.addEventListener('click', function () { setView('table'); });
+    var saved = 'cards';
+    try { saved = localStorage.getItem(LS_VIEW) || 'cards'; } catch (e) { /* default to cards */ }
+    setView(saved);
   }
 
   /* ─── Actions ────────────────────────────────────────────── */
@@ -321,6 +432,10 @@
   function init() {
     els.grid = document.getElementById('invGrid');
     els.empty = document.getElementById('invEmpty');
+    els.tableWrap = document.getElementById('invTableWrap');
+    els.tableBody = document.getElementById('invTableBody');
+    els.viewCards = document.getElementById('invViewCards');
+    els.viewTable = document.getElementById('invViewTable');
     els.search = document.getElementById('invSearch');
     els.filterAge = document.getElementById('invFilterAge');
     els.filterCat = document.getElementById('invFilterCat');
@@ -330,12 +445,14 @@
     els.condSelect = document.getElementById('invCondition');
     els.ageChips = document.getElementById('invAgeChips');
     els.addBtn = document.getElementById('invAddBtn');
-    if (!els.grid || !els.addBtn) return;
+    if (!els.grid || !els.addBtn || !els.tableBody) return;
 
     wireAddForm();
     wireFilters();
+    wireViewToggle();
     fetchItems().catch(function (e) {
       els.empty.hidden = false;
+      els.tableWrap.hidden = true;
       els.empty.textContent = 'Could not load the inventory: ' + e.message;
     });
   }

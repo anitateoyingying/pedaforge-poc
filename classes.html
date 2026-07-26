@@ -10,49 +10,115 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/app-shell.css">
   <style>
-    .cls-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin: 26px 0 60px; }
-    .cls-card { background: var(--bg-card); border-radius: var(--radius); padding: 22px;
-      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06); }
-    .cls-card h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--secondary); display: flex; justify-content: space-between; align-items: center; }
-    .cls-card h3 .tag { font-size: 0.66rem; }
-    .kid-list { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }
-    .kid-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--bg); border-radius: var(--radius-sm); font-size: 0.85rem; }
-    .kid-row .kid-tags { display: flex; gap: 4px; flex-wrap: wrap; }
-    .kid-row .kid-tag { font-size: 0.62rem; font-weight: 700; padding: 2px 8px; border-radius: 100px; background: var(--accent-proposal-soft, rgba(232,6,60,0.08)); color: var(--primary); }
-    .kid-row button { margin-left: auto; border: none; background: none; cursor: pointer; color: var(--text-muted); font-size: 0.85rem; }
-    .kid-row button:hover { color: var(--danger); }
-    .add-kid { display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed var(--border); padding-top: 14px; }
-    .add-kid input, .new-class input, .new-class select { padding: 9px 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.85rem; }
-    .tag-picks { display: flex; gap: 6px; flex-wrap: wrap; }
-    .tag-pick { font-size: 0.7rem; font-weight: 600; padding: 4px 11px; border-radius: 100px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; }
-    .tag-pick.on { background: rgba(232,6,60,0.08); border-color: var(--primary); color: var(--primary); }
-    .new-class { background: var(--bg-card); border-radius: var(--radius); padding: 22px; margin-top: 26px;
+    .cls-toolbar { display: flex; align-items: center; gap: 12px; margin: 8px 0 18px; }
+    .cls-toolbar .spacer { flex: 1; }
+
+    /* ── Creator card ── */
+    .creator {
+      background: var(--bg-card); border-radius: var(--radius); padding: 22px 24px;
       box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
-      display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+      margin-bottom: 22px;
+    }
+    .creator h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--secondary); margin: 0 0 14px; }
+    .creator-grid { display: grid; grid-template-columns: 2fr 1fr 1.4fr auto; gap: 14px; align-items: end; }
+    @media (max-width: 900px) { .creator-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .creator-grid { grid-template-columns: 1fr; } }
+    .field label {
+      display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+    }
+    .field input, .field select {
+      width: 100%; padding: 11px 14px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.9rem; background: #fff;
+      min-height: 44px;
+    }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--primary); }
+    .creator .btn { min-height: 44px; }
+
+    /* ── Class cards ── */
+    .cls-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; margin: 0 0 60px; }
+    .cls-card {
+      background: var(--bg-card); border-radius: var(--radius); padding: 22px;
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
+    }
+    .cls-card-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+    .cls-card-head h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--secondary); margin: 0; }
+    .cls-meta { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); }
+    .kid-list { display: flex; flex-direction: column; gap: 6px; margin: 14px 0; }
+    .kid-row {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      background: var(--bg); border-radius: var(--radius-sm); font-size: 0.88rem;
+      min-height: 46px;
+    }
+    .kid-row .kid-face {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 0.68rem; font-weight: 800;
+    }
+    .kid-row a.kid-name { font-weight: 600; color: var(--text); text-decoration: none; }
+    .kid-row a.kid-name:hover { color: var(--primary); }
+    .kid-tagsum {
+      font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+      background: #fff; border: 1px solid var(--border); border-radius: 100px;
+      padding: 3px 11px; cursor: pointer; white-space: nowrap;
+    }
+    .kid-tagsum:hover { border-color: var(--primary); color: var(--primary); }
+    .kid-row .kid-del {
+      margin-left: auto; border: none; background: none; cursor: pointer;
+      color: var(--text-muted); font-size: 0.85rem; width: 34px; height: 34px; border-radius: 10px;
+    }
+    .kid-row .kid-del:hover { color: var(--danger); background: rgba(220,38,38,0.06); }
+
+    /* ── Add child (collapsed by default) ── */
+    .add-kid-toggle {
+      width: 100%; min-height: 44px; border: 1px dashed var(--border); border-radius: var(--radius-sm);
+      background: none; cursor: pointer; font-family: var(--font); font-size: 0.85rem; font-weight: 600;
+      color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .add-kid-toggle:hover { border-color: var(--primary); color: var(--primary); }
+    .add-kid { display: none; flex-direction: column; gap: 10px; border-top: 1px dashed var(--border); padding-top: 14px; margin-top: 12px; }
+    .add-kid.open { display: flex; }
+    .add-kid input {
+      padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-family: var(--font); font-size: 0.88rem; min-height: 44px;
+    }
+
+    /* ── Tag editor popover ── */
+    .tag-pop {
+      position: absolute; z-index: 90; background: var(--bg-card); border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(45,42,94,0.1), 0 18px 50px rgba(45,42,94,0.22);
+      padding: 16px; width: 300px;
+    }
+    .tag-pop h4 { font-size: 0.8rem; color: var(--secondary); margin: 0 0 10px; }
+    .tag-picks { display: flex; gap: 7px; flex-wrap: wrap; }
+    .tag-pick {
+      font-size: 0.74rem; font-weight: 600; padding: 8px 14px; min-height: 36px;
+      border-radius: 100px; border: 1px solid var(--border); background: var(--bg); cursor: pointer;
+      font-family: var(--font);
+    }
+    .tag-pick.on { background: rgba(232,6,60,0.08); border-color: var(--primary); color: var(--primary); }
+
+    /* ── Table view ── */
+    .cls-table-wrap {
+      background: var(--bg-card); border-radius: var(--radius); overflow: hidden;
+      box-shadow: 0 1px 2px rgba(45,42,94,0.04), 0 6px 18px rgba(45,42,94,0.06);
+      margin-bottom: 60px; display: none;
+    }
+    .cls-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .cls-table th {
+      text-align: left; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--bg);
+    }
+    .cls-table td { padding: 12px 18px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .cls-table tr:last-child td { border-bottom: none; }
+    .cls-table tr:hover td { background: #fdfbf7; }
     .empty-note { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
+    body.view-table .cls-grid { display: none; }
+    body.view-table .cls-table-wrap { display: block; }
   </style>
 </head>
 <body>
-<div class="bg-blobs" aria-hidden="true"><div class="bg-blob bg-blob-1"></div><div class="bg-blob bg-blob-2"></div></div>
-
-  <nav class="navbar" role="navigation" aria-label="Main navigation">
-    <div class="container">
-      <a href="index.html" class="navbar-brand"><div class="logo">PF</div> PedaForge</a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Dashboard</a></li>
-        <li><span class="nav-dropdown-trigger">Classroom</span><div class="nav-dropdown">
-          <a href="classes.html">My Classes</a><a href="planner.html">Lesson Planner</a><a href="portfolio.html">Portfolio</a><a href="work-sample.html">Work Samples</a></div></li>
-        <li><span class="nav-dropdown-trigger">Leadership</span><div class="nav-dropdown">
-          <a href="coach.html">AI Coach</a><a href="observation.html">Lesson Observation</a><a href="lna.html">Learning Needs</a><a href="dashboard.html">PD Dashboard</a></div></li>
-        <li><span class="nav-dropdown-trigger">Spaces</span><div class="nav-dropdown">
-          <a href="sproutspace-layout.html">Layout Planner</a><a href="sproutspace-inventory.html">Resource Inventory</a><a href="sproutspace-control.html">HQ Control</a></div></li>
-        <li><span class="nav-dropdown-trigger">Home Literacy</span><div class="nav-dropdown">
-          <a href="home-phonics-studio.html">Phonics Studio</a><a href="home-benchmark.html">Termly Benchmark</a><a href="home-reading-coach.html">Reading Coach</a><a href="home-draw-reflect.html">Draw &amp; Reflect</a><a href="home-dictionary.html">Talking Dictionary</a></div></li>
-      </ul>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">&#9776;</button>
-    </div>
-  </nav>
-
   <header class="page-header">
     <div class="container">
       <h1>My Classes</h1>
@@ -61,18 +127,52 @@
   </header>
 
   <main class="container" style="padding-bottom:60px;">
-    <div class="new-class">
-      <input type="text" id="ncName" placeholder="Class name, e.g. K1 Sunshine" style="flex:1;min-width:200px;">
-      <select id="ncAge" class="age-select">
-        <option value="ic">Infant Care</option><option value="pg">Playgroup</option>
-        <option value="n1">N1</option><option value="n2">N2</option>
-        <option value="k1" selected>K1</option><option value="k2">K2</option>
-      </select>
-      <select id="ncCentre" class="age-select" style="min-width:200px;"></select>
-      <button class="btn btn-primary btn-sm" id="ncBtn">Create Class</button>
+    <div class="creator">
+      <h3>Create a class</h3>
+      <div class="creator-grid">
+        <div class="field">
+          <label for="ncName">Class name</label>
+          <input type="text" id="ncName" placeholder="e.g. K1 Sunshine" maxlength="60">
+        </div>
+        <div class="field">
+          <label for="ncAge">Age group</label>
+          <select id="ncAge">
+            <option value="ic">Infant Care</option><option value="pg">Playgroup</option>
+            <option value="n1">Nursery 1</option><option value="n2">Nursery 2</option>
+            <option value="k1" selected>Kindergarten 1</option><option value="k2">Kindergarten 2</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="ncCentre">Centre</label>
+          <select id="ncCentre"></select>
+        </div>
+        <button class="btn btn-primary" id="ncBtn">Create Class</button>
+      </div>
+    </div>
+
+    <div class="cls-toolbar">
+      <span class="empty-note" id="clsCount"></span>
+      <span class="spacer"></span>
+      <div class="pf-viewseg" role="tablist" aria-label="View">
+        <button id="viewCards" class="on" role="tab" aria-selected="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          Cards
+        </button>
+        <button id="viewTable" role="tab" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          Table
+        </button>
+      </div>
     </div>
 
     <div class="cls-grid" id="clsGrid"><span class="empty-note">Loading...</span></div>
+
+    <div class="cls-table-wrap">
+      <table class="cls-table" id="clsTable">
+        <thead><tr><th>Child</th><th>Class</th><th>Age group</th><th>Learning profile</th><th style="width:60px;"></th></tr></thead>
+        <tbody id="clsTableBody"></tbody>
+      </table>
+    </div>
   </main>
 
   <footer class="footer"><div class="container"><div class="footer-bottom">
@@ -87,107 +187,6 @@
   <script src="js/pf-shell.js"></script>
   <script src="js/pf-centres.js"></script>
   <script src="js/app.js"></script>
-  <script>
-  (function () {
-    'use strict';
-    var TAGS = ['visual-spatial', 'advanced-verbal', 'sensory-avoidant', 'kinesthetic', 'emergent-reader', 'EAL', 'needs-movement-breaks', 'high-support'];
-    var grid = document.getElementById('clsGrid');
-
-    (function fillCentres() {
-      var host = document.getElementById('ncCentre');
-      if (!host || !window.pfCentreSelect) return;
-      var sel = window.pfCentreSelect({ placeholder: 'Select centre (optional)' });
-      Array.prototype.slice.call(sel.children).forEach(function (n) { host.appendChild(n); });
-    })();
-
-    function esc(s) { return window.pfApi.esc(s); }
-
-    function kidRow(kid) {
-      var r = document.createElement('div');
-      r.className = 'kid-row';
-      var name = document.createElement('strong');
-      name.textContent = kid.name;
-      var tags = document.createElement('span');
-      tags.className = 'kid-tags';
-      (kid.profile_tags || []).forEach(function (t) {
-        var s = document.createElement('span'); s.className = 'kid-tag'; s.textContent = t; tags.appendChild(s);
-      });
-      var del = document.createElement('button');
-      del.textContent = '✕'; del.title = 'Remove child';
-      del.addEventListener('click', function () {
-        if (!confirm('Remove ' + kid.name + ' and all their records?')) return;
-        window.pfApi.removeChild(kid.id).then(load);
-      });
-      r.appendChild(name); r.appendChild(tags); r.appendChild(del);
-      return r;
-    }
-
-    function classCard(cls) {
-      var card = document.createElement('div');
-      card.className = 'cls-card';
-      var h = document.createElement('h3');
-      h.innerHTML = esc(cls.name) + ' <span class="tag">' + esc(cls.age_group.toUpperCase()) + (cls.centre ? ' - ' + esc(cls.centre) : '') + '</span>';
-      card.appendChild(h);
-      var list = document.createElement('div');
-      list.className = 'kid-list';
-      var kids = cls.children || [];
-      if (!kids.length) list.innerHTML = '<span class="empty-note">No children yet - add your first below.</span>';
-      kids.sort(function (a, b) { return a.name.localeCompare(b.name); }).forEach(function (k) { list.appendChild(kidRow(k)); });
-      card.appendChild(list);
-
-      var add = document.createElement('div');
-      add.className = 'add-kid';
-      var nameIn = document.createElement('input');
-      nameIn.placeholder = 'Child\'s name (or initials for privacy)';
-      var picks = document.createElement('div');
-      picks.className = 'tag-picks';
-      var chosen = [];
-      TAGS.forEach(function (t) {
-        var b = document.createElement('button');
-        b.type = 'button'; b.className = 'tag-pick'; b.textContent = t;
-        b.addEventListener('click', function () {
-          b.classList.toggle('on');
-          chosen = Array.prototype.filter.call(picks.children, function (x) { return x.classList.contains('on'); })
-            .map(function (x) { return x.textContent; });
-        });
-        picks.appendChild(b);
-      });
-      var btn = document.createElement('button');
-      btn.className = 'btn btn-secondary btn-sm'; btn.textContent = 'Add Child';
-      btn.addEventListener('click', function () {
-        var n = nameIn.value.trim();
-        if (!n) { nameIn.focus(); return; }
-        var done = window.pfApi.spinner(btn, 'Adding...');
-        window.pfApi.addChild(cls.id, n, chosen).then(function () { done(); load(); },
-          function (e) { done(); if (window.pfToast) pfToast('Failed: ' + e.message); });
-      });
-      add.appendChild(nameIn); add.appendChild(picks); add.appendChild(btn);
-      card.appendChild(add);
-      return card;
-    }
-
-    function load() {
-      window.pfApi.myClasses().then(function (classes) {
-        grid.innerHTML = '';
-        if (!classes.length) {
-          grid.innerHTML = '<span class="empty-note">No classes yet. Create your first class above - e.g. "K1 Sunshine".</span>';
-          return;
-        }
-        classes.forEach(function (c) { grid.appendChild(classCard(c)); });
-      });
-    }
-
-    document.getElementById('ncBtn').addEventListener('click', function () {
-      var name = document.getElementById('ncName').value.trim();
-      if (!name) { document.getElementById('ncName').focus(); return; }
-      var done = window.pfApi.spinner(this, 'Creating...');
-      window.pfApi.createClass(name, document.getElementById('ncAge').value, document.getElementById('ncCentre').value)
-        .then(function () { done(); document.getElementById('ncName').value = ''; load(); },
-          function (e) { done(); if (window.pfToast) pfToast('Failed: ' + e.message); });
-    });
-
-    if (window.pfAuthReady) window.pfAuthReady.then(function (ctx) { if (ctx.user) load(); });
-  })();
-  </script>
+  <script src="js/pf-classes.js"></script>
 </body>
 </html>

@@ -109,11 +109,25 @@
     }
   }
 
+  function sendSpinner() {
+    // The send button contains an icon; spin only the text label so the
+    // SVG survives, and disable the whole button while busy.
+    var label = document.getElementById('coachSendLabel');
+    if (!label) return window.pfApi.spinner(els.send, '...');
+    els.send.disabled = true;
+    var orig = label.textContent;
+    label.textContent = '...';
+    return function done() {
+      els.send.disabled = false;
+      label.textContent = orig;
+    };
+  }
+
   function send() {
     var text = els.input.value.trim();
     if (!text || state.busy) return;
     state.busy = true;
-    var done = window.pfApi.spinner(els.send, '...');
+    var done = sendSpinner();
     var history = state.messages.slice(-8);
 
     els.body.appendChild(bubble('user', text));

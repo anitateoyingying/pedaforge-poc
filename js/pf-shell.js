@@ -20,7 +20,7 @@
       { href: 'lna.html', name: 'Learning Needs', ico: 'M22 12h-4l-3 9L9 3l-3 9H2' },
       { href: 'dashboard.html', name: 'PD Dashboard', ico: 'M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14' },
     ]},
-    { label: 'Spaces', items: [
+    { label: 'SproutSpace', items: [
       { href: 'sproutspace-layout.html', name: 'Layout Planner', ico: 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z' },
       { href: 'sproutspace-inventory.html', name: 'Inventory', ico: 'M21 8V21H3V8M1 3h22v5H1zM10 12h4' },
       { href: 'sproutspace-control.html', name: 'HQ Control', ico: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },

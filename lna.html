@@ -37,7 +37,8 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 1rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
       color: var(--secondary);
       margin-bottom: 20px;
     }
@@ -55,6 +56,29 @@
       font-weight: 700;
       flex-shrink: 0;
     }
+
+    /* ─── Labeled fields (same pattern as classes.html) ── */
+    .lna-field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 560px) { .lna-field-row { grid-template-columns: 1fr; } }
+    .field label {
+      display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 11px 14px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.9rem;
+      color: var(--text); background: var(--bg-card); min-height: 44px; outline: none;
+      transition: border-color var(--transition);
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); }
+    .field textarea { resize: vertical; line-height: 1.55; }
+    .lna-analyse-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
+    .lna-analyse-row .btn { min-height: 44px; }
+    .lna-hint { font-size: 0.76rem; color: var(--text-muted); line-height: 1.45; }
 
     /* ─── IDP Section ─────────────────────────────────── */
     .idp-card {
@@ -116,8 +140,8 @@
       margin-bottom: 12px;
     }
     .lna-goal-head {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 10px; flex-wrap: wrap; margin-bottom: 8px;
+      display: flex; align-items: center;
+      gap: 10px; flex-wrap: wrap; margin-bottom: 10px;
     }
     .lna-goal-num {
       display: inline-flex; align-items: center; justify-content: center;
@@ -125,17 +149,17 @@
       background: var(--accent-proposal); color: #fff;
       font-size: 0.74rem; font-weight: 700; flex-shrink: 0;
     }
-    .lna-goal-tags { display: inline-flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .lna-goal-tags { display: inline-flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-left: auto; }
     .lna-qtt-tag {
-      display: inline-block; padding: 3px 11px; border-radius: 100px;
-      font-size: 0.72rem; font-weight: 700;
+      display: inline-flex; align-items: center; padding: 3px 11px; min-height: 24px;
+      border-radius: 100px; font-size: 0.72rem; font-weight: 700; line-height: 1.2;
       background: var(--accent-proposal-soft); color: var(--accent-proposal);
       border: 1px solid var(--accent-proposal-line);
     }
     .sfw-pill {
-      display: inline-block; padding: 3px 11px;
-      background: rgba(139,92,246,0.1); color: #8b5cf6;
-      border-radius: 100px; font-size: 0.7rem; font-weight: 700;
+      display: inline-flex; align-items: center; padding: 3px 11px; min-height: 24px;
+      background: rgba(139,92,246,0.1); color: #8b5cf6; line-height: 1.2;
+      border-radius: 100px; font-size: 0.72rem; font-weight: 700;
     }
     .lna-goal-text { font-size: 0.9rem; color: var(--text); line-height: 1.6; margin: 0; }
     .lna-pd-box {
@@ -146,7 +170,8 @@
     }
     .lna-pd-box h4 { font-size: 0.9rem; color: var(--accent-proposal); margin-bottom: 8px; }
     .lna-pd-box p { font-size: 0.88rem; color: var(--text); line-height: 1.55; margin: 0; }
-    .lna-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .lna-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+    .lna-actions .btn { min-height: 44px; }
     .lna-empty { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
 
     /* ─── Sidebar ─────────────────────────────────────── */
@@ -164,7 +189,8 @@
     }
 
     .sidebar-panel h3 {
-      font-size: 0.95rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
       color: var(--secondary);
       margin-bottom: 16px;
       display: flex;
@@ -362,30 +388,30 @@
         <div class="step-card">
           <h3><span class="step-number">1</span> Your Profile &amp; Self-Assessment</h3>
 
-          <div class="lna-form-row">
-            <div class="lna-form-group">
+          <div class="lna-field-row">
+            <div class="field">
               <label for="lnaDesignation">Designation</label>
-              <select class="lna-select" id="lnaDesignation">
+              <select id="lnaDesignation">
                 <option>Educator</option>
                 <option>Senior Educator</option>
                 <option>Lead Educator</option>
                 <option>Deputy Director</option>
               </select>
             </div>
-            <div class="lna-form-group">
+            <div class="field">
               <label for="lnaExperience">Years of experience</label>
-              <input type="number" class="lna-select" id="lnaExperience" min="0" max="60" step="1" placeholder="e.g. 4" inputmode="numeric">
+              <input type="number" id="lnaExperience" min="0" max="60" step="1" placeholder="e.g. 4" inputmode="numeric">
             </div>
           </div>
 
-          <div class="lna-form-group" style="margin-top:12px;">
+          <div class="field" style="margin-top:16px;">
             <label for="lnaSelf">Where do you want to grow?</label>
-            <textarea class="form-control" id="lnaSelf" rows="5" placeholder="Describe your strengths, the areas you find hardest, and what you'd like to be doing more confidently a year from now. The more specific you are, the sharper the AI's goals will be."></textarea>
+            <textarea id="lnaSelf" rows="5" placeholder="Describe your strengths, the areas you find hardest, and what you'd like to be doing more confidently a year from now. The more specific you are, the sharper the AI's goals will be."></textarea>
           </div>
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
-            <button class="btn btn-primary" id="lnaAnalyse" type="button">Analyse</button>
-            <span style="font-size:0.76rem;color:var(--text-muted);align-self:center;">AI maps your reflection to QTT domains and SFw for ECCE references.</span>
+          <div class="lna-analyse-row">
+            <button class="btn btn-primary" id="lnaAnalyse" type="button">Analyse My Learning Needs</button>
+            <span class="lna-hint">AI maps your reflection to QTT domains and SFw for ECCE references.</span>
           </div>
         </div>
 

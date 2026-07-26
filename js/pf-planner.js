@@ -52,12 +52,14 @@
       chip.setAttribute('role', 'button');
       chip.setAttribute('tabindex', '0');
       chip.setAttribute('aria-pressed', 'true');
-      var body = el('div', null);
-      body.style.flex = '1';
-      body.appendChild(el('span', 'profile-name', k.name));
-      var tags = (k.profile_tags || []).join(' - ');
-      body.appendChild(el('div', 'planner-child-tags', tags || 'No profile tags'));
-      chip.appendChild(body);
+      var tags = k.profile_tags || [];
+      chip.title = k.name + (tags.length ? ' - ' + tags.join(', ') : ' - no profile tags')
+        + '. Click to include or exclude.';
+      chip.appendChild(el('span', 'profile-name', k.name));
+      if (tags.length) {
+        var t = el('span', 'planner-child-tag', tags.length > 1 ? tags[0] + ' +' + (tags.length - 1) : tags[0]);
+        chip.appendChild(t);
+      }
       var badge = el('span', 'count', 'In');
       chip.appendChild(badge);
       function toggle() {
@@ -238,7 +240,10 @@
   function renderLessonEmpty() {
     var host = $('plannerLessons');
     host.innerHTML = '';
-    host.appendChild(el('p', 'profile-meta', 'No saved lessons yet - generate a plan above and save it to build your library.'));
+    var empty = el('div', 'planner-empty');
+    empty.appendChild(el('h4', null, 'No saved lessons yet'));
+    empty.appendChild(el('p', null, 'Pick a class, type a theme, and press Generate Lesson Plan - saved plans build your library here.'));
+    host.appendChild(empty);
   }
 
   function loadLessons() {
@@ -274,15 +279,16 @@
             if (e.key === 'Enter') { e.preventDefault(); open(); }
           });
           row.appendChild(info);
-          var pLink = el('a', 'pf-xlink', '→ Portfolio');
+          var actions = el('div', 'lesson-actions');
+          var pLink = el('a', 'pf-xlink', 'Portfolio');
           pLink.href = 'portfolio.html';
           pLink.title = 'Capture how this lesson went in Portfolios';
-          pLink.style.marginRight = '10px';
-          row.appendChild(pLink);
+          actions.appendChild(pLink);
           var del = el('button', 'btn btn-secondary btn-sm', 'Delete');
           del.type = 'button';
           del.addEventListener('click', function () { deleteLesson(l.id, row); });
-          row.appendChild(del);
+          actions.appendChild(del);
+          row.appendChild(actions);
           host.appendChild(row);
         });
       })

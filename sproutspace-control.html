@@ -64,14 +64,38 @@
   <!-- ─── Main Content ──────────────────────────────────────── -->
   <main class="container main-content-spacing">
 
+    <style>
+      /* Approvals: 48px rows, clear 40px review actions */
+      #lpApprovalRows .safety-flag { min-height: 48px; align-items: center; }
+      #lpApprovalRows .lp-appr-meta { font-size: 0.72rem; color: var(--text-muted); font-style: italic; }
+      #lpApprovalRows .lp-appr-acts { display: flex; gap: 8px; flex-shrink: 0; }
+      #lpApprovalRows .lp-appr-acts .btn { min-height: 40px; }
+      .lp-appr-empty {
+        padding: 26px 20px; text-align: center; color: var(--text-light);
+        font-size: 0.9rem; background: var(--bg); border-radius: var(--radius-sm);
+        border: 1px dashed var(--border);
+      }
+
+      /* Stats: uniform tiles */
+      .dashboard-stats { align-items: stretch; }
+      .dash-stat { min-height: 116px; display: flex; flex-direction: column; justify-content: center; }
+
+      /* Panel headings: consistent serif scale */
+      .dash-panel h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+
+      /* Educator table: 44px rows with hover */
+      .budget-table tbody td { padding: 12px 20px; height: 44px; }
+      .budget-table tbody tr:hover { background: #fdfbf7; }
+    </style>
+
     <!-- ─── Live: Submitted Layouts (Supabase-backed) ───────── -->
-    <div class="panel-card" id="lpApprovals" style="margin-bottom:28px;display:none;">
+    <div class="panel-card" id="lpApprovals" style="margin-bottom:28px;">
       <div class="section-header" style="text-align:left;margin-bottom:18px;">
         <span class="section-label" style="color:var(--sprout);">Live - Layout Approvals</span>
         <h2 style="font-size:1.4rem;">Submitted Classroom Layouts</h2>
         <p style="margin:0;font-size:0.9rem;">Layouts submitted from the <a href="sproutspace-layout.html">Layout Planner</a> by signed-in educators, read live from the database. Directors can approve or request changes.</p>
       </div>
-      <div id="lpApprovalRows"></div>
+      <div id="lpApprovalRows"><p class="profile-meta">Loading submitted layouts...</p></div>
     </div>
 
     <script>
@@ -87,19 +111,23 @@
 
       function rowHtml(l, canReview) {
         var badge = { submitted: 'warn', approved: 'ok', changes_requested: 'danger' }[l.status] || 'ok';
-        return '<div class="safety-flag ' + badge + '" style="align-items:center;" data-id="' + esc(l.id) + '" data-owner-name="' + esc(l.owner_name || '') + '">' +
+        return '<div class="safety-flag ' + badge + '" data-id="' + esc(l.id) + '" data-owner-name="' + esc(l.owner_name || '') + '">' +
           '<span style="flex:1;"><strong>' + esc(l.name) + '</strong><br>' +
-          '<em style="font-size:0.72rem;color:var(--text-muted);">' + esc(l.owner_name || '') + ' - score ' + esc(l.score) + '% - ' + esc(fmtDate(l.submitted_at || l.updated_at)) + ' - ' + esc(l.status.replace('_', ' ')) + '</em></span>' +
+          '<em class="lp-appr-meta">' + esc(l.owner_name || '') + ' - score ' + esc(l.score) + '% - ' + esc(fmtDate(l.submitted_at || l.updated_at)) + ' - ' + esc(l.status.replace('_', ' ')) + '</em></span>' +
           (canReview && l.status === 'submitted'
-            ? '<span style="display:flex;gap:6px;flex-shrink:0;">' +
-              '<button class="btn btn-sm btn-primary" data-act="approved" style="background:var(--sprout);border-color:var(--sprout);">Approve</button>' +
-              '<button class="btn btn-sm btn-secondary" data-act="changes_requested">Request changes</button></span>'
+            ? '<span class="lp-appr-acts">' +
+              '<button class="btn btn-sm btn-primary" data-act="approved" style="background:var(--sprout);border-color:var(--sprout);">Approve Layout</button>' +
+              '<button class="btn btn-sm btn-secondary" data-act="changes_requested">Request Changes</button></span>'
             : '') +
           '</div>';
       }
 
       function load(ctx) {
-        if (!ctx.user || !window.pfDb) return;
+        if (!ctx.user || !window.pfDb) {
+          document.getElementById('lpApprovalRows').innerHTML =
+            '<div class="lp-appr-empty">Sign in to review submitted layouts.</div>';
+          return;
+        }
         var isDirector = ctx.profile && ctx.profile.role === 'director';
         window.pfDb.from('layouts')
           .select('id,name,age_group,score,status,submitted_at,updated_at,owner,profiles:owner(full_name)')
@@ -108,12 +136,17 @@
           .limit(15)
           .then(function (r) {
             var rows = r.data || [];
-            if (r.error || !rows.length) return; // hidden panel if nothing to show
-            rows.forEach(function (l) { l.owner_name = l.profiles ? l.profiles.full_name : ''; });
-            var panel = document.getElementById('lpApprovals');
             var host = document.getElementById('lpApprovalRows');
+            if (r.error) {
+              host.innerHTML = '<div class="lp-appr-empty">Could not load submitted layouts: ' + esc(r.error.message) + '</div>';
+              return;
+            }
+            if (!rows.length) {
+              host.innerHTML = '<div class="lp-appr-empty">No layouts submitted yet - educators submit from the <a href="sproutspace-layout.html">Layout Planner</a> once a room reaches 100% compliance.</div>';
+              return;
+            }
+            rows.forEach(function (l) { l.owner_name = l.profiles ? l.profiles.full_name : ''; });
             host.innerHTML = rows.map(function (l) { return rowHtml(l, isDirector); }).join('');
-            panel.style.display = '';
             if (!host.dataset.wired) {
               host.dataset.wired = '1';
               host.addEventListener('click', function (e) {
